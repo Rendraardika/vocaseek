@@ -28,13 +28,12 @@ class SocialiteController extends Controller
                 [
                     'nama'     => $googleUser->getName(),
                     'password' => Hash::make(Str::random(24)),
-                    'role'     => 'intern', // Khusus Google Login kita set sebagai intern
+                    'role'     => 'intern', 
                     'notelp'   => null,
                 ]
             );
 
-            // Pastikan profil intern terbuat jika user baru
-            InternProfile::firstOrCreate(['user_id' => $user->user_id]);
+InternProfile::firstOrCreate(['user_id' => $user->user_id]);
 
             Auth::login($user);
 

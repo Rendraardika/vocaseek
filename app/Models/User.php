@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // Tambahkan ini jika akan menggunakan API
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -14,60 +13,61 @@ class User extends Authenticatable
 
     /**
      * Nama tabel yang terkait dengan model.
-     * * @var string
      */
     protected $table = 'users';
 
     /**
-   
-     * * @var string
+     * Nama kolom Primary Key yang digunakan di database (HeidiSQL).
      */
     protected $primaryKey = 'user_id';
 
     /**
-    
-     * * @var bool
+     * Menonaktifkan timestamps otomatis jika tabel tidak punya created_at/updated_at.
      */
     public $timestamps = false;
 
     /**
-     * Atribut yang dapat diisi secara massal (mass assignable).
-     *
-     * @var array<int, string>
+     * Atribut yang dapat diisi secara massal (Mass Assignment).
+     * PENTING: google_id harus ada agar login Google tidak error.
      */
     protected $fillable = [
-        'role',
         'nama',
         'email',
-        'notelp',
         'password',
+        'role',
+        'notelp',
+        'google_id', 
     ];
 
     /**
-    
-     * @var array<int, string>
+     * Atribut yang disembunyikan saat data dikonversi ke JSON.
      */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    
+    /**
+     * Pengaturan casting tipe data.
+     */
     protected function casts(): array
     {
         return [
             'password' => 'hashed',
-            'created_at' => 'datetime',
         ];
     }
 
-    
-     
+    /**
+     * Relasi ke profil Intern (Pencari Kerja).
+     */
     public function internProfile()
     {
         return $this->hasOne(InternProfile::class, 'user_id', 'user_id');
     }
 
+    /**
+     * Relasi ke profil Company (Perusahaan).
+     */
     public function companyProfile()
     {
         return $this->hasOne(CompanyProfile::class, 'user_id', 'user_id');
