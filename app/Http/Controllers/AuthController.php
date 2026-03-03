@@ -12,59 +12,62 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    /**
-     * Handle Registrasi User
-     */
     public function register(Request $request)
     {
-        // 1. Validasi Input
+        // 1. Validasi Lengkap
         $request->validate([
             'nama'     => 'required|string|max:100',
             'email'    => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role'     => 'required|in:intern,company',
-            'notelp'   => 'nullable|string|max:20',
+            'notelp'   => 'required|string|max:20',
+            'nib'      => 'required_if:role,company|string',
+            'loa_pdf'      => 'required_if:role,company|mimes:pdf|max:2048',
+            'akta_pdf'     => 'required_if:role,company|mimes:pdf|max:2048',
         ]);
 
-        // 2. Gunakan Database Transaction agar data konsisten
         DB::beginTransaction();
-
         try {
-            // Simpan ke tabel users
+            // 2. Simpan ke tabel users
             $user = User::create([
                 'nama'     => $request->nama,
                 'email'    => $request->email,
-                'password' => Hash::make($request->password), // Password wajib di-hash
+                'password' => Hash::make($request->password),
                 'role'     => $request->role,
                 'notelp'   => $request->notelp,
             ]);
 
-            // 3. Buat profil kosong sesuai role
+            // 3. Simpan Profil Berdasarkan Role
             if ($user->role === 'intern') {
                 InternProfile::create([
                     'user_id' => $user->user_id,
-                    'status_mahasiswa' => 'AKTIF' // default value
+                    'status_mahasiswa' => 'AKTIF'
                 ]);
             } elseif ($user->role === 'company') {
+                // Proses Upload File PDF
+                $loaPath  = $request->file('loa_pdf')->store('documents/loa', 'public');
+                $aktaPath = $request->file('akta_pdf')->store('documents/akta', 'public');
+
+                // SIMPAN KE TABEL company_profile
                 CompanyProfile::create([
-                    'user_id' => $user->user_id,
-                    'nama_perusahaan' => $request->nama // gunakan nama user sebagai nama awal perusahaan
+                    'user_id'         => $user->user_id,
+                    'nama_perusahaan' => $request->nama_perusahaan ?? $request->nama,
+                    'notelp'          => $request->notelp,
+                    'nib'             => $request->nib,
+                    'loa_pdf'         => $loaPath,
+                    'akta_pdf'        => $aktaPath,
                 ]);
             }
 
             DB::commit();
-
             return response()->json(['message' => 'Registrasi berhasil!'], 201);
 
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['message' => 'Registrasi gagal: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Gagal: ' . $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Handle Login User
-     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -73,27 +76,8 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            
-            $user = Auth::user();
-            return response()->json([
-                'message' => 'Login berhasil',
-                'user'    => $user
-            ], 200);
+            return response()->json(['message' => 'Login berhasil', 'user' => Auth::user()], 200);
         }
-
         return response()->json(['message' => 'Email atau password salah.'], 401);
-    }
-
-    /**
-     * Handle Logout
-     */
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return response()->json(['message' => 'Berhasil logout']);
     }
 }
