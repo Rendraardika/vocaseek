@@ -14,7 +14,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        // 1. Validasi Lengkap
+        // 1. Validasi Lengkap sesuai kebutuhan Intern & Company
         $request->validate([
             'nama'     => 'required|string|max:100',
             'email'    => 'required|string|email|max:100|unique:users',
@@ -22,13 +22,13 @@ class AuthController extends Controller
             'role'     => 'required|in:intern,company',
             'notelp'   => 'required|string|max:20',
             'nib'      => 'required_if:role,company|string',
-            'loa_pdf'      => 'required_if:role,company|mimes:pdf|max:2048',
-            'akta_pdf'     => 'required_if:role,company|mimes:pdf|max:2048',
+            'loa_pdf'  => 'required_if:role,company|mimes:pdf|max:2048',
+            'akta_pdf' => 'required_if:role,company|mimes:pdf|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
-            // 2. Simpan ke tabel users
+            // 2. Simpan Data User Utama
             $user = User::create([
                 'nama'     => $request->nama,
                 'email'    => $request->email,
@@ -37,18 +37,17 @@ class AuthController extends Controller
                 'notelp'   => $request->notelp,
             ]);
 
-            // 3. Simpan Profil Berdasarkan Role
+            // 3. Logika Pembuatan Profil berdasarkan Role
             if ($user->role === 'intern') {
                 InternProfile::create([
                     'user_id' => $user->user_id,
-                    'status_mahasiswa' => 'AKTIF'
+                    // Pastikan kolom ini ada di database atau hapus jika tidak digunakan
+                    'is_profile_complete' => false 
                 ]);
             } elseif ($user->role === 'company') {
-                // Proses Upload File PDF
                 $loaPath  = $request->file('loa_pdf')->store('documents/loa', 'public');
                 $aktaPath = $request->file('akta_pdf')->store('documents/akta', 'public');
 
-                // SIMPAN KE TABEL company_profile
                 CompanyProfile::create([
                     'user_id'         => $user->user_id,
                     'nama_perusahaan' => $request->nama_perusahaan ?? $request->nama,
@@ -70,14 +69,33 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // 1. Validasi Input Login
         $credentials = $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
+        // 2. Cek Kredensial
         if (Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Login berhasil', 'user' => Auth::user()], 200);
+            $user = Auth::user();
+            
+            // 3. PEMBUATAN TOKEN SANCTUM (Penting agar bisa akses update-profile)
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login berhasil',
+                'token'   => $token,
+                'user'    => $user
+            ], 200);
         }
+
         return response()->json(['message' => 'Email atau password salah.'], 401);
+    }
+
+    public function logout(Request $request)
+    {
+        // Menghapus token saat ini
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Berhasil logout'], 200);
     }
 }

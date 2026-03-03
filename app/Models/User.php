@@ -11,25 +11,13 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * Nama tabel yang terkait dengan model.
-     */
     protected $table = 'users';
-
-    /**
-     * Nama kolom Primary Key yang digunakan di database (HeidiSQL).
-     */
     protected $primaryKey = 'user_id';
 
-    /**
-     * Menonaktifkan timestamps otomatis jika tabel tidak punya created_at/updated_at.
-     */
+    // Aktifkan true jika kamu sudah menjalankan ALTER TABLE sebelumnya untuk created_at/updated_at
+    // Jika masih belum ada kolomnya di HeidiSQL, biarkan false
     public $timestamps = false;
 
-    /**
-     * Atribut yang dapat diisi secara massal (Mass Assignment).
-     * PENTING: google_id harus ada agar login Google tidak error.
-     */
     protected $fillable = [
         'nama',
         'email',
@@ -39,17 +27,11 @@ class User extends Authenticatable
         'google_id', 
     ];
 
-    /**
-     * Atribut yang disembunyikan saat data dikonversi ke JSON.
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Pengaturan casting tipe data.
-     */
     protected function casts(): array
     {
         return [
@@ -58,7 +40,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Relasi ke profil Intern (Pencari Kerja).
+     * Relasi ke profil Intern
      */
     public function internProfile()
     {
@@ -66,7 +48,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Relasi ke profil Company (Perusahaan).
+     * Relasi ke profil Company
      */
     public function companyProfile()
     {

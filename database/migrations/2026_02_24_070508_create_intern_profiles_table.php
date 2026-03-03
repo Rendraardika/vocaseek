@@ -9,29 +9,29 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('intern_profiles', function (Blueprint $table) {
-            $table->id('profile_id'); 
+            $table->id('intern_id');
             $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
-            $table->string('status_mahasiswa')->default('AKTIF');
             
-           
+            
             $table->string('foto')->nullable();
-            $table->text('tentang')->nullable();
-            $table->string('jenis_kelamin')->nullable();
+            $table->text('tentang_saya')->nullable();
             $table->string('tempat_lahir')->nullable();
             $table->date('tanggal_lahir')->nullable();
+            $table->string('jenis_kelamin')->nullable();
             $table->string('provinsi')->nullable();
             $table->string('kabupaten')->nullable();
             $table->text('detail_alamat')->nullable();
-            $table->string('linkedin')->nullable();
-            $table->string('github')->nullable();
+            
+            // Data Akademik & Dokumen
             $table->string('universitas')->nullable();
-            $table->string('jenjang')->nullable();
             $table->string('jurusan')->nullable();
-            $table->string('ipk')->nullable();
-            $table->year('tahun_masuk')->nullable();
-            $table->year('tahun_lulus')->nullable();
+            $table->string('cv_pdf')->nullable();
+            $table->string('portofolio_pdf')->nullable();
             
-            
+            // Fitur Pre-Test & Status
+            $table->integer('skor_pretest')->default(0);
+            $table->boolean('is_profile_complete')->default(false);
+            $table->timestamps();
         });
     }
 

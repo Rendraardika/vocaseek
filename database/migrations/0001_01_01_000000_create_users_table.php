@@ -10,26 +10,28 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('users', function (Blueprint $table) {
-        $table->id('user_id'); // Sesuaikan dengan primaryKey di model kamu
-        $table->string('nama'); // Ganti 'name' jadi 'nama'
-        $table->string('email')->unique();
-        $table->string('password');
-        $table->string('role'); // Tambahkan kolom role
-        $table->string('notelp')->nullable(); // Tambahkan kolom notelp
-        $table->rememberToken();
-        $table->timestamps();
-    });
-    // ... sisanya biarkan saja
+    {
+        // 1. Tabel Utama Users
+        Schema::create('users', function (Blueprint $table) {
+            $table->id('user_id'); 
+            $table->string('nama', 100); 
+            $table->string('email')->unique();
+            $table->string('password');
+            // Gunakan enum agar role lebih terjaga (hanya bisa diisi intern atau company)
+            $table->enum('role', ['intern', 'company'])->default('intern'); 
+            $table->string('notelp', 20)->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+        });
 
-
+        // 2. Tabel Reset Password
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // 3. Tabel Sessions (Untuk login berbasis database)
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

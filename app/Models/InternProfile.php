@@ -3,27 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InternProfile extends Model
 {
-   protected $table = 'intern_profiles'; 
+    protected $table = 'intern_profiles';
     protected $primaryKey = 'profile_id';
-    
-    
-    public $timestamps = false;
 
     protected $fillable = [
-        'user_id', 'foto', 'tentang', 'jenis_kelamin', 'tempat_lahir', 
-        'tanggal_lahir', 'provinsi', 'kabupaten', 'detail_alamat', 
-        'linkedin', 'github', 'universitas', 'jenjang', 'jurusan', 
-        'ipk', 'tahun_masuk', 'tahun_lulus', 'status_mahasiswa'
+        'user_id',
+        'foto',
+        'tentang_saya',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'provinsi',
+        'kabupaten',
+        'detail_alamat',
+        'universitas',
+        'jurusan',
+        'cv_pdf',
+        'portofolio_pdf',
+        'pretest_score',
+        'test_started_at',
+        'test_finished_at',
+        'is_profile_complete'
     ];
 
-    /**
-     * Relasi balik ke User
-     */
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
