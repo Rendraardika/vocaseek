@@ -9,13 +9,12 @@ use App\Models\CompanyProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller
 {
     public function register(Request $request)
     {
-        // 1. Validasi Dasar (Berlaku untuk semua)
+        // 1. Validasi
         $rules = [
             'nama'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email',
@@ -24,18 +23,18 @@ class RegisterController extends Controller
             'role'     => 'required|in:intern,company',
         ];
 
-        // 2. Validasi Khusus Company (Sesuai Desain Figma kamu)
         if ($request->role === 'company') {
+            $rules['nama_perusahaan'] = 'required|string|max:255';
             $rules['nib']  = 'required|string|max:50';
-            $rules['loa']  = 'required|mimes:pdf|max:2048'; // Max 2MB
-            $rules['akta'] = 'required|mimes:pdf|max:2048';
+            $rules['loa_pdf']  = 'required|mimes:pdf|max:2048';
+            $rules['akta_pdf'] = 'required|mimes:pdf|max:2048';
         }
 
         $request->validate($rules);
 
         return DB::transaction(function () use ($request) {
-            
-            // 3. Simpan ke Tabel Users
+
+            // 2. Simpan ke tabel users
             $user = User::create([
                 'nama'     => $request->nama,
                 'email'    => $request->email,
@@ -44,32 +43,32 @@ class RegisterController extends Controller
                 'notelp'   => $request->notelp,
             ]);
 
-            // 4. Proses Jika Role adalah Company
+            // 3. Jika role company
             if ($request->role === 'company') {
-                // Upload File PDF ke folder storage/app/public/documents
-                $loaPath  = $request->file('loa')->store('documents/loa', 'public');
-                $aktaPath = $request->file('akta')->store('documents/akta', 'public');
+
+                $loaPath  = $request->file('loa_pdf')->store('documents/loa', 'public');
+                $aktaPath = $request->file('akta_pdf')->store('documents/akta', 'public');
 
                 CompanyProfile::create([
-                    'user_id'         => $user->user_id,
-                    'nama_perusahaan' => $request->nama,
+                    'user_id'         => $user->id, 
+                    'nama_perusahaan' => $request->nama_perusahaan,
+                    'notelp'          => $request->notelp,
                     'nib'             => $request->nib,
                     'loa_pdf'         => $loaPath,
                     'akta_pdf'        => $aktaPath,
                 ]);
-            } 
+            }
             
-            // 5. Proses Jika Role adalah Intern
             else {
                 InternProfile::create([
-                    'user_id' => $user->user_id,
+                    'user_id' => $user->id,
                     'status_mahasiswa' => 'AKTIF'
                 ]);
             }
 
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Registrasi berhasil! Silakan login.',
+                'message' => 'Registrasi berhasil!',
                 'role'    => $user->role
             ], 201);
         });

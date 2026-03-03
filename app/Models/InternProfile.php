@@ -10,7 +10,7 @@ class InternProfile extends Model
    protected $table = 'intern_profiles'; 
     protected $primaryKey = 'profile_id';
     
-    // Matikan timestamps karena di SQL hanya ada created_at
+    
     public $timestamps = false;
 
     protected $fillable = [
