@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\GoogleController; // GANTI INI
 use App\Http\Controllers\LandingPageController;
 
 // Landing Page Dinamis
 Route::get('/', [LandingPageController::class, 'index'])->name('home');
 
-// Auth Google
-Route::get('/auth/google', [SocialiteController::class, 'redirect'])->name('google.login');
-Route::get('/auth/google/callback', [SocialiteController::class, 'callback']);
+// Auth Google - SEKARANG MANGGIL GOOGLE CONTROLLER
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);

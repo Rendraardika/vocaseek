@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\InternProfile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
@@ -24,21 +24,18 @@ class GoogleController extends Controller
             
             DB::beginTransaction();
 
-            // Cari user berdasarkan email
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if (!$user) {
-                // Jika user belum ada, daftarkan sebagai 'intern' secara default
                 $user = User::create([
                     'nama'      => $googleUser->getName(),
                     'email'     => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
-                    'role'      => 'intern', // Default role untuk login google
+                    'role'      => 'intern', 
                     'password'  => bcrypt(Str::random(16)),
-                    'notelp'    => '-', // Nilai sementara karena google tidak kasih no telp
+                    'notelp'    => '-', 
                 ]);
 
-                // Buat profil intern (Sama seperti logika register kamu)
                 InternProfile::create([
                     'user_id' => $user->user_id,
                     'is_profile_complete' => false
@@ -47,15 +44,14 @@ class GoogleController extends Controller
 
             DB::commit();
 
-            // Login-kan user
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            // Redirect ke Frontend (React) membawa token
+            // Redirect ke React
             return redirect('http://localhost:3000/login-success?token=' . $token);
 
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect('http://localhost:3000/login?error=' . urlencode($e->getMessage()));
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
