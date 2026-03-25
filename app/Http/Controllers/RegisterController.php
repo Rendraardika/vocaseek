@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth; // Pastikan foldernya app/Http/Controllers/Auth
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -9,6 +9,7 @@ use App\Models\CompanyProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -32,9 +33,9 @@ class RegisterController extends Controller
 
         $request->validate($rules);
 
-        return DB::transaction(function () use ($request) {
+        $user = DB::transaction(function () use ($request) {
 
-            // 2. Simpan ke tabel users
+            // 2. Simpan ke tabel users (Sesuaikan primary key kalau kamu pakai user_id)
             $user = User::create([
                 'nama'     => $request->nama,
                 'email'    => $request->email,
@@ -45,32 +46,36 @@ class RegisterController extends Controller
 
             // 3. Jika role company
             if ($request->role === 'company') {
-
                 $loaPath  = $request->file('loa_pdf')->store('documents/loa', 'public');
                 $aktaPath = $request->file('akta_pdf')->store('documents/akta', 'public');
 
                 CompanyProfile::create([
-                    'user_id'         => $user->id, 
+                    'user_id'         => $user->user_id, // Pakai user_id sesuai migrasi kamu
                     'nama_perusahaan' => $request->nama_perusahaan,
                     'notelp'          => $request->notelp,
                     'nib'             => $request->nib,
                     'loa_pdf'         => $loaPath,
                     'akta_pdf'        => $aktaPath,
                 ]);
-            }
-            
+            } 
             else {
                 InternProfile::create([
-                    'user_id' => $user->id,
-                    'status_mahasiswa' => 'AKTIF'
+                    'user_id' => $user->user_id, // Pakai user_id sesuai migrasi kamu
+                    'is_profile_complete' => false
                 ]);
             }
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Registrasi berhasil!',
-                'role'    => $user->role
-            ], 201);
+            return $user;
         });
+
+        // 4. Otomatis Login setelah daftar
+        Auth::login($user);
+
+        // 5. Redirect pakai Inertia (Bukan JSON)
+        if ($user->role === 'company') {
+            return redirect()->route('company.dashboard');
+        }
+
+        return redirect()->route('dashboard'); // Dashboard default buat intern
     }
 }

@@ -1,61 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\InternProfile;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
-class GoogleController extends Controller
+class AuthController extends Controller
 {
-    public function redirectToGoogle()
+    public function login(Request $request)
     {
-        return Socialite::driver('google')->stateless()->redirect();
-    }
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    public function handleGoogleCallback()
-    {
-        try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-            
-            DB::beginTransaction();
-
-            // Cari user berdasarkan email
-            $user = User::where('email', $googleUser->getEmail())->first();
-
-            if (!$user) {
-                // Jika user belum ada, daftarkan sebagai 'intern' secara default
-                $user = User::create([
-                    'nama'      => $googleUser->getName(),
-                    'email'     => $googleUser->getEmail(),
-                    'google_id' => $googleUser->getId(),
-                    'role'      => 'intern', // Default role untuk login google
-                    'password'  => bcrypt(Str::random(16)),
-                    'notelp'    => '-', // Nilai sementara karena google tidak kasih no telp
-                ]);
-
-                // Buat profil intern (Sama seperti logika register kamu)
-                InternProfile::create([
-                    'user_id' => $user->user_id,
-                    'is_profile_complete' => false
-                ]);
-            }
-
-            DB::commit();
-
-            // Login-kan user
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            // Redirect ke Frontend (React) membawa token
-            return redirect('http://localhost:3000/login-success?token=' . $token);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect('http://localhost:3000/login?error=' . urlencode($e->getMessage()));
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json(['message' => 'Email atau Password salah'], 401);
         }
+
+        $user = Auth::user();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'token' => $token,
+            'role' => $user->role, 
+            'user' => $user->nama
+        ]);
     }
 }

@@ -12,11 +12,11 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'users';
+    
+    // Karena kamu pakai user_id, pastikan ini konsisten di semua tabel relasi
     protected $primaryKey = 'user_id';
 
-    // Aktifkan true jika kamu sudah menjalankan ALTER TABLE sebelumnya untuk created_at/updated_at
-    // Jika masih belum ada kolomnya di HeidiSQL, biarkan false
-    public $timestamps = false;
+    public $timestamps = false; 
 
     protected $fillable = [
         'nama',
@@ -32,6 +32,9 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * Casting password agar otomatis di-hash
+     */
     protected function casts(): array
     {
         return [
@@ -39,16 +42,19 @@ class User extends Authenticatable
         ];
     }
 
+    // --- RELASI ---
+
     /**
      * Relasi ke profil Intern
      */
     public function internProfile()
     {
+        // Parameter: (Model, Foreign Key di tabel tujuan, Local Key di tabel users)
         return $this->hasOne(InternProfile::class, 'user_id', 'user_id');
     }
 
     /**
-     * Relasi ke profil Company
+     * Relasi ke profil Company (Penting untuk Dashboard Mitra)
      */
     public function companyProfile()
     {
