@@ -10,17 +10,22 @@ use App\Http\Controllers\TalentController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes (Akses Tanpa Login)
+| Public Routes (Akses Tanpa Login / Tanpa Token)
 |--------------------------------------------------------------------------
 */
 
-// Auth Manual & Socialite
+// 1. Data Landing Page (Gambar 1)
+// Menggunakan fungsi khusus agar pelamar bisa lihat tanpa login
+Route::get('/landing-stats', [CompanyController::class, 'getPublicStats']);
+Route::get('/popular-vacancies', [CompanyController::class, 'getPublicJobs']);
+
+// 2. Auth Manual & Socialite
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-// Fitur Lupa Password
+// 3. Fitur Lupa Password
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
@@ -31,7 +36,7 @@ Route::get('/test', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Protected Routes (Wajib Login / Bearer Token)
+| Protected Routes (Wajib Login / Membawa Bearer Token)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->group(function () {
@@ -53,28 +58,32 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     /* |--------------------------------------------------------------------------
-    | --- FITUR COMPANY (POV MITRA) ---
+    | --- FITUR COMPANY (POV MITRA / HRD) ---
     |--------------------------------------------------------------------------
     */
     Route::prefix('company')->group(function () {
         
-        // 1. Dashboard (Statistik Utama - Gambar 1 Awal)
+        // 1. Dashboard (Statistik Utama & Recent Applicants - Gambar 1 Dashboard)
         Route::get('/dashboard', [CompanyController::class, 'getDashboardData']);
 
-        // 2. Manajemen Lowongan (Gambar 1-5 Lowongan)
+        // 2. Manajemen Lowongan (CRUD Lowongan - Gambar 1 s/d 5)
         Route::get('/jobs', [CompanyController::class, 'getJobPostings']);
         Route::post('/jobs', [CompanyController::class, 'storeJob']);
         Route::put('/jobs/{id}', [CompanyController::class, 'updateJob']); 
         Route::delete('/jobs/{id}', [CompanyController::class, 'destroyJob']);
 
-        // 3. Manajemen Talent (Gambar 1-7 Talent)
-        // Menu Semua Kandidat (Stats & Tabel - Gambar 2)
+        // 3. Manajemen Talent (Seleksi Pelamar - Gambar 1 s/d 7 Talent)
+        // Menu Semua Kandidat & Filter
         Route::get('/talent/candidates', [TalentController::class, 'getAllCandidates']);
+        // api.php di dalam grup company/talent
+Route::get('/talent/candidates/{id}/detail', [TalentController::class, 'getCandidateDetail']);
         
         // Tambah Kandidat Manual (Gambar 3)
         Route::post('/talent/candidates/manual', [TalentController::class, 'storeManualCandidate']);
+
         
-        // Update Status & Notifikasi (Popup Gambar 6)
+        
+        // Update Status & Kirim Email Otomatis (Popup Gambar 6)
         Route::put('/talent/candidates/{id}/status', [TalentController::class, 'updateCandidateStatus']);
         
         // Menu Kandidat Terpilih (Gambar 7)
