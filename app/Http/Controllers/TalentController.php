@@ -14,9 +14,7 @@ use Illuminate\Support\Str;
 
 class TalentController extends Controller
 {
-    /**
-     * SEMUA KANDIDAT (Gambar 1 & 2)
-     */
+
     public function getAllCandidates(Request $request)
     {
         $company = $request->user()->companyProfile;
@@ -63,10 +61,7 @@ class TalentController extends Controller
         ]);
     }
 
-    /**
-     * DETAIL PROFIL LENGKAP (Gambar 4 & 5)
-     * Fungsi baru untuk melihat CV, Portofolio, dan IPK Sarah Jenkins dkk.
-     */
+    
     public function getCandidateDetail($id)
     {
         // $id adalah ID lamaran
@@ -81,7 +76,7 @@ class TalentController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                // Bagian Kiri UI: Data Pribadi (Gambar 4)
+                // Bagian Kiri UI: Data Pribadi
                 'personal' => [
                     'name' => $user->nama,
                     'role' => $profile->posisi_sekarang ?? 'Candidate',
@@ -96,7 +91,7 @@ class TalentController extends Controller
                         'instagram' => $profile->instagram_url,
                     ]
                 ],
-                // Bagian Tengah: Akademik & Assessment (Gambar 4 & 5)
+                // Bagian Tengah: Akademik & Assessment
                 'academic' => [
                     'university' => $profile->asal_kampus,
                     'major' => $profile->prodi,
@@ -108,7 +103,7 @@ class TalentController extends Controller
                     'summary' => 'Kandidat memiliki potensi teknis yang stabil.',
                     'date' => $application->created_at->format('d M Y')
                 ],
-                // Bagian Kanan: Dokumen (Gambar 4)
+                // Bagian Kanan: Dokumen
                 'documents' => [
                     'cv' => $profile->cv_path ? url('storage/'.$profile->cv_path) : null,
                     'portfolio' => $profile->portfolio_url,
@@ -118,9 +113,6 @@ class TalentController extends Controller
         ]);
     }
 
-    /**
-     * CREATE MANUAL KANDIDATE (Gambar 3)
-     */
     public function storeManualCandidate(Request $request)
     {
         $validated = $request->validate([
@@ -153,9 +145,7 @@ class TalentController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Kandidat manual berhasil dibuat']);
     }
 
-    /**
-     * UPDATE STATUS (Gambar 6)
-     */
+    
     public function updateCandidateStatus(Request $request, $id)
     {
         $validated = $request->validate([
@@ -176,9 +166,7 @@ class TalentController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Status diperbarui!']);
     }
 
-    /**
-     * KANDIDAT TERPILIH (Gambar 7)
-     */
+  
     public function getSelectedCandidates(Request $request)
     {
         $company = $request->user()->companyProfile;

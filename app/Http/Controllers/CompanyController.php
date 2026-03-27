@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
-    /**
-     * STATISTIK LANDING PAGE (Publik - Gambar 1 Landing Page)
-     */
     public function getPublicStats()
     {
         return response()->json([
@@ -27,9 +24,7 @@ class CompanyController extends Controller
         ]);
     }
 
-    /**
-     * DASHBOARD DATA (Internal Mitra - Gambar 1 Dashboard)
-     */
+
     public function getDashboardData(Request $request)
     {
         $company = $request->user()->companyProfile;
@@ -64,9 +59,7 @@ class CompanyController extends Controller
         return response()->json(['status' => 'success', 'stats' => $stats, 'recent_applicants' => $recentApplicants]);
     }
 
-    /**
-     * MANAJEMEN LOWONGAN (List & Statistik - Gambar 1)
-     */
+
     public function getJobPostings(Request $request)
     {
         $company = $request->user()->companyProfile;
@@ -97,9 +90,6 @@ class CompanyController extends Controller
         ]);
     }
 
-    /**
-     * SIMPAN LOWONGAN BARU (Gambar 2-5)
-     */
     public function storeJob(Request $request)
     {
         $company = $request->user()->companyProfile;
@@ -124,9 +114,6 @@ class CompanyController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil diterbitkan!', 'data' => $job]);
     }
 
-    /**
-     * UPDATE LOWONGAN (Edit - Gambar 5 / Icon Edit)
-     */
     public function updateJob(Request $request, $id)
     {
         $company = $request->user()->companyProfile;
@@ -151,9 +138,7 @@ class CompanyController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil diperbarui!']);
     }
 
-    /**
-     * HAPUS LOWONGAN
-     */
+
     public function destroyJob($id)
     {
         Lowongan::findOrFail($id)->delete();
