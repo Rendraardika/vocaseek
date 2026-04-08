@@ -13,14 +13,24 @@ class CompanyProfile extends Model
     protected $primaryKey = 'id'; // Sesuai screenshot Abang
 
     protected $fillable = [
-        'user_id',
-        'nama_perusahaan',
-        'notelp',
-        'nib',
-        'loa_pdf',
-        'akta_pdf',
-        'status_mitra'
-    ];
+    'user_id', 
+    'nama_perusahaan', 
+    'industri', 
+    'ukuran_perusahaan', 
+    'website_url', 
+    'deskripsi', 
+    'notelp', 
+    'alamat_kantor_pusat', 
+    'nib', 
+    'loa_pdf', 
+    'akta_pdf', 
+    'logo_perusahaan', 
+    'banner_perusahaan', 
+    'status_mitra', 
+    'linkedin_url', 
+    'instagram_url', 
+    'twitter_url'
+];
 
     // Relasi balik ke User
     public function user()

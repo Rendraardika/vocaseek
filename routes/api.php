@@ -63,20 +63,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- POV COMPANY (Mitra Perusahaan) ---
     Route::prefix('company')->group(function () {
+        // --- PROFIL & DASHBOARD ---
         Route::get('/profile', [CompanyController::class, 'getCompanyProfile']); 
+        Route::post('/profile/update', [CompanyController::class, 'updateProfile']); // <-- INI YANG BARU TAMBAH BANG!
         Route::get('/dashboard', [CompanyController::class, 'getDashboardData']);
         
-        // Fitur Seleksi Pelamar
+        // --- FITUR SELEKSI PELAMAR ---
         Route::get('/jobs/{jobId}/applicants', [CompanyController::class, 'getApplicantsByJob']);
         Route::put('/applications/{id}/status', [CompanyController::class, 'updateApplicationStatus']);
 
-        // CRUD Lowongan
+        // --- CRUD LOWONGAN ---
         Route::get('/jobs', [CompanyController::class, 'getJobPostings']);
         Route::post('/jobs', [CompanyController::class, 'storeJob']);
         Route::put('/jobs/{id}', [CompanyController::class, 'updateJob']); 
         Route::delete('/jobs/{id}', [CompanyController::class, 'destroyJob']);
 
-        // Management Talent (Database Kandidat)
+        // --- MANAGEMENT TALENT (Database Kandidat) ---
         Route::get('/talent/candidates', [TalentController::class, 'getAllCandidates']);
         Route::get('/talent/candidates/{id}/detail', [TalentController::class, 'getCandidateDetail']);
         Route::post('/talent/candidates/manual', [TalentController::class, 'storeManualCandidate']);

@@ -8,51 +8,95 @@ use App\Models\JobApplication;
 use App\Models\CompanyProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
     /**
-     * Helper untuk mengambil profil Company yang sedang login
+     * Helper: Ambil profil company yang sedang login
      */
     private function getMyCompany()
     {
         return CompanyProfile::where('user_id', Auth::id())->first();
     }
 
-    /**
-     * Mengambil Detail Profil Perusahaan
-     */
+    // ==========================================
+    // 1. FITUR PROFIL (Sesuai UI Settings)
+    // ==========================================
+
     public function getCompanyProfile()
     {
         $profile = $this->getMyCompany();
-        if (!$profile) {
-            return response()->json(['message' => 'Profil perusahaan tidak ditemukan'], 404);
-        }
+        if (!$profile) return response()->json(['message' => 'Profil tidak ditemukan'], 404);
 
         return response()->json([
             'status' => 'success',
             'data' => [
-                'nama_perusahaan' => $profile->nama_perusahaan,
-                'notelp' => $profile->notelp,
-                'nib' => $profile->nib,
-                'status_mitra' => $profile->status_mitra,
-                'loa_url' => $profile->loa_pdf ? asset('storage/' . $profile->loa_pdf) : null,
-                'akta_url' => $profile->akta_pdf ? asset('storage/' . $profile->akta_pdf) : null,
-                'created_at' => $profile->created_at->format('d M Y')
+                'nama_perusahaan'     => $profile->nama_perusahaan,
+                'industri'            => $profile->industri,
+                'ukuran_perusahaan'   => $profile->ukuran_perusahaan,
+                'website_url'         => $profile->website_url,
+                'deskripsi'           => $profile->deskripsi,
+                'notelp'              => $profile->notelp,
+                'alamat_kantor_pusat' => $profile->alamat_kantor_pusat,
+                'nib'                 => $profile->nib,
+                'status_mitra'        => $profile->status_mitra,
+                'logo_url'            => $profile->logo_perusahaan ? asset('storage/' . $profile->logo_perusahaan) : null,
+                'banner_url'          => $profile->banner_perusahaan ? asset('storage/' . $profile->banner_perusahaan) : null,
+                'linkedin_url'        => $profile->linkedin_url,
+                'instagram_url'       => $profile->instagram_url,
+                'twitter_url'         => $profile->twitter_url,
+                'loa_url'             => $profile->loa_pdf ? asset('storage/' . $profile->loa_pdf) : null,
+                'akta_url'            => $profile->akta_pdf ? asset('storage/' . $profile->akta_pdf) : null,
+                'created_at'          => $profile->created_at->format('d M Y')
             ]
         ]);
     }
 
-    /**
-     * Data Statistik Dashboard untuk Company
-     */
+    public function updateProfile(Request $request)
+    {
+        $company = $this->getMyCompany();
+        if (!$company) return response()->json(['message' => 'Unauthorized'], 403);
+        
+        $validated = $request->validate([
+            'nama_perusahaan'     => 'required|string|max:255',
+            'industri'            => 'nullable|string',
+            'ukuran_perusahaan'   => 'nullable|string',
+            'website_url'         => 'nullable|url',
+            'deskripsi'           => 'nullable|string',
+            'notelp'              => 'nullable|string',
+            'alamat_kantor_pusat' => 'nullable|string',
+            'linkedin_url'        => 'nullable|url',
+            'instagram_url'       => 'nullable|url',
+            'twitter_url'         => 'nullable|url',
+            'logo'                => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'banner'              => 'nullable|image|mimes:jpg,jpeg,png|max:3072',
+        ]);
+
+        if ($request->hasFile('logo')) {
+            if ($company->logo_perusahaan) Storage::disk('public')->delete($company->logo_perusahaan);
+            $validated['logo_perusahaan'] = $request->file('logo')->store('company/logos', 'public');
+        }
+
+        if ($request->hasFile('banner')) {
+            if ($company->banner_perusahaan) Storage::disk('public')->delete($company->banner_perusahaan);
+            $validated['banner_perusahaan'] = $request->file('banner')->store('company/banners', 'public');
+        }
+
+        $company->update($validated);
+
+        return response()->json(['status' => 'success', 'message' => 'Profil berhasil diperbarui!', 'data' => $company]);
+    }
+
+    // ==========================================
+    // 2. FITUR DASHBOARD & STATS
+    // ==========================================
+
     public function getDashboardData()
     {
         $company = $this->getMyCompany();
         if (!$company) return response()->json(['message' => 'Unauthorized'], 403);
 
-        // Ambil semua ID lowongan milik perusahaan ini untuk filter
         $jobIds = Lowongan::where('company_profile_id', $company->id)->pluck('id');
 
         $stats = [
@@ -74,75 +118,44 @@ class CompanyController extends Controller
                 'status'         => $app->status
             ]);
 
-        return response()->json([
-            'status' => 'success', 
-            'stats' => $stats, 
-            'recent_applicants' => $recentApplicants
-        ]);
+        return response()->json(['status' => 'success', 'stats' => $stats, 'recent_applicants' => $recentApplicants]);
     }
 
-    /**
-     * Melihat List Pelamar pada Lowongan Tertentu
-     */
+    // ==========================================
+    // 3. FITUR MANAJEMEN PELAMAR
+    // ==========================================
+
     public function getApplicantsByJob($jobId)
     {
         $company = $this->getMyCompany();
-        $job = Lowongan::where('id', $jobId)
-            ->where('company_profile_id', $company->id)
-            ->firstOrFail();
-
-        $applicants = JobApplication::with(['user.internProfile'])
-            ->where('job_id', $jobId)
-            ->latest()
-            ->get();
-
-        return response()->json([
-            'status' => 'success', 
-            'job' => $job->judul_posisi, 
-            'applicants' => $applicants
-        ]);
+        $job = Lowongan::where('id', $jobId)->where('company_profile_id', $company->id)->firstOrFail();
+        $applicants = JobApplication::with(['user.internProfile'])->where('job_id', $jobId)->latest()->get();
+        return response()->json(['status' => 'success', 'job' => $job->judul_posisi, 'applicants' => $applicants]);
     }
 
-    /**
-     * Mengubah Status Lamaran (Seleksi)
-     */
     public function updateApplicationStatus(Request $request, $id)
     {
-        // Validasi sesuai dengan isi ENUM di database Abang
-        $request->validate([
-            'status' => 'required|in:PENDING,REVIEW,INTERVIEW,SHORTLISTED,ACCEPTED,REJECTED'
-        ]);
-
+        $request->validate(['status' => 'required|in:PENDING,REVIEW,INTERVIEW,SHORTLISTED,ACCEPTED,REJECTED']);
         $app = JobApplication::findOrFail($id);
         $app->update(['status' => $request->status]);
-
-        return response()->json([
-            'status' => 'success', 
-            'message' => 'Status pelamar berhasil diperbarui ke ' . $request->status
-        ]);
+        return response()->json(['status' => 'success', 'message' => 'Status pelamar diperbarui!']);
     }
 
-    /**
-     * List Semua Lowongan yang Pernah Dibuat Company
-     */
+    // ==========================================
+    // 4. FITUR LOWONGAN (CRUD)
+    // ==========================================
+
     public function getJobPostings()
     {
         $company = $this->getMyCompany();
-        $jobs = Lowongan::where('company_profile_id', $company->id)->latest()->get();
-
-        return response()->json(['status' => 'success', 'jobs' => $jobs]);
+        return response()->json(['status' => 'success', 'jobs' => Lowongan::where('company_profile_id', $company->id)->latest()->get()]);
     }
 
-    /**
-     * Menambah Lowongan Baru
-     */
     public function storeJob(Request $request)
     {
         $company = $this->getMyCompany();
-        if ($company->status_mitra !== 'active') {
-            return response()->json(['message' => 'Akun mitra belum aktif atau diverifikasi'], 403);
-        }
-
+        if ($company->status_mitra !== 'active') return response()->json(['message' => 'Akun belum aktif'], 403);
+        
         $validated = $request->validate([
             'judul_posisi' => 'required|string',
             'deskripsi_pekerjaan' => 'required|string',
@@ -153,61 +166,31 @@ class CompanyController extends Controller
             'status' => 'required|in:ACTIVE,CLOSED,DRAFT',
         ]);
 
-        $job = Lowongan::create(array_merge($validated, [
-            'company_profile_id' => $company->id
-        ]));
-
-        return response()->json([
-            'status' => 'success', 
-            'message' => 'Lowongan berhasil diterbitkan!', 
-            'data' => $job
-        ]);
+        $job = Lowongan::create(array_merge($validated, ['company_profile_id' => $company->id]));
+        return response()->json(['status' => 'success', 'data' => $job]);
     }
 
-    /**
-     * Update Data Lowongan
-     */
     public function updateJob(Request $request, $id)
     {
         $company = $this->getMyCompany();
         $job = Lowongan::where('id', $id)->where('company_profile_id', $company->id)->firstOrFail();
-
         $job->update($request->all());
-
-        return response()->json([
-            'status' => 'success', 
-            'message' => 'Lowongan berhasil diupdate!'
-        ]);
+        return response()->json(['status' => 'success', 'message' => 'Lowongan diupdate!']);
     }
 
-    /**
-     * Menghapus Lowongan
-     */
     public function destroyJob($id)
     {
         $company = $this->getMyCompany();
-        $job = Lowongan::where('id', $id)->where('company_profile_id', $company->id)->firstOrFail();
-        
-        $job->delete();
-
-        return response()->json([
-            'status' => 'success', 
-            'message' => 'Lowongan berhasil dihapus'
-        ]);
+        Lowongan::where('id', $id)->where('company_profile_id', $company->id)->delete();
+        return response()->json(['status' => 'success', 'message' => 'Lowongan dihapus']);
     }
 
-    /**
-     * Statistik Publik (Tanpa Auth)
-     */
     public function getPublicStats()
     {
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'live_jobs'  => Lowongan::where('status', 'ACTIVE')->count(),
-                'companies'  => CompanyProfile::where('status_mitra', 'active')->count(),
-                'candidates' => User::where('role', 'intern')->count(),
-            ]
-        ]);
+        return response()->json(['status' => 'success', 'data' => [
+            'live_jobs'  => Lowongan::where('status', 'ACTIVE')->count(),
+            'companies'  => CompanyProfile::where('status_mitra', 'active')->count(),
+            'candidates' => User::where('role', 'intern')->count(),
+        ]]);
     }
 }
