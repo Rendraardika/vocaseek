@@ -14,13 +14,16 @@ use App\Http\Controllers\TalentController;
 // --- ADMIN CONTROLLERS ---
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTalentController;
-
 use App\Http\Controllers\Auth\AdminPartnerController;
 use App\Http\Controllers\Auth\AdminUserController;
 use App\Http\Controllers\Auth\AdminVerificationController;
 use App\Http\Controllers\Auth\AdminProfileController;
 
-
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 Route::get('/landing-stats', [CompanyController::class, 'getPublicStats']);
 Route::get('/popular-vacancies', [CompanyController::class, 'getPublicJobs']);
 
@@ -39,12 +42,16 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API Vokaseek Aktif & Terhubung']);
 });
 
-
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Wajib Login dengan Sanctum)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout']);
     
-    // --- POV INTERN ---
+    // --- POV INTERN (Pelamar) ---
     Route::prefix('intern')->group(function () {
         Route::get('/profile', [InternController::class, 'getProfile']);
         Route::put('/update-profile', [InternController::class, 'updateProfile']);
@@ -54,29 +61,33 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/applications', [InternController::class, 'getMyApplications']);
     });
 
-    
-    // --- POV COMPANY ---
-Route::prefix('company')->group(function () {
-    // Tambahkan baris profile ini
-    Route::get('/profile', [CompanyController::class, 'getCompanyProfile']); 
-    
-    Route::get('/dashboard', [CompanyController::class, 'getDashboardData']);
-    Route::get('/jobs', [CompanyController::class, 'getJobPostings']);
-    Route::post('/jobs', [CompanyController::class, 'storeJob']);
-    Route::put('/jobs/{id}', [CompanyController::class, 'updateJob']); 
-    Route::delete('/jobs/{id}', [CompanyController::class, 'destroyJob']);
+    // --- POV COMPANY (Mitra Perusahaan) ---
+    Route::prefix('company')->group(function () {
+        Route::get('/profile', [CompanyController::class, 'getCompanyProfile']); 
+        Route::get('/dashboard', [CompanyController::class, 'getDashboardData']);
+        
+        // Fitur Seleksi Pelamar
+        Route::get('/jobs/{jobId}/applicants', [CompanyController::class, 'getApplicantsByJob']);
+        Route::put('/applications/{id}/status', [CompanyController::class, 'updateApplicationStatus']);
 
-    Route::get('/talent/candidates', [TalentController::class, 'getAllCandidates']);
-    Route::get('/talent/candidates/{id}/detail', [TalentController::class, 'getCandidateDetail']);
-    Route::post('/talent/candidates/manual', [TalentController::class, 'storeManualCandidate']);
-    Route::put('/talent/candidates/{id}/status', [TalentController::class, 'updateCandidateStatus']);
-    Route::get('/talent/selected', [TalentController::class, 'getSelectedCandidates']);
-});
+        // CRUD Lowongan
+        Route::get('/jobs', [CompanyController::class, 'getJobPostings']);
+        Route::post('/jobs', [CompanyController::class, 'storeJob']);
+        Route::put('/jobs/{id}', [CompanyController::class, 'updateJob']); 
+        Route::delete('/jobs/{id}', [CompanyController::class, 'destroyJob']);
 
-    // --- POV ADMIN ---
+        // Management Talent (Database Kandidat)
+        Route::get('/talent/candidates', [TalentController::class, 'getAllCandidates']);
+        Route::get('/talent/candidates/{id}/detail', [TalentController::class, 'getCandidateDetail']);
+        Route::post('/talent/candidates/manual', [TalentController::class, 'storeManualCandidate']);
+        Route::put('/talent/candidates/{id}/status', [TalentController::class, 'updateCandidateStatus']);
+        Route::get('/talent/selected', [TalentController::class, 'getSelectedCandidates']);
+    });
+
+    // --- POV ADMIN (Super Admin & Staff) ---
     Route::prefix('admin')->group(function () {
         
-        
+        // AREA BERSAMA (Admin & Staff)
         Route::middleware(['role:super_admin,staff_admin'])->group(function () {
             
             Route::prefix('profile')->group(function () {
@@ -97,7 +108,7 @@ Route::prefix('company')->group(function () {
             });
         });
 
-        // 2. AREA KHUSUS (Hanya Super Admin)
+        // AREA KHUSUS (Hanya Super Admin)
         Route::middleware(['role:super_admin'])->group(function () {
             Route::prefix('users-management')->group(function () {
                 Route::get('/', [AdminUserController::class, 'index']);      
