@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CompanyProfile extends Model
 {
-    protected $table = 'company_profile';
-    protected $primaryKey = 'id';
-    
-    public $timestamps = true;
+    use HasFactory;
+
+    protected $table = 'company_profile'; // Sesuai nama tabel di HeidiSQL
+    protected $primaryKey = 'id'; // Sesuai screenshot Abang
 
     protected $fillable = [
         'user_id',
@@ -18,11 +18,19 @@ class CompanyProfile extends Model
         'notelp',
         'nib',
         'loa_pdf',
-        'akta_pdf'
+        'akta_pdf',
+        'status_mitra'
     ];
 
-    public function user(): BelongsTo
+    // Relasi balik ke User
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    // Relasi ke Lowongan
+    public function lowongan()
+    {
+        return $this->hasMany(Lowongan::class, 'company_profile_id', 'id');
     }
 }

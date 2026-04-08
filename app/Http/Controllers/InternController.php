@@ -7,6 +7,7 @@ use App\Models\JobApplication;
 use App\Models\TestAnswer;
 use App\Models\InternExperience;
 use App\Models\InternCertification;
+use App\Models\Lowongan; // Pastikan Abang buat model untuk tabel lowongan
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -14,12 +15,11 @@ use Illuminate\Support\Facades\Storage;
 class InternController extends Controller
 {
     /**
-     * Ambil Data Profil Lengkap (Biodata + Pengalaman + Sertifikasi)
+     * Ambil Data Profil Lengkap
      */
     public function getProfile()
     {
         $user = Auth::user();
-        // Load profile beserta relasi pengalaman dan sertifikasi
         $profile = InternProfile::where('user_id', $user->user_id)->first();
         
         if (!$profile) return response()->json(['message' => 'Profil tidak ditemukan'], 404);
@@ -30,7 +30,7 @@ class InternController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'nama' => $user->name,
+                'nama' => $user->nama, 
                 'email' => $user->email,
                 'universitas' => $profile->universitas,
                 'jurusan' => $profile->jurusan,
@@ -40,8 +40,7 @@ class InternController extends Controller
                 'foto' => $profile->foto ? asset('storage/' . $profile->foto) : null,
                 'cv' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
                 'instagram' => $profile->instagram,
-                'is_complete' => $profile->is_profile_complete,
-                // Data Opsional (Nilai Plus)
+                'is_complete' => (int) $profile->is_profile_complete,
                 'pengalaman' => $experiences,
                 'sertifikasi' => $certifications
             ]
@@ -49,7 +48,7 @@ class InternController extends Controller
     }
 
     /**
-     * Update Profile Utama (Langkah 1)
+     * Update Profile Utama
      */
     public function updateProfile(Request $request)
     {
@@ -57,9 +56,9 @@ class InternController extends Controller
         $profile = InternProfile::where('user_id', $user->user_id)->first();
 
         $request->validate([
-            'foto'           => 'nullable|image|max:1024',
-            'cv_pdf'         => 'nullable|mimes:pdf|max:2048',
-            'portofolio_pdf' => 'nullable|mimes:pdf|max:2048',
+            'foto'           => 'nullable|image|max:2048',
+            'cv_pdf'         => 'nullable|mimes:pdf|max:5120',
+            'portofolio_pdf' => 'nullable|mimes:pdf|max:5120',
             'ipk'            => 'nullable|numeric|between:0,4.00',
         ]);
 
@@ -79,10 +78,10 @@ class InternController extends Controller
         $profile->update($request->only([
             'tentang_saya', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin',
             'provinsi', 'kabupaten', 'detail_alamat', 'universitas', 'jurusan',
-            'jenjang', 'ipk', 'tahun_masuk', 'tahun_lulus', 'linkedin', 'instagram'
+            'jenjang', 'ipk', 'tahun_masuk', 'tahun_lulus', 'linkedin', 'instagram', 'notelp'
         ]));
 
-        // Syarat minimal kelengkapan profil
+        // Update status kelengkapan
         if ($profile->foto && $profile->cv_pdf && $profile->universitas) {
             $profile->is_profile_complete = 1;
             $profile->save();
@@ -92,68 +91,36 @@ class InternController extends Controller
     }
 
     /**
-     * Tambah Pengalaman Kerja (Opsional - Nilai Plus)
-     */
-    public function addExperience(Request $request)
-    {
-        $request->validate([
-            'title'   => 'required|string',
-            'company' => 'required|string',
-            'period'  => 'required|string',
-        ]);
-
-        $exp = InternExperience::create([
-            'user_id' => Auth::id(),
-            'title'   => $request->title,
-            'company' => $request->company,
-            'period'  => $request->period,
-        ]);
-
-        return response()->json(['status' => 'success', 'message' => 'Pengalaman ditambahkan!', 'data' => $exp]);
-    }
-
-    /**
-     * Tambah Sertifikasi (Opsional - Nilai Plus)
-     */
-    public function addCertification(Request $request)
-    {
-        $request->validate(['name' => 'required|string']);
-
-        $cert = InternCertification::create([
-            'user_id' => Auth::id(),
-            'name'    => $request->name,
-        ]);
-
-        return response()->json(['status' => 'success', 'message' => 'Sertifikasi ditambahkan!', 'data' => $cert]);
-    }
-
-    /**
-     * Memulai Tes (Langkah 2)
+     * Memulai Tes
      */
     public function startTest()
     {
-        $profile = InternProfile::where('user_id', Auth::id())->first();
+        $user = Auth::user();
+        $profile = InternProfile::where('user_id', $user->user_id)->first();
 
-        if (!$profile || !$profile->is_profile_complete) {
+        if (!$profile || (int)$profile->is_profile_complete === 0) {
             return response()->json(['status' => 'error', 'message' => 'Lengkapi profil dulu!'], 403);
         }
 
         if (!$profile->test_started_at) {
-            $profile->update(['test_started_at' => now()]);
+            $profile->test_started_at = now();
+            $profile->save();
         }
 
-        return response()->json(['status' => 'success', 'test_started_at' => $profile->test_started_at]);
+        return response()->json([
+            'status' => 'success', 
+            'message' => 'Test dimulai!',
+            'test_started_at' => $profile->test_started_at
+        ]);
     }
 
     /**
-     * Submit Jawaban Tes (Review Kualitatif Admin)
+     * Submit Jawaban Tes
      */
     public function submitPreTest(Request $request)
     {
         $request->validate([
             'answers' => 'required|array',
-            'answers.*.question' => 'required|string',
-            'answers.*.selected_option' => 'required|string',
         ]);
 
         $user = Auth::user();
@@ -167,47 +134,47 @@ class InternController extends Controller
             ]);
         }
 
-        $profile->update([
-            'test_finished_at' => now(),
-            'pretest_score' => null 
-        ]);
+        $profile->update(['test_finished_at' => now()]);
 
-        return response()->json(['status' => 'success', 'message' => 'Tes selesai! Admin akan mereview jawaban Anda.']);
+        return response()->json(['status' => 'success', 'message' => 'Tes berhasil dikirim!']);
     }
 
     /**
-     * Melamar Pekerjaan (Langkah 3)
+     * Melamar Kerja (Final Step)
      */
     public function applyJob(Request $request)
     {
         $request->validate([
-            'job_id' => 'required|integer',
-            'motivation' => 'required|string'
+            'job_id' => 'required|integer', // Mengacu ke ID di tabel lowongan
         ]);
 
         $user = Auth::user();
         $profile = InternProfile::where('user_id', $user->user_id)->first();
 
+        // Validasi: Profil Lengkap & Sudah Test
         if (!$profile->is_profile_complete || !$profile->test_finished_at) {
-            return response()->json(['status' => 'error', 'message' => 'Selesaikan profil dan tes dulu!'], 403);
+            return response()->json([
+                'status' => 'error', 
+                'message' => 'Selesaikan profil dan tes dulu sebelum melamar!'
+            ], 403);
         }
 
+        // Cek apakah sudah pernah melamar di posisi yang sama
+        $exists = JobApplication::where('user_id', $user->user_id)
+                                ->where('job_id', $request->job_id)
+                                ->exists();
+        
+        if ($exists) {
+            return response()->json(['message' => 'Anda sudah melamar di posisi ini.'], 400);
+        }
+
+        // Simpan Lamaran (Sesuai kolom di tabel job_applications Abang)
         JobApplication::create([
             'user_id' => $user->user_id,
             'job_id'  => $request->job_id,
-            'motivation' => $request->motivation,
-            'status'  => 'Sedang Diproses'
+            'status'  => 'PENDING' // Sesuai default ENUM di gambar DB
         ]);
 
-        return response()->json(['status' => 'success', 'message' => 'Kamu berhasil mendaftar!']);
-    }
-
-    /**
-     * Riwayat Lamaran
-     */
-    public function getMyApplications()
-    {
-        $data = JobApplication::with('job')->where('user_id', Auth::id())->get();
-        return response()->json(['status' => 'success', 'data' => $data]);
+        return response()->json(['status' => 'success', 'message' => 'Lamaran berhasil terkirim!']);
     }
 }

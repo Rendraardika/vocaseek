@@ -12,9 +12,13 @@ class Lowongan extends Model
     protected $table = 'lowongan'; // Karena nama tabel kita 'lowongan'
 
    protected $fillable = [
-    'company_profile_id', 'judul_pekerjaan', 'kategori_pekerjaan', 
-    'tipe_pekerjaan', 'lokasi', 'pengaturan_kerja', 'gaji_min', 
-    'gaji_max', 'deskripsi_pekerjaan', 'persyaratan', 
-    'tgl_tutup_lamaran', 'tgl_mulai_kerja', 'status'
+    'company_profile_id', 
+    'judul_posisi',
+    'deskripsi_pekerjaan',
+    'persyaratan',
+    'lokasi',
+    'tipe_magang',
+    'gaji_per_bulan',
+    'status'
 ];
 }

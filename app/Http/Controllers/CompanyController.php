@@ -7,141 +7,159 @@ use App\Models\Lowongan;
 use App\Models\JobApplication;
 use App\Models\CompanyProfile;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
-    public function getPublicStats()
+    /**
+     * Ambil Data Profil Perusahaan (Untuk API /profile)
+     */
+    public function getCompanyProfile()
     {
+        $user = Auth::user();
+        $profile = CompanyProfile::where('user_id', $user->user_id)->first();
+
+        if (!$profile) {
+            return response()->json(['message' => 'Profil perusahaan tidak ditemukan'], 404);
+        }
+
         return response()->json([
             'status' => 'success',
             'data' => [
-                'live_jobs'  => Lowongan::where('status', 'OPEN')->count(),
-                'companies'  => CompanyProfile::count(),
-                'candidates' => User::where('role', 'intern')->count(),
-                'new_jobs'   => Lowongan::where('created_at', '>=', now()->subDays(7))->count(),
+                'nama_perusahaan' => $profile->nama_perusahaan,
+                'notelp' => $profile->notelp,
+                'nib' => $profile->nib,
+                'status_mitra' => $profile->status_mitra,
+                'loa_url' => $profile->loa_pdf ? asset('storage/' . $profile->loa_pdf) : null,
+                'akta_url' => $profile->akta_pdf ? asset('storage/' . $profile->akta_pdf) : null,
+                'created_at' => $profile->created_at ? $profile->created_at->format('d M Y') : null
             ]
         ]);
     }
 
-
+    /**
+     * Data Statistik Dashboard Company
+     */
     public function getDashboardData(Request $request)
     {
-        $company = $request->user()->companyProfile;
+        $user = Auth::user();
+        // Menggunakan relasi atau query langsung agar aman
+        $company = CompanyProfile::where('user_id', $user->user_id)->first();
 
         if (!$company) {
             return response()->json(['message' => 'Profil perusahaan tidak ditemukan'], 404);
         }
 
         $stats = [
-            'total_applicants' => JobApplication::whereHas('lowongan', function($q) use ($company) {
-                $q->where('company_profile_id', $company->id);
+            'total_applicants' => JobApplication::where('job_id', function($q) use ($company) {
+                $q->select('id')->from('lowongan')->where('company_profile_id', $company->id);
             })->count(),
-            'active_jobs' => Lowongan::where('company_profile_id', $company->id)->where('status', 'OPEN')->count(),
-            'shortlisted' => JobApplication::where('status', 'SHORTLISTED')->whereHas('lowongan', function($q) use ($company) {
-                $q->where('company_profile_id', $company->id);
-            })->count(),
+            'active_jobs' => Lowongan::where('company_profile_id', $company->id)->where('status', 'ACTIVE')->count(),
+            'shortlisted' => JobApplication::where('status', 'SHORTLISTED')->count(),
         ];
 
+        // Ambil pelamar terbaru
         $recentApplicants = JobApplication::with(['user', 'lowongan'])
-            ->whereHas('lowongan', function($q) use ($company) {
-                $q->where('company_profile_id', $company->id);
-            })->latest()->take(5)->get()
+            ->whereIn('job_id', function($q) use ($company) {
+                $q->select('id')->from('lowongan')->where('company_profile_id', $company->id);
+            })
+            ->latest()
+            ->take(5)
+            ->get()
             ->map(fn($app) => [
-                'id' => $app->id,
-                'candidate_id' => 'KDT-' . str_pad($app->id, 3, '0', STR_PAD_LEFT),
+                'id' => $app->application_id, // Sesuai Primary Key Abang
                 'name' => $app->user->nama ?? 'N/A',
-                'position' => $app->lowongan->judul_pekerjaan ?? 'N/A',
+                'position' => $app->lowongan->judul_posisi ?? 'N/A',
                 'date' => $app->created_at->format('M d, Y'),
                 'status' => $app->status
             ]);
 
-        return response()->json(['status' => 'success', 'stats' => $stats, 'recent_applicants' => $recentApplicants]);
+        return response()->json([
+            'status' => 'success', 
+            'stats' => $stats, 
+            'recent_applicants' => $recentApplicants
+        ]);
     }
 
-
+    /**
+     * List Lowongan Kerja Milik Company
+     */
     public function getJobPostings(Request $request)
     {
-        $company = $request->user()->companyProfile;
+        $user = Auth::user();
+        $company = CompanyProfile::where('user_id', $user->user_id)->first();
 
         $jobs = Lowongan::where('company_profile_id', $company->id)
-            ->withCount('applications')
             ->latest()
             ->get()
             ->map(fn($job) => [
                 'id' => $job->id,
-                'job_id_display' => '#JOB-' . $job->created_at->format('Y') . '-' . str_pad($job->id, 3, '0', STR_PAD_LEFT),
-                'title' => $job->judul_pekerjaan,
-                'department' => $job->kategori_pekerjaan,
-                'applicants_count' => $job->applications_count,
+                'title' => $job->judul_posisi,
+                'location' => $job->lokasi,
                 'posted_date' => $job->created_at->format('M d, Y'),
                 'status' => $job->status, 
             ]);
 
         return response()->json([
             'status' => 'success',
-            'stats' => [
-                'total_jobs' => $jobs->count(),
-                'active_openings' => $jobs->where('status', 'OPEN')->count(),
-                'closed_jobs' => $jobs->where('status', 'CLOSED')->count(),
-                'drafts' => $jobs->where('status', 'DRAFT')->count(),
-            ],
             'jobs' => $jobs
         ]);
     }
 
+    /**
+     * Simpan Lowongan Baru (Sinkron dengan DB)
+     */
     public function storeJob(Request $request)
     {
-        $company = $request->user()->companyProfile;
+        $user = Auth::user();
+        $company = CompanyProfile::where('user_id', $user->user_id)->first();
+
+        if ($company->status_mitra !== 'active') {
+            return response()->json(['message' => 'Akun belum diverifikasi admin'], 403);
+        }
 
         $validated = $request->validate([
-            'judul_pekerjaan' => 'required|string',
-            'kategori_pekerjaan' => 'required|string',
-            'tipe_pekerjaan' => 'required|string',
-            'lokasi' => 'required|string',
-            'pengaturan_kerja' => 'required|string',
-            'gaji_min' => 'nullable|numeric',
-            'gaji_max' => 'nullable|numeric',
+            'judul_posisi' => 'required|string',
             'deskripsi_pekerjaan' => 'required|string',
             'persyaratan' => 'required|string',
-            'tgl_tutup_lamaran' => 'required|date',
-            'tgl_mulai_kerja' => 'required|date',
-            'status' => 'required|in:OPEN,CLOSED,DRAFT',
+            'lokasi' => 'required|string',
+            'tipe_magang' => 'required|string',
+            'gaji_per_bulan' => 'nullable|string',
+            'status' => 'required|in:ACTIVE,CLOSED,DRAFT',
         ]);
 
         $job = Lowongan::create(array_merge($validated, ['company_profile_id' => $company->id]));
 
-        return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil diterbitkan!', 'data' => $job]);
-    }
-
-    public function updateJob(Request $request, $id)
-    {
-        $company = $request->user()->companyProfile;
-        $job = Lowongan::where('id', $id)->where('company_profile_id', $company->id)->firstOrFail();
-
-        $validated = $request->validate([
-            'judul_pekerjaan' => 'required|string',
-            'kategori_pekerjaan' => 'required|string',
-            'tipe_pekerjaan' => 'required|string',
-            'lokasi' => 'required|string',
-            'pengaturan_kerja' => 'required|string',
-            'gaji_min' => 'nullable|numeric',
-            'gaji_max' => 'nullable|numeric',
-            'deskripsi_pekerjaan' => 'required|string',
-            'persyaratan' => 'required|string',
-            'tgl_tutup_lamaran' => 'required|date',
-            'tgl_mulai_kerja' => 'required|date',
-            'status' => 'required|in:OPEN,CLOSED,DRAFT',
+        return response()->json([
+            'status' => 'success', 
+            'message' => 'Lowongan berhasil diterbitkan!', 
+            'data' => $job
         ]);
-
-        $job->update($validated);
-        return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil diperbarui!']);
     }
 
-
+    /**
+     * Hapus Lowongan
+     */
     public function destroyJob($id)
     {
-        Lowongan::findOrFail($id)->delete();
+        $job = Lowongan::findOrFail($id);
+        $job->delete();
         return response()->json(['message' => 'Lowongan berhasil dihapus']);
+    }
+
+    /**
+     * Statistik Publik untuk Landing Page
+     */
+    public function getPublicStats()
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'live_jobs'  => Lowongan::where('status', 'ACTIVE')->count(),
+                'companies'  => CompanyProfile::count(),
+                'candidates' => User::where('role', 'intern')->count(),
+            ]
+        ]);
     }
 }
