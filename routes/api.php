@@ -19,11 +19,7 @@ use App\Http\Controllers\Auth\AdminUserController;
 use App\Http\Controllers\Auth\AdminVerificationController;
 use App\Http\Controllers\Auth\AdminProfileController;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
+
 Route::get('/landing-stats', [CompanyController::class, 'getPublicStats']);
 Route::get('/popular-vacancies', [CompanyController::class, 'getPublicJobs']);
 
@@ -42,11 +38,7 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API Vokaseek Aktif & Terhubung']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Protected Routes (Wajib Login dengan Sanctum)
-|--------------------------------------------------------------------------
-*/
+
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -65,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('company')->group(function () {
         // --- PROFIL & DASHBOARD ---
         Route::get('/profile', [CompanyController::class, 'getCompanyProfile']); 
-        Route::post('/profile/update', [CompanyController::class, 'updateProfile']); // <-- INI YANG BARU TAMBAH BANG!
+        Route::post('/profile/update', [CompanyController::class, 'updateProfile']); 
         Route::get('/dashboard', [CompanyController::class, 'getDashboardData']);
         
         // --- FITUR SELEKSI PELAMAR ---
