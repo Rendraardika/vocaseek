@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Lowongan;
+use App\Models\Lowongan; // Pastikan nama model sesuai
 use App\Models\JobApplication;
 use App\Models\CompanyProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -32,6 +33,7 @@ class CompanyController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
+                'id'                  => $profile->id,
                 'nama_perusahaan'     => $profile->nama_perusahaan,
                 'industri'            => $profile->industri,
                 'ukuran_perusahaan'   => $profile->ukuran_perusahaan,
@@ -129,7 +131,12 @@ class CompanyController extends Controller
     {
         $company = $this->getMyCompany();
         $job = Lowongan::where('id', $jobId)->where('company_profile_id', $company->id)->firstOrFail();
-        $applicants = JobApplication::with(['user.internProfile'])->where('job_id', $jobId)->latest()->get();
+        
+        $applicants = JobApplication::with(['user.internProfile'])
+            ->where('job_id', $jobId)
+            ->latest()
+            ->get();
+
         return response()->json(['status' => 'success', 'job' => $job->judul_posisi, 'applicants' => $applicants]);
     }
 
@@ -137,7 +144,9 @@ class CompanyController extends Controller
     {
         $request->validate(['status' => 'required|in:PENDING,REVIEW,INTERVIEW,SHORTLISTED,ACCEPTED,REJECTED']);
         $app = JobApplication::findOrFail($id);
+        
         $app->update(['status' => $request->status]);
+        
         return response()->json(['status' => 'success', 'message' => 'Status pelamar diperbarui!']);
     }
 
@@ -148,43 +157,64 @@ class CompanyController extends Controller
     public function getJobPostings()
     {
         $company = $this->getMyCompany();
-        return response()->json(['status' => 'success', 'jobs' => Lowongan::where('company_profile_id', $company->id)->latest()->get()]);
+        $jobs = Lowongan::where('company_profile_id', $company->id)->latest()->get();
+        
+        return response()->json(['status' => 'success', 'jobs' => $jobs]);
     }
 
     public function storeJob(Request $request)
     {
         $company = $this->getMyCompany();
-        if ($company->status_mitra !== 'active') return response()->json(['message' => 'Akun belum aktif'], 403);
+        
+        // Proteksi: Cek status mitra
+        if (!$company || $company->status_mitra !== 'active') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Akun Anda belum aktif atau belum diverifikasi oleh Admin.'
+            ], 403);
+        }
         
         $validated = $request->validate([
-            'judul_posisi' => 'required|string',
+            'judul_posisi' => 'required|string|max:255',
             'deskripsi_pekerjaan' => 'required|string',
             'persyaratan' => 'required|string',
             'lokasi' => 'required|string',
-            'tipe_magang' => 'required|string',
+            'tipe_magang' => 'required|in:remote,onsite,hybrid',
             'gaji_per_bulan' => 'nullable|string',
             'status' => 'required|in:ACTIVE,CLOSED,DRAFT',
         ]);
 
         $job = Lowongan::create(array_merge($validated, ['company_profile_id' => $company->id]));
-        return response()->json(['status' => 'success', 'data' => $job]);
+
+        return response()->json([
+            'status' => 'success', 
+            'message' => 'Lowongan berhasil dipublikasikan!',
+            'data' => $job
+        ], 201);
     }
 
     public function updateJob(Request $request, $id)
     {
         $company = $this->getMyCompany();
         $job = Lowongan::where('id', $id)->where('company_profile_id', $company->id)->firstOrFail();
+        
         $job->update($request->all());
-        return response()->json(['status' => 'success', 'message' => 'Lowongan diupdate!']);
+        
+        return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil diupdate!']);
     }
 
     public function destroyJob($id)
     {
         $company = $this->getMyCompany();
-        Lowongan::where('id', $id)->where('company_profile_id', $company->id)->delete();
-        return response()->json(['status' => 'success', 'message' => 'Lowongan dihapus']);
+        $job = Lowongan::where('id', $id)->where('company_profile_id', $company->id)->first();
+
+        if (!$job) return response()->json(['message' => 'Lowongan tidak ditemukan'], 404);
+
+        $job->delete();
+        return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil dihapus']);
     }
 
+    
     public function getPublicStats()
     {
         return response()->json(['status' => 'success', 'data' => [
@@ -192,5 +222,17 @@ class CompanyController extends Controller
             'companies'  => CompanyProfile::where('status_mitra', 'active')->count(),
             'candidates' => User::where('role', 'intern')->count(),
         ]]);
+    }
+
+    public function getPublicJobs()
+    {
+        
+        $jobs = Lowongan::with('companyProfile')
+            ->where('status', 'ACTIVE')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return response()->json(['status' => 'success', 'data' => $jobs]);
     }
 }

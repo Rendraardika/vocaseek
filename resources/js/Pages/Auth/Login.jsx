@@ -4,9 +4,12 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { translate } from '@/lib/translations';
 
 export default function Login({ status, canResetPassword }) {
+    const { locale } = usePage().props;
+    const t = (key, fallback) => translate(locale, key, fallback);
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -23,7 +26,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title={t('common.login', 'Log in')} />
 
             {status && (
                 <div className="mb-4 text-sm font-medium text-green-600">
@@ -31,10 +34,15 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             )}
 
+            {errors.google && (
+                <div className="mb-4 text-sm font-medium text-red-600">
+                    {errors.google}
+                </div>
+            )}
+
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
+                    <InputLabel htmlFor="email" value={t('common.email', 'Email')} />
                     <TextInput
                         id="email"
                         type="email"
@@ -50,7 +58,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value={t('common.password', 'Password')} />
 
                     <TextInput
                         id="password"
@@ -75,7 +83,7 @@ export default function Login({ status, canResetPassword }) {
                             }
                         />
                         <span className="ms-2 text-sm text-gray-600">
-                            Remember me
+                            {t('common.rememberMe', 'Remember me')}
                         </span>
                     </label>
                 </div>
@@ -86,15 +94,24 @@ export default function Login({ status, canResetPassword }) {
                             href={route('password.request')}
                             className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
-                            Forgot your password?
+                            {t('common.forgotPassword', 'Forgot your password?')}
                         </Link>
                     )}
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                        {t('common.login', 'Log in')}
                     </PrimaryButton>
                 </div>
             </form>
+
+            <div className="mt-6">
+                <a
+                    href="/auth/google"
+                    className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                    {t('common.continueWithGoogle', 'Continue with Google')}
+                </a>
+            </div>
         </GuestLayout>
     );
 }

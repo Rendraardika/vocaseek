@@ -7,54 +7,58 @@ use Illuminate\Http\Request;
 use App\Models\CompanyProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AdminVerificationController extends Controller
 {
-    
+    /**
+     * 1. LIST PENGAJUAN (POV Staff & Super Admin)
+     */
     public function index()
     {
-        // Statistik Card (Atas)
+        // Sesuaikan dengan kolom 'status_mitra' yang kita pakai sebelumnya
         $stats = [
-            'total_pending' => CompanyProfile::where('is_verified', false)->count(),
-            'total_approved' => CompanyProfile::where('is_verified', true)->count(),
-            'total_rejected' => User::where('role', 'company')->where('status', 'REJECTED')->count(),
+            'total_pending'  => CompanyProfile::where('status_mitra', 'pending')->count(),
+            'total_reviewed' => CompanyProfile::where('status_mitra', 'reviewed')->count(),
+            'total_active'   => CompanyProfile::where('status_mitra', 'active')->count(),
         ];
 
-        // Daftar Pengajuan (Tabel)
+        // Daftar Pengajuan yang belum Active/Rejected
         $submissions = CompanyProfile::with('user')
-            ->where('is_verified', false)
+            ->whereIn('status_mitra', ['pending', 'reviewed'])
             ->latest()
             ->paginate(10);
 
         return response()->json([
             'status' => 'success',
-            'stats' => $stats,
-            'data' => $submissions->map(fn($item) => [
-                'id' => $item->id,
-                'id_perusahaan' => 'CMP-' . str_pad($item->id, 3, '0', STR_PAD_LEFT),
-                'nama_perusahaan' => $item->nama_perusahaan,
-                'tipe_bisnis' => $item->sektor_industri ?? 'N/A',
+            'stats'  => $stats,
+            'data'   => $submissions->getCollection()->map(fn($item) => [
+                'id'                => $item->id,
+                'id_perusahaan'     => 'CMP-' . str_pad($item->id, 3, '0', STR_PAD_LEFT),
+                'nama_perusahaan'   => $item->nama_perusahaan,
+                'industri'          => $item->industri ?? 'N/A', // Pakai kolom industri yang baru kita buat
                 'tanggal_pengajuan' => $item->created_at->format('d M Y'),
-                'status_verifikasi' => $item->status_review ?? 'Pending', // Label Kuning/Biru
+                'status_mitra'      => $item->status_mitra, 
             ])
         ]);
     }
 
     /**
-     * 2. UBAH STATUS REVIEW (Gambar 3)
+     * 2. UBAH STATUS REVIEW (Biasanya dilakukan Staff)
      */
     public function updateReviewStatus(Request $request, $id)
     {
-        $request->validate(['status' => 'required|in:Pending,Under Review']);
+        // Hanya Staff Admin atau Super Admin
+        $request->validate(['status' => 'required|in:pending,reviewed']);
         
         $company = CompanyProfile::findOrFail($id);
-        $company->update(['status_review' => $request->status]);
+        $company->update(['status_mitra' => $request->status]);
 
-        return response()->json(['message' => 'Status review berhasil diperbarui']);
+        return response()->json(['message' => 'Dokumen ditandai sebagai: ' . $request->status]);
     }
 
     /**
-     * 3. DETAIL DOKUMEN LEGALITAS (Gambar 4 & 6)
+     * 3. DETAIL DOKUMEN LEGALITAS
      */
     public function show($id)
     {
@@ -65,49 +69,45 @@ class AdminVerificationController extends Controller
             'data' => [
                 'perusahaan' => $company,
                 'dokumen' => [
-                    ['id' => 1, 'nama' => 'Nomor Induk Berusaha (NIB)', 'file' => $company->nib_file, 'updated' => $company->updated_at->format('d M Y')],
-                    ['id' => 2, 'nama' => 'NPWP Perusahaan', 'file' => $company->npwp_file, 'updated' => $company->updated_at->format('d M Y')],
-                    ['id' => 3, 'nama' => 'Akta Pendirian Perusahaan', 'file' => $company->akta_file, 'updated' => $company->updated_at->format('d M Y')],
-                    ['id' => 4, 'nama' => 'Company Profile', 'file' => $company->cp_file, 'updated' => $company->updated_at->format('d M Y')],
+                    ['id' => 1, 'nama' => 'NIB', 'file' => $company->nib ? asset('storage/'.$company->nib) : null],
+                    ['id' => 2, 'nama' => 'Letter of Agreement (LoA)', 'file' => $company->loa_pdf ? asset('storage/'.$profile->loa_pdf) : null],
+                    ['id' => 3, 'nama' => 'Akta Perusahaan', 'file' => $company->akta_pdf ? asset('storage/'.$company->akta_pdf) : null],
                 ]
             ]
         ]);
     }
 
     /**
-     * 4. VALIDASI PER DOKUMEN (Gambar 5 - Preview)
-     */
-    public function validateSingleDocument(Request $request, $id)
-    {
-        // Logic ini bisa disimpan di tabel terpisah atau kolom JSON
-        // Contoh: status_nib = 'valid' atau 'invalid'
-        return response()->json(['message' => 'Status dokumen diperbarui']);
-    }
-
-    /**
-     * 5. SETUJUI ATAU TOLAK FINAL (Gambar 6)
+     * 4. SETUJUI ATAU TOLAK FINAL (HANYA SUPER ADMIN)
      */
     public function finalVerification(Request $request, $id)
     {
-        $company = CompanyProfile::findOrFail($id);
-        $action = $request->action; // 'approve' atau 'reject'
+        // Proteksi tambahan di level Code
+        if (Auth::user()->role !== 'super_admin') {
+            return response()->json(['message' => 'Hanya Super Admin yang bisa melakukan verifikasi final'], 403);
+        }
 
-        if ($action === 'approve') {
+        $request->validate(['action' => 'required|in:approve,reject']);
+        $company = CompanyProfile::findOrFail($id);
+
+        if ($request->action === 'approve') {
             DB::transaction(function () use ($company) {
-                $company->update([
-                    'is_verified' => true,
-                    'status_review' => 'Verified'
-                ]);
+                // Update tabel profile
+                $company->update(['status_mitra' => 'active']);
                 
-                // Ubah status di tabel users agar bisa login/aktif
-                $company->user->update(['status' => 'Active']);
+                // Update tabel users agar statusnya 'active'
+                $company->user->update(['status' => 'active']);
             });
 
-            return response()->json(['status' => 'success', 'message' => 'Mitra Berhasil Disetujui & Aktif!']);
+            return response()->json(['status' => 'success', 'message' => 'Mitra Resmi Aktif!']);
         }
 
         // Jika Reject
-        $company->user->update(['status' => 'Rejected']);
+        DB::transaction(function () use ($company) {
+            $company->update(['status_mitra' => 'rejected']);
+            $company->user->update(['status' => 'rejected']);
+        });
+
         return response()->json(['message' => 'Pendaftaran Mitra ditolak']);
     }
 }

@@ -27,15 +27,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
         
-        // Cek jika company belum di-approve (Optional, aktifkan jika ingin proteksi login)
-        /*
-        if ($user->role === 'company') {
-            $profile = CompanyProfile::where('user_id', $user->user_id)->first();
-            if ($profile->status_mitra !== 'active') {
-                return response()->json(['message' => 'Akun Anda sedang dalam tahap verifikasi admin.'], 403);
-            }
-        }
-        */
+        
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -136,6 +128,30 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Berhasil Logout!'
+        ]);
+    }
+
+    public function me(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'user_id' => $user->user_id,
+                'nama' => $user->nama,
+                'email' => $user->email,
+                'role' => $user->role,
+                'notelp' => $user->notelp,
+                'google_id' => $user->google_id,
+            ],
         ]);
     }
 }

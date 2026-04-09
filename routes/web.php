@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CompanyController; // Tambahkan ini
 use App\Http\Controllers\InternController;  // Tambahkan ini
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +17,16 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::post('/locale', function (Request $request) {
+    $validated = $request->validate([
+        'locale' => 'required|in:id,en',
+    ]);
+
+    $request->session()->put('locale', $validated['locale']);
+
+    return back();
+})->name('locale.switch');
 
 // 2. Dashboard General (Bawaan Breeze)
 Route::get('/dashboard', function () {

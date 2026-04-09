@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -11,83 +12,119 @@ use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
-    /**
-     * LOGIKA GAMBAR 2: Request Link Reset
-     */
     public function sendResetLink(Request $request)
     {
-        // Validasi: Email harus ada di tabel users
-        $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ], [
-            'email.exists' => 'Email tidak terdaftar di sistem kami.'
+        $validated = $request->validate([
+            'email' => 'required|email',
         ]);
 
-        $token = Str::random(64);
+        $user = User::where('email', $validated['email'])->first();
 
-        // Simpan atau update token di tabel password_reset_tokens
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
-            [
-                'token' => $token,
-                'created_at' => now()
-            ]
-        );
+        if ($user) {
+            $plainToken = Str::random(64);
+            $hashedToken = hash('sha256', $plainToken);
 
-        // Link ini yang akan dikirim ke email user
-        // Nantinya di React, kamu harus punya route /reset-password
-        $resetLink = "http://localhost:3000/reset-password?token=" . $token . "&email=" . $request->email;
+            DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $user->email],
+                [
+                    'token' => $hashedToken,
+                    'created_at' => now(),
+                ]
+            );
 
-        // Logika kirim email sederhana (Tanpa template dulu)
-        Mail::raw("Halo! Klik link ini untuk reset password Vocaseek Anda: " . $resetLink, function ($message) use ($request) {
-            $message->to($request->email)
+            $frontendUrl = rtrim(config('app.frontend_url'), '/');
+            $resetLink = $frontendUrl.'/reset-password?token='.$plainToken.'&email='.urlencode($user->email);
+
+            Mail::send('emails.reset-password', [
+                'name' => $user->nama,
+                'resetLink' => $resetLink,
+                'expiresInMinutes' => $this->resetTokenExpiresInMinutes(),
+            ], function ($message) use ($user) {
+                $message->to($user->email)
                     ->subject('Reset Password Vocaseek');
-        });
+            });
+        }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Tautan reset kata sandi telah dikirim ke email Anda.'
+            'message' => 'Jika email terdaftar, tautan reset kata sandi telah dikirim.'
         ]);
     }
 
-    /**
-     * LOGIKA GAMBAR 3: Proses Reset Password Baru
-     */
-    public function resetPassword(Request $request)
+    public function validateResetToken(Request $request)
     {
-        // Validasi input dari Gambar 3
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'token' => 'required',
-            'password' => 'required|min:8|confirmed', // Harus ada password_confirmation di request
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'token' => 'required|string',
         ]);
 
-        // Cek apakah token dan email cocok di database
-        $checkToken = DB::table('password_reset_tokens')
-            ->where('email', $request->email)
-            ->where('token', $request->token)
+        $resetToken = DB::table('password_reset_tokens')
+            ->where('email', $validated['email'])
             ->first();
 
-        if (!$checkToken) {
+        if (!$this->isValidResetToken($resetToken, $validated['token'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Token tidak valid atau sudah kadaluarsa.',
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Token valid.',
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $resetToken = DB::table('password_reset_tokens')
+            ->where('email', $validated['email'])
+            ->first();
+
+        if (!$this->isValidResetToken($resetToken, $validated['token'])) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Token tidak valid atau sudah kadaluarsa.'
             ], 400);
         }
 
-        // Update password user
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $validated['email'])->first();
         $user->update([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($validated['password'])
         ]);
 
-        // Hapus token supaya tidak bisa dipakai lagi
-        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+        DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
+        $user->tokens()->delete();
 
-        // Respon ini akan mentrigger Gambar 4 (Sukses) di React
         return response()->json([
             'status' => 'success',
             'message' => 'Kata sandi berhasil diperbarui.'
         ]);
+    }
+
+    private function isValidResetToken(?object $resetToken, string $plainToken): bool
+    {
+        if (!$resetToken) {
+            return false;
+        }
+
+        $expiresAt = Carbon::parse($resetToken->created_at)->addMinutes($this->resetTokenExpiresInMinutes());
+
+        if (now()->greaterThan($expiresAt)) {
+            return false;
+        }
+
+        return hash_equals($resetToken->token, hash('sha256', $plainToken));
+    }
+
+    private function resetTokenExpiresInMinutes(): int
+    {
+        return (int) env('PASSWORD_RESET_TOKEN_EXPIRES', 60);
     }
 }

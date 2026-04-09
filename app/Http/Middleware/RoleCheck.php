@@ -9,7 +9,6 @@ class RoleCheck
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // Jika user belum login atau rolenya tidak ada di daftar yang diizinkan
         if (!$request->user() || !in_array($request->user()->role, $roles)) {
             return response()->json([
                 'status' => 'error',

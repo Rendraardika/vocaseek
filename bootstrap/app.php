@@ -12,7 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // WAJIB: Agar Sanctum bisa handle session/cookie antara React & Laravel
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
+        // 1. Daftarkan Alias Middleware RoleCheck agar bisa dipanggil sebagai 'role'
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleCheck::class,
+        ]);
+
+        // 2. Agar Sanctum bisa handle session/cookie antara React & Laravel
         $middleware->statefulApi();
 
         $middleware->web(append: [
@@ -20,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        // Perbaikan: Tambahkan prefix 'api/' agar sesuai dengan route yang kita buat
+        // 3. Pengecualian CSRF untuk API
         $middleware->validateCsrfTokens(except: [
             'api/register',
             'api/login',
@@ -28,7 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/reset-password',
             'api/auth/google',
             'api/auth/google/callback',
-            'api/company/jobs', // Tambahkan ini jika nanti testing POST lowongan tanpa CSRF
+            'api/company/jobs', 
+            'api/admin/verification/*', // Tambahkan ini agar verifikasi admin lancar
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

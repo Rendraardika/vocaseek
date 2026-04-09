@@ -3,9 +3,12 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { translate } from '@/lib/translations';
 
 export default function Register() {
+    const { locale } = usePage().props;
+    const t = (key, fallback) => translate(locale, key, fallback);
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -23,11 +26,11 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title={t('common.register', 'Register')} />
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value={t('common.name', 'Name')} />
 
                     <TextInput
                         id="name"
@@ -44,7 +47,7 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value={t('common.email', 'Email')} />
 
                     <TextInput
                         id="email"
@@ -61,7 +64,7 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value={t('common.password', 'Password')} />
 
                     <TextInput
                         id="password"
@@ -80,7 +83,7 @@ export default function Register() {
                 <div className="mt-4">
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value={t('common.confirmPassword', 'Confirm Password')}
                     />
 
                     <TextInput
@@ -107,11 +110,11 @@ export default function Register() {
                         href={route('login')}
                         className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Already registered?
+                        {t('common.alreadyRegistered', 'Already registered?')}
                     </Link>
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        {t('common.register', 'Register')}
                     </PrimaryButton>
                 </div>
             </form>

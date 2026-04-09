@@ -1,6 +1,10 @@
-import { Head, Link } from '@inertiajs/react';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
+import { translate } from '@/lib/translations';
+import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
+    const { locale } = usePage().props;
+    const t = (key, fallback) => translate(locale, key, fallback);
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -14,7 +18,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
     return (
         <>
-            <Head title="Welcome" />
+            <Head title={t('welcome.title', 'Welcome')} />
             <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
                 <img
                     id="background"
@@ -38,12 +42,15 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                 </svg>
                             </div>
                             <nav className="-mx-3 flex flex-1 justify-end">
+                                <div className="me-4 hidden items-center lg:flex">
+                                    <LanguageSwitcher />
+                                </div>
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
                                         className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                     >
-                                        Dashboard
+                                        {t('common.dashboard', 'Dashboard')}
                                     </Link>
                                 ) : (
                                     <>
@@ -51,13 +58,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             href={route('login')}
                                             className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                         >
-                                            Log in
+                                            {t('common.login', 'Log in')}
                                         </Link>
                                         <Link
                                             href={route('register')}
                                             className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                                         >
-                                            Register
+                                            {t('common.register', 'Register')}
                                         </Link>
                                     </>
                                 )}
@@ -114,18 +121,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                             <div className="pt-3 sm:pt-5 lg:pt-0">
                                                 <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                    Documentation
+                                                    {t('welcome.docsTitle', 'Documentation')}
                                                 </h2>
 
                                                 <p className="mt-4 text-sm/relaxed">
-                                                    Laravel has wonderful
-                                                    documentation covering every
-                                                    aspect of the framework.
-                                                    Whether you are a newcomer
-                                                    or have prior experience
-                                                    with Laravel, we recommend
-                                                    reading our documentation
-                                                    from beginning to end.
+                                                    {t('welcome.docsText', 'Laravel has wonderful documentation covering every aspect of the framework.')}
                                                 </p>
                                             </div>
                                         </div>
@@ -165,16 +165,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laracasts
+                                            {t('welcome.laracastsTitle', 'Laracasts')}
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                            Laracasts offers thousands of video
-                                            tutorials on Laravel, PHP, and
-                                            JavaScript development. Check them
-                                            out, see for yourself, and massively
-                                            level up your development skills in
-                                            the process.
+                                            {t('welcome.laracastsText', 'Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript.')}
                                         </p>
                                     </div>
 
@@ -214,16 +209,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laravel News
+                                            {t('welcome.newsTitle', 'Laravel News')}
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                            Laravel News is a community driven
-                                            portal and newsletter aggregating
-                                            all of the latest and most important
-                                            news in the Laravel ecosystem,
-                                            including new package releases and
-                                            tutorials.
+                                            {t('welcome.newsText', 'Laravel News is a community driven portal for the latest Laravel ecosystem updates.')}
                                         </p>
                                     </div>
 
@@ -258,13 +248,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Vibrant Ecosystem
+                                            {t('welcome.ecosystemTitle', 'Vibrant Ecosystem')}
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                            Laravel's robust library of
-                                            first-party tools and libraries,
-                                            such as{' '}
+                                            {t('welcome.ecosystemText', 'Laravel tools and libraries help your projects move faster and scale better.')} {' '}
                                             <a
                                                 href="https://forge.laravel.com"
                                                 className="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white dark:focus-visible:ring-[#FF2D20]"
