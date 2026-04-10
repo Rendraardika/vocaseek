@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\LanguagePreferenceController;
 
 // --- APP CONTROLLERS ---
 use App\Http\Controllers\InternController;
@@ -48,9 +49,13 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API Vocaseek Aktif & Terhubung']);
 });
 
-
 Route::middleware('auth:sanctum')->group(function () {
-    
+
+    Route::get('/language', [LanguagePreferenceController::class, 'show']);
+    Route::put('/language', [LanguagePreferenceController::class, 'update']);
+    Route::get('/preferences/language', [LanguagePreferenceController::class, 'show']);
+    Route::put('/preferences/language', [LanguagePreferenceController::class, 'update']);
+
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     

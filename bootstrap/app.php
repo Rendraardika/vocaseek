@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocale::class,
         ]);
 
+        $middleware->api(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         // 1. Daftarkan Alias Middleware RoleCheck agar bisa dipanggil sebagai 'role'
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleCheck::class,

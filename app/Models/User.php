@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role',
         'notelp',
+        'preferred_locale',
         'google_id', 
     ];
 
@@ -39,6 +40,7 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'email_verified_at' => 'datetime',
         ];
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
@@ -20,6 +21,17 @@ class SetLocale
 
         if (!$locale) {
             $locale = $request->query('locale');
+        }
+
+        if (!$locale) {
+            $user = $request->user();
+
+            if (!$user && $request->bearerToken()) {
+                $accessToken = PersonalAccessToken::findToken($request->bearerToken());
+                $user = $accessToken?->tokenable;
+            }
+
+            $locale = $user?->preferred_locale;
         }
 
         if (!$locale) {

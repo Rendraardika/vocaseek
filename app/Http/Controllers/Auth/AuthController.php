@@ -46,7 +46,8 @@ class AuthController extends Controller
             'status' => 'success',
             'token' => $token,
             'role' => $user->role, 
-            'user' => $user->nama
+            'user' => $user->nama,
+            'locale' => $user->preferred_locale ?? app()->getLocale(),
         ]);
     }
 
@@ -81,6 +82,7 @@ class AuthController extends Controller
                     'password' => Hash::make($request->password),
                     'role'     => $request->role,
                     'notelp'   => $request->notelp,
+                    'preferred_locale' => app()->getLocale(),
                 ]);
 
                 if ($request->role === 'company') {
@@ -115,6 +117,7 @@ class AuthController extends Controller
                     'message' => __('messages.auth.company_register_pending'),
                     'user'    => $user->nama,
                     'role'    => $user->role,
+                    'locale'  => $user->preferred_locale ?? app()->getLocale(),
                 ], 201);
             }
 
@@ -125,7 +128,8 @@ class AuthController extends Controller
                 'message' => 'Registrasi Berhasil!',
                 'token'   => $token,
                 'user'    => $user->nama,
-                'role'    => $user->role
+                'role'    => $user->role,
+                'locale'  => $user->preferred_locale ?? app()->getLocale(),
             ], 201);
 
         } catch (\Exception $e) {
@@ -168,6 +172,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'role' => $user->role,
                 'notelp' => $user->notelp,
+                'preferred_locale' => $user->preferred_locale ?? app()->getLocale(),
                 'google_id' => $user->google_id,
             ],
         ]);
