@@ -7,6 +7,14 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Vocaseek Docs
+
+- Browser docs page: `/docs/api`
+- Swagger UI page: `/docs/swagger`
+- API README: [docs/API_README.md](/c:/laragon/www/VOCASEEK/vocaseek/docs/API_README.md)
+- OpenAPI spec: [docs/openapi.yaml](/c:/laragon/www/VOCASEEK/vocaseek/docs/openapi.yaml)
+- Frontend handoff lama: [docs/FRONTEND_API_HANDOFF.md](/c:/laragon/www/VOCASEEK/vocaseek/docs/FRONTEND_API_HANDOFF.md)
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

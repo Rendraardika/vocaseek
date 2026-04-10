@@ -26,8 +26,19 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        
-        
+
+        if ($user->role === 'company') {
+            $companyProfile = $user->companyProfile;
+
+            if (!$companyProfile || $companyProfile->status_mitra !== 'active') {
+                Auth::logout();
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Akun company Anda belum disetujui super admin.',
+                ], 403);
+            }
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -98,13 +109,20 @@ class AuthController extends Controller
                 return $user;
             });
 
+            if ($user->role === 'company') {
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Registrasi berhasil! Menunggu verifikasi super admin sebelum bisa login.',
+                    'user'    => $user->nama,
+                    'role'    => $user->role,
+                ], 201);
+            }
+
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'status'  => 'success',
-                'message' => ($user->role === 'company') 
-                             ? 'Registrasi berhasil! Menunggu verifikasi admin.' 
-                             : 'Registrasi Berhasil!',
+                'message' => 'Registrasi Berhasil!',
                 'token'   => $token,
                 'user'    => $user->nama,
                 'role'    => $user->role

@@ -6,6 +6,7 @@ use App\Http\Controllers\InternController;  // Tambahkan ini
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 
 // 1. Landing Page
@@ -27,6 +28,44 @@ Route::post('/locale', function (Request $request) {
 
     return back();
 })->name('locale.switch');
+
+Route::get('/docs/openapi.yaml', function () {
+    $path = base_path('docs/openapi.yaml');
+
+    abort_unless(File::exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/yaml; charset=UTF-8',
+    ]);
+})->name('docs.openapi');
+
+Route::get('/docs/api-readme', function () {
+    $path = base_path('docs/API_README.md');
+
+    abort_unless(File::exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'text/markdown; charset=UTF-8',
+    ]);
+})->name('docs.api-readme');
+
+Route::get('/docs/frontend-handoff', function () {
+    $path = base_path('docs/FRONTEND_API_HANDOFF.md');
+
+    abort_unless(File::exists($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'text/markdown; charset=UTF-8',
+    ]);
+})->name('docs.frontend-handoff');
+
+Route::get('/docs/api', function () {
+    return view('api-docs');
+})->name('docs.api');
+
+Route::get('/docs/swagger', function () {
+    return view('swagger-ui');
+})->name('docs.swagger');
 
 // 2. Dashboard General (Bawaan Breeze)
 Route::get('/dashboard', function () {

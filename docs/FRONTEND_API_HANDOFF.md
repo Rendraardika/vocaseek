@@ -68,6 +68,7 @@ Response:
 Content type:
 - `multipart/form-data` untuk role `company`
 - `application/json` untuk role `intern`
+- Role `company` tidak langsung bisa login. Harus menunggu approval super admin.
 
 Body minimal intern:
 
@@ -100,6 +101,17 @@ Response sukses:
 }
 ```
 
+Response sukses untuk register company:
+
+```json
+{
+  "status": "success",
+  "message": "Registrasi berhasil! Menunggu verifikasi super admin sebelum bisa login.",
+  "user": "PIC Company",
+  "role": "company"
+}
+```
+
 ### `POST /api/login`
 
 Body:
@@ -119,6 +131,15 @@ Response sukses:
   "token": "plain-text-token",
   "role": "intern",
   "user": "Rendra"
+}
+```
+
+Jika akun `company` belum diverifikasi super admin:
+
+```json
+{
+  "status": "error",
+  "message": "Akun company Anda belum disetujui super admin."
 }
 ```
 
@@ -286,6 +307,10 @@ Sebagian besar endpoint mengembalikan pola:
   "message": "Penjelasan error"
 }
 ```
+
+Catatan auth company:
+- akun `company` hanya bisa login setelah `status_mitra` menjadi `active`
+- sebelum itu, frontend sebaiknya tampilkan status "menunggu verifikasi admin"
 
 Namun saat validasi Laravel gagal, response default bisa berbentuk:
 
