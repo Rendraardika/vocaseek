@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -35,14 +36,28 @@ class ForgotPasswordController extends Controller
             $frontendUrl = rtrim(config('app.frontend_url'), '/');
             $resetLink = $frontendUrl.'/reset-password?token='.$plainToken.'&email='.urlencode($user->email);
 
-            Mail::send('emails.reset-password', [
-                'name' => $user->nama,
-                'resetLink' => $resetLink,
-                'expiresInMinutes' => $this->resetTokenExpiresInMinutes(),
-            ], function ($message) use ($user) {
-                $message->to($user->email)
-                    ->subject('Reset Password Vocaseek');
-            });
+            try {
+                Mail::send('emails.reset-password', [
+                    'name' => $user->nama,
+                    'resetLink' => $resetLink,
+                    'expiresInMinutes' => $this->resetTokenExpiresInMinutes(),
+                ], function ($message) use ($user) {
+                    $message->to($user->email)
+                        ->subject('Reset Password Vocaseek');
+                });
+            } catch (\Throwable $exception) {
+                DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+
+                Log::error('Gagal mengirim email reset password.', [
+                    'email' => $user->email,
+                    'message' => $exception->getMessage(),
+                ]);
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Email reset password gagal dikirim. Periksa konfigurasi mail server.',
+                ], 500);
+            }
         }
 
         return response()->json([
