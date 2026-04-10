@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\InternProfile;
 use App\Models\JobApplication;
 use App\Models\TestAnswer;
@@ -14,6 +15,43 @@ use Illuminate\Support\Facades\Storage;
 
 class InternController extends Controller
 {
+    public function getTestQuestions()
+    {
+        $user = Auth::user();
+        $profile = InternProfile::where('user_id', $user->user_id)->first();
+
+        if (!$profile || (int) $profile->is_profile_complete === 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lengkapi profil dulu sebelum mengakses pre-test.',
+            ], 403);
+        }
+
+        if ($profile->test_finished_at) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pre-test hanya dapat dikerjakan satu kali.',
+                'data' => [
+                    'already_completed' => true,
+                    'test_started_at' => $profile->test_started_at,
+                    'test_finished_at' => $profile->test_finished_at,
+                ],
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'questions' => $this->pretestQuestions(),
+                'duration_minutes' => $this->pretestDurationMinutes(),
+                'total_questions' => count($this->pretestQuestions()),
+                'already_started' => (bool) $profile->test_started_at,
+                'test_started_at' => $profile->test_started_at,
+                'expires_at' => $this->expiresAt($profile),
+            ],
+        ]);
+    }
+
     /**
      * Ambil Data Profil Lengkap
      */
@@ -102,6 +140,13 @@ class InternController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Lengkapi profil dulu!'], 403);
         }
 
+        if ($profile->test_finished_at) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pre-test hanya dapat dikerjakan satu kali.',
+            ], 403);
+        }
+
         if (!$profile->test_started_at) {
             $profile->test_started_at = now();
             $profile->save();
@@ -110,7 +155,10 @@ class InternController extends Controller
         return response()->json([
             'status' => 'success', 
             'message' => 'Test dimulai!',
-            'test_started_at' => $profile->test_started_at
+            'test_started_at' => $profile->test_started_at,
+            'expires_at' => $this->expiresAt($profile),
+            'duration_minutes' => $this->pretestDurationMinutes(),
+            'total_questions' => count($this->pretestQuestions()),
         ]);
     }
 
@@ -125,12 +173,77 @@ class InternController extends Controller
 
         $user = Auth::user();
         $profile = InternProfile::where('user_id', $user->user_id)->first();
+        $questionsById = collect($this->pretestQuestions())->keyBy('id');
+
+        if (!$profile || (int) $profile->is_profile_complete === 0) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lengkapi profil dulu sebelum mengerjakan pre-test.',
+            ], 403);
+        }
+
+        if ($profile->test_finished_at) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Pre-test hanya dapat dikerjakan satu kali.',
+            ], 403);
+        }
+
+        if (!$profile->test_started_at) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mulai pre-test terlebih dahulu.',
+            ], 400);
+        }
+
+        if ($this->isTestExpired($profile)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Waktu pre-test sudah habis.',
+                'expires_at' => $this->expiresAt($profile),
+            ], 422);
+        }
+
+        if (count($request->answers) !== $questionsById->count()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jumlah jawaban tidak sesuai dengan jumlah soal.',
+                'expected' => $questionsById->count(),
+            ], 422);
+        }
+
+        $normalizedAnswers = collect($request->answers);
+        $questionIds = $normalizedAnswers->pluck('question_id')->filter()->values();
+
+        if ($questionIds->count() !== $questionsById->count() || $questionIds->unique()->count() !== $questionsById->count()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Setiap soal harus dijawab tepat satu kali.',
+            ], 422);
+        }
+
+        if ($questionIds->sort()->values()->all() !== $questionsById->keys()->sort()->values()->all()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Daftar soal yang dikirim tidak valid.',
+            ], 422);
+        }
 
         foreach ($request->answers as $ans) {
+            $question = $questionsById->get((int) ($ans['question_id'] ?? 0));
+            $selectedOption = $ans['selected_option'] ?? null;
+
+            if (!$question || !in_array($selectedOption, $question['options'], true)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Jawaban pre-test tidak valid.',
+                ], 422);
+            }
+
             TestAnswer::create([
                 'user_id' => $user->user_id,
-                'question_text' => $ans['question'],
-                'user_answer' => $ans['selected_option'],
+                'question_text' => $question['question'],
+                'user_answer' => $selectedOption,
             ]);
         }
 
@@ -176,5 +289,37 @@ class InternController extends Controller
         ]);
 
         return response()->json(['status' => 'success', 'message' => 'Lamaran berhasil terkirim!']);
+    }
+
+    private function pretestQuestions(): array
+    {
+        return config('pretest.questions', []);
+    }
+
+    private function pretestDurationMinutes(): int
+    {
+        return (int) config('pretest.duration_minutes', 20);
+    }
+
+    private function expiresAt(InternProfile $profile): ?string
+    {
+        if (!$profile->test_started_at) {
+            return null;
+        }
+
+        return Carbon::parse($profile->test_started_at)
+            ->addMinutes($this->pretestDurationMinutes())
+            ->toDateTimeString();
+    }
+
+    private function isTestExpired(InternProfile $profile): bool
+    {
+        if (!$profile->test_started_at) {
+            return false;
+        }
+
+        return now()->greaterThan(
+            Carbon::parse($profile->test_started_at)->addMinutes($this->pretestDurationMinutes())
+        );
     }
 }

@@ -230,10 +230,16 @@ Flow ini lebih cocok untuk SPA/mobile, tetapi frontend harus sudah mendapatkan t
 Semua endpoint intern butuh bearer token dan role `intern`.
 
 - `GET /api/intern/profile`
+- `GET /api/intern/test/questions`
 - `PUT /api/intern/update-profile`
 - `POST /api/intern/start-test`
 - `POST /api/intern/submit-test`
 - `POST /api/intern/apply`
+
+Catatan pre-test:
+- soal diambil dari backend, bukan hardcode frontend
+- setiap user hanya bisa mengerjakan satu kali
+- durasi pre-test saat ini `20` menit
 
 Contoh payload `submit-test`:
 
@@ -241,8 +247,8 @@ Contoh payload `submit-test`:
 {
   "answers": [
     {
-      "question": "Apa kelebihan kamu?",
-      "selected_option": "Cepat belajar"
+      "question_id": 1,
+      "selected_option": "Ya"
     }
   ]
 }

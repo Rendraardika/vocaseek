@@ -62,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::prefix('intern')->middleware('role:intern')->group(function () {
         Route::get('/profile', [InternController::class, 'getProfile']);
+        Route::get('/test/questions', [InternController::class, 'getTestQuestions']);
         Route::put('/update-profile', [InternController::class, 'updateProfile']);
         Route::post('/start-test', [InternController::class, 'startTest']);
         Route::post('/submit-test', [InternController::class, 'submitPreTest']);
