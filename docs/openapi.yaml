@@ -5,6 +5,7 @@ info:
   description: |
     Dokumentasi API untuk integrasi frontend Vocaseek.
     Base URL lokal: `http://localhost:8000/api`
+    Bahasa response backend dapat dipilih lewat header `X-Locale: id` atau `X-Locale: en`.
 servers:
   - url: http://localhost:8000/api
     description: Local development
@@ -123,6 +124,7 @@ paths:
       description: |
         `intern` memakai `application/json`.
         `company` memakai `multipart/form-data` karena upload `loa_pdf` dan `akta_pdf`.
+        Akun `company` tidak langsung mendapat token dan harus menunggu approval super admin sebelum bisa login.
       responses:
         '201':
           description: Registrasi berhasil
@@ -152,6 +154,8 @@ paths:
                 $ref: '#/components/schemas/LoginResponse'
         '401':
           description: Login gagal
+        '403':
+          description: Company belum disetujui super admin
 
   /auth/google:
     get:
@@ -618,6 +622,9 @@ paths:
     put:
       tags: [Admin]
       summary: Update status review
+      description: |
+        Endpoint ini menerima alias status agar frontend lebih fleksibel:
+        `pending`, `reviewed`, `approve`, `active`, `reject`, `rejected`.
       security:
         - bearerAuth: []
       parameters:
@@ -650,6 +657,9 @@ paths:
     post:
       tags: [Admin]
       summary: Verifikasi final mitra
+      description: |
+        Hanya super admin.
+        Payload dapat memakai `action=approve|reject` atau `status=approve|reject`.
       security:
         - bearerAuth: []
       parameters:

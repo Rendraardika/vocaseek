@@ -12,7 +12,20 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         $availableLocales = config('app.available_locales', ['id', 'en']);
-        $locale = $request->session()->get('locale', config('app.locale'));
+        $locale = $request->session()->get('locale');
+
+        if (!$locale) {
+            $locale = $request->header('X-Locale');
+        }
+
+        if (!$locale) {
+            $locale = $request->query('locale');
+        }
+
+        if (!$locale) {
+            $preferred = $request->getPreferredLanguage($availableLocales);
+            $locale = $preferred ?: config('app.locale');
+        }
 
         if (!in_array($locale, $availableLocales, true)) {
             $locale = config('app.locale');

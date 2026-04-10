@@ -286,7 +286,7 @@ Content-Type: application/json</div>
                     <tr>
                         <td>Login email/password</td>
                         <td><code>POST /api/login</code></td>
-                        <td>Simpan token dari response lalu kirim sebagai Bearer token.</td>
+                        <td>Simpan token dari response lalu kirim sebagai Bearer token. Untuk role company, login hanya bisa jika sudah di-approve super admin.</td>
                     </tr>
                     <tr>
                         <td>Ambil user login</td>
@@ -416,6 +416,8 @@ Content-Type: application/json</div>
             </div>
 
             <ul>
+                <li>Register `company` tidak lagi mengembalikan token login. Status awalnya menunggu verifikasi super admin.</li>
+                <li>Login `company` akan ditolak sampai status mitra menjadi <code>active</code>.</li>
                 <li><code>GET /api/intern/applications</code> sudah ada di route, tetapi method controller belum ditemukan saat dokumentasi ini disusun.</li>
                 <li>Upload file wajib memakai <code>multipart/form-data</code>, terutama register company dan update profile.</li>
                 <li>Reset password mengandalkan mail server backend. Jika email gagal terkirim, cek konfigurasi <code>MAIL_*</code> di backend.</li>

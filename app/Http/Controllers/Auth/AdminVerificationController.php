@@ -48,13 +48,38 @@ class AdminVerificationController extends Controller
      */
     public function updateReviewStatus(Request $request, $id)
     {
-        // Hanya Staff Admin atau Super Admin
-        $request->validate(['status' => 'required|in:pending,reviewed']);
-        
         $company = CompanyProfile::findOrFail($id);
-        $company->update(['status_mitra' => $request->status]);
+        $normalizedStatus = $this->normalizeVerificationInput(
+            $request->input('status', $request->input('action'))
+        );
 
-        return response()->json(['message' => 'Dokumen ditandai sebagai: ' . $request->status]);
+        if (!$normalizedStatus) {
+            return response()->json([
+                'message' => 'The selected status is invalid.',
+                'allowed_status' => ['pending', 'reviewed', 'approve', 'reject', 'active', 'rejected'],
+            ], 422);
+        }
+
+        if (in_array($normalizedStatus, ['active', 'rejected'], true) && Auth::user()->role !== 'super_admin') {
+            return response()->json([
+                'message' => __('messages.verification.super_admin_only'),
+            ], 403);
+        }
+
+        $company->update(['status_mitra' => $normalizedStatus]);
+
+        if ($company->user && in_array($normalizedStatus, ['active', 'rejected'], true)) {
+            $company->user->update(['status' => $normalizedStatus]);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => __('messages.verification.marked_as', ['status' => $normalizedStatus]),
+            'data' => [
+                'company_id' => $company->id,
+                'status_mitra' => $company->status_mitra,
+            ],
+        ]);
     }
 
     /**
@@ -70,7 +95,7 @@ class AdminVerificationController extends Controller
                 'perusahaan' => $company,
                 'dokumen' => [
                     ['id' => 1, 'nama' => 'NIB', 'file' => $company->nib ? asset('storage/'.$company->nib) : null],
-                    ['id' => 2, 'nama' => 'Letter of Agreement (LoA)', 'file' => $company->loa_pdf ? asset('storage/'.$profile->loa_pdf) : null],
+                    ['id' => 2, 'nama' => 'Letter of Agreement (LoA)', 'file' => $company->loa_pdf ? asset('storage/'.$company->loa_pdf) : null],
                     ['id' => 3, 'nama' => 'Akta Perusahaan', 'file' => $company->akta_pdf ? asset('storage/'.$company->akta_pdf) : null],
                 ]
             ]
@@ -84,13 +109,22 @@ class AdminVerificationController extends Controller
     {
         // Proteksi tambahan di level Code
         if (Auth::user()->role !== 'super_admin') {
-            return response()->json(['message' => 'Hanya Super Admin yang bisa melakukan verifikasi final'], 403);
+            return response()->json(['message' => __('messages.verification.super_admin_only')], 403);
         }
 
-        $request->validate(['action' => 'required|in:approve,reject']);
         $company = CompanyProfile::findOrFail($id);
+        $normalizedStatus = $this->normalizeVerificationInput(
+            $request->input('action', $request->input('status'))
+        );
 
-        if ($request->action === 'approve') {
+        if (!in_array($normalizedStatus, ['active', 'rejected'], true)) {
+            return response()->json([
+                'message' => 'The selected action is invalid.',
+                'allowed_action' => ['approve', 'reject'],
+            ], 422);
+        }
+
+        if ($normalizedStatus === 'active') {
             DB::transaction(function () use ($company) {
                 // Update tabel profile
                 $company->update(['status_mitra' => 'active']);
@@ -99,7 +133,7 @@ class AdminVerificationController extends Controller
                 $company->user->update(['status' => 'active']);
             });
 
-            return response()->json(['status' => 'success', 'message' => 'Mitra Resmi Aktif!']);
+            return response()->json(['status' => 'success', 'message' => __('messages.verification.company_approved')]);
         }
 
         // Jika Reject
@@ -108,6 +142,21 @@ class AdminVerificationController extends Controller
             $company->user->update(['status' => 'rejected']);
         });
 
-        return response()->json(['message' => 'Pendaftaran Mitra ditolak']);
+        return response()->json(['status' => 'success', 'message' => __('messages.verification.company_rejected')]);
+    }
+
+    private function normalizeVerificationInput(?string $value): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+
+        return match (strtolower(trim($value))) {
+            'pending' => 'pending',
+            'reviewed', 'review' => 'reviewed',
+            'approve', 'approved', 'active' => 'active',
+            'reject', 'rejected' => 'rejected',
+            default => null,
+        };
     }
 }

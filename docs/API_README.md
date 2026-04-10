@@ -16,6 +16,18 @@ Accept: application/json
 Content-Type: application/json
 ```
 
+- Untuk memilih bahasa response backend, bisa kirim:
+
+```http
+X-Locale: id
+```
+
+atau
+
+```http
+X-Locale: en
+```
+
 - Untuk endpoint yang butuh login:
 
 ```http
@@ -349,6 +361,11 @@ Ada beberapa hal yang perlu diketahui frontend sejak awal:
 - Route `GET /api/intern/applications` ada di `routes/api.php`, tetapi method `getMyApplications()` belum ditemukan di `InternController`. Jadi endpoint ini sebaiknya dianggap belum siap.
 - Register `company` sekarang tidak mengembalikan token. Frontend harus menampilkan pesan menunggu approval super admin.
 - Login `company` hanya bisa berhasil jika `status_mitra = active`.
+- Endpoint verifikasi admin sekarang menerima alias input berikut:
+  - `pending`
+  - `reviewed`
+  - `approve` atau `active`
+  - `reject` atau `rejected`
 - Status pelamar tidak seragam antar modul. Contoh:
   - Company memakai `PENDING`, `REVIEW`, `INTERVIEW`, `SHORTLISTED`, `ACCEPTED`, `REJECTED`
   - Talent pool memakai `PENDING`, `REVIEWED`, `SHORTLISTED`, `INTERVIEW`, `REJECTED`, `OFFER`

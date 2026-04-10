@@ -35,7 +35,7 @@ class AuthController extends Controller
 
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Akun company Anda belum disetujui super admin.',
+                    'message' => __('messages.auth.company_not_approved'),
                 ], 403);
             }
         }
@@ -112,7 +112,7 @@ class AuthController extends Controller
             if ($user->role === 'company') {
                 return response()->json([
                     'status'  => 'success',
-                    'message' => 'Registrasi berhasil! Menunggu verifikasi super admin sebelum bisa login.',
+                    'message' => __('messages.auth.company_register_pending'),
                     'user'    => $user->nama,
                     'role'    => $user->role,
                 ], 201);
