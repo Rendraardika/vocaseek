@@ -41,7 +41,10 @@ class LanguagePreferenceController extends Controller
             ]);
         }
 
-        $request->session()->put('locale', $validated['locale']);
+        if ($request->hasSession()) {
+            $request->session()->put('locale', $validated['locale']);
+        }
+
         app()->setLocale($validated['locale']);
 
         return response()->json([

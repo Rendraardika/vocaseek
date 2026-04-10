@@ -13,7 +13,11 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         $availableLocales = config('app.available_locales', ['id', 'en']);
-        $locale = $request->session()->get('locale');
+        $locale = null;
+
+        if ($request->hasSession()) {
+            $locale = $request->session()->get('locale');
+        }
 
         if (!$locale) {
             $locale = $request->header('X-Locale');
