@@ -37,7 +37,7 @@ class AdminUserController extends Controller
                 ],
                 'role' => strtoupper(str_replace('_', ' ', $user->role)), // Format: SUPER ADMIN
                 'status' => $user->status ?? 'Active', // Status Badge: Active / Inactive
-                'joined_at' => $user->created_at->format('d M Y')
+                'joined_at' => optional($user->created_at)->format('d M Y') ?? 'N/A'
             ]),
             'pagination' => [
                 'total' => $admins->total(),

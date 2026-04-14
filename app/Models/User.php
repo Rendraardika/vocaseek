@@ -17,8 +17,6 @@ class User extends Authenticatable
     // Karena kamu pakai user_id, pastikan ini konsisten di semua tabel relasi
     protected $primaryKey = 'user_id';
 
-    public $timestamps = false; 
-
     protected $fillable = [
         'nama',
         'email',
@@ -62,6 +60,11 @@ class User extends Authenticatable
     public function companyProfile()
     {
         return $this->hasOne(CompanyProfile::class, 'user_id', 'user_id');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, 'user_id', 'user_id');
     }
 
     public function sendPasswordResetNotification($token): void
