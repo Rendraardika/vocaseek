@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class AdminDashboardController extends Controller
         // 1. Ambil Statistik Utama 
         $totalTalents = User::where('role', 'intern')->count();
         $totalPartners = CompanyProfile::count();
-        $totalOpenings = Lowongan::where('status', 'OPEN')->count();
+        $totalOpenings = Lowongan::whereIn('status', ['OPEN', 'ACTIVE'])->count();
         $scheduledMeetings = 8; 
 
         // 2. Logika Persentase Pertumbuhan (vs Bulan Lalu)

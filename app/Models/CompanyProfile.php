@@ -13,24 +13,24 @@ class CompanyProfile extends Model
     protected $primaryKey = 'id'; // Sesuai screenshot Abang
 
     protected $fillable = [
-    'user_id', 
-    'nama_perusahaan', 
-    'industri', 
-    'ukuran_perusahaan', 
-    'website_url', 
-    'deskripsi', 
-    'notelp', 
-    'alamat_kantor_pusat', 
-    'nib', 
-    'loa_pdf', 
-    'akta_pdf', 
-    'logo_perusahaan', 
-    'banner_perusahaan', 
-    'status_mitra', 
-    'linkedin_url', 
-    'instagram_url', 
-    'twitter_url'
-];
+        'user_id',
+        'nama_perusahaan',
+        'industri',
+        'ukuran_perusahaan',
+        'website_url',
+        'deskripsi',
+        'notelp',
+        'alamat_kantor_pusat',
+        'nib',
+        'loa_pdf',
+        'akta_pdf',
+        'logo_perusahaan',
+        'banner_perusahaan',
+        'status_mitra',
+        'linkedin_url',
+        'instagram_url',
+        'twitter_url',
+    ];
 
     // Relasi balik ke User
     public function user()
@@ -42,5 +42,10 @@ class CompanyProfile extends Model
     public function lowongan()
     {
         return $this->hasMany(Lowongan::class, 'company_profile_id', 'id');
+    }
+
+    public function lowongans()
+    {
+        return $this->lowongan();
     }
 }

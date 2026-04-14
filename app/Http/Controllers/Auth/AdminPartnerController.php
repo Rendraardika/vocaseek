@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\CompanyProfile;
-use App\Models\Lowongan;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class AdminPartnerController extends Controller
@@ -31,19 +30,19 @@ class AdminPartnerController extends Controller
             'status' => 'success',
             'stats' => [
                 'total_partner' => CompanyProfile::count(),
-                'kolaborasi_aktif' => CompanyProfile::where('is_verified', true)->count(),
-                'butuh_review' => CompanyProfile::where('is_verified', false)->count(),
+                'kolaborasi_aktif' => CompanyProfile::where('status_mitra', 'active')->count(),
+                'butuh_review' => CompanyProfile::whereIn('status_mitra', ['pending', 'reviewed'])->count(),
             ],
             'data' => $partners->map(fn($item) => [
                 'id' => $item->id,
                 'id_perusahaan' => 'CMP-' . str_pad($item->id, 3, '0', STR_PAD_LEFT),
                 'nama_perusahaan' => [
                     'nama' => $item->nama_perusahaan,
-                    'lokasi' => $item->alamat_kantor ?? 'N/A'
+                    'lokasi' => $item->alamat_kantor_pusat ?? 'N/A',
                 ],
-                'tipe_bisnis' => $item->sektor_industri ?? 'N/A',
-                'tanggal_pengajuan' => $item->created_at->format('d M Y'),
-                'status_verifikasi' => $this->formatStatus($item->is_verified),
+                'tipe_bisnis' => $item->industri ?? 'N/A',
+                'tanggal_pengajuan' => optional($item->created_at)->format('d M Y') ?? 'N/A',
+                'status_verifikasi' => $this->formatStatus($item->status_mitra),
             ]),
             'pagination' => [
                 'total' => $partners->total(),
@@ -117,13 +116,12 @@ class AdminPartnerController extends Controller
             return CompanyProfile::create([
                 'user_id' => $user->user_id,
                 'nama_perusahaan' => $validated['nama_perusahaan'],
-                'sektor_industri' => $validated['industri'],
-                'website' => $validated['website'],
-                'deskripsi' => $validated['deskripsi'],
-                'nama_pic' => $validated['nama_pic'],
-                'jabatan_pic' => $validated['jabatan_pic'],
-                'alamat_kantor' => $validated['alamat_lengkap'] . ', ' . $validated['kota'],
-                'is_verified' => true // Karena diinput langsung oleh Admin
+                'industri' => $validated['industri'],
+                'website_url' => $validated['website'] ?? null,
+                'deskripsi' => $validated['deskripsi'] ?? null,
+                'notelp' => $validated['notelp'],
+                'alamat_kantor_pusat' => $validated['alamat_lengkap'] . ', ' . $validated['kota'] . ', ' . $validated['provinsi'] . ' ' . $validated['kode_pos'],
+                'status_mitra' => 'active',
             ]);
         });
 
@@ -134,7 +132,13 @@ class AdminPartnerController extends Controller
         ]);
     }
 
-    private function formatStatus($is_verified) {
-        return $is_verified ? 'Active' : 'Pending';
+    private function formatStatus(?string $statusMitra): string
+    {
+        return match ($statusMitra) {
+            'active' => 'Active',
+            'reviewed' => 'Reviewed',
+            'rejected' => 'Rejected',
+            default => 'Pending',
+        };
     }
 }
