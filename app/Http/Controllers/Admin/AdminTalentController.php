@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TestAnswer;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -28,8 +29,8 @@ class AdminTalentController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%$search%")
                     ->orWhereHas('internProfile', function ($sq) use ($search) {
-                        $sq->where('asal_kampus', 'like', "%$search%")
-                            ->orWhere('prodi', 'like', "%$search%");
+                        $sq->where('universitas', 'like', "%$search%")
+                            ->orWhere('jurusan', 'like', "%$search%");
                     });
             });
         }
@@ -61,16 +62,66 @@ class AdminTalentController extends Controller
                 'full_name' => $user->nama,
                 'email' => $user->email,
                 'email_address' => $user->email,
-                'foto' => $user->foto,
+                'foto' => $user->internProfile?->foto ? asset('storage/'.$user->internProfile->foto) : null,
                 'nama_talenta' => [
                     'nama' => $user->nama,
                     'email' => $user->email,
-                    'foto' => $user->foto,
+                    'foto' => $user->internProfile?->foto ? asset('storage/'.$user->internProfile->foto) : null,
                 ],
-                'universitas' => $user->internProfile->asal_kampus ?? '-',
-                'jurusan' => $user->internProfile->prodi ?? '-',
+                'universitas' => $user->internProfile?->universitas ?? '-',
+                'jurusan' => $user->internProfile?->jurusan ?? '-',
                 'tanggal_daftar' => optional($user->created_at)->format('M d, Y') ?? 'N/A',
                 'status' => $user->applications->first()->status ?? 'PENDING',
+                'tentang_saya' => $user->internProfile?->tentang_saya,
+                'jenis_kelamin' => $user->internProfile?->jenis_kelamin,
+                'tempat_lahir' => $user->internProfile?->tempat_lahir,
+                'tanggal_lahir' => optional($user->internProfile?->tanggal_lahir)->format('Y-m-d'),
+                'notelp' => $user->internProfile?->notelp ?? $user->notelp,
+                'provinsi' => $user->internProfile?->provinsi,
+                'kabupaten' => $user->internProfile?->kabupaten,
+                'detail_alamat' => $user->internProfile?->detail_alamat,
+                'linkedin' => $user->internProfile?->linkedin,
+                'instagram' => $user->internProfile?->instagram,
+                'cv_pdf' => $user->internProfile?->cv_pdf ? asset('storage/'.$user->internProfile->cv_pdf) : null,
+                'portofolio_pdf' => $user->internProfile?->portofolio_pdf ? asset('storage/'.$user->internProfile->portofolio_pdf) : null,
+                'skor_pretest' => $user->internProfile?->skor_pretest ?? 0,
+                'test_started_at' => optional($user->internProfile?->test_started_at)->toDateTimeString(),
+                'test_finished_at' => optional($user->internProfile?->test_finished_at)->toDateTimeString(),
+                'is_profile_complete' => (bool) ($user->internProfile?->is_profile_complete ?? false),
+                'pretest_answers_count' => TestAnswer::where('user_id', $user->user_id)->count(),
+                'pretest_answers' => TestAnswer::where('user_id', $user->user_id)
+                    ->orderBy('id')
+                    ->get(['question_text', 'user_answer'])
+                    ->map(fn ($answer) => [
+                        'question_text' => $answer->question_text,
+                        'user_answer' => $answer->user_answer,
+                    ])
+                    ->values(),
+                'profile' => [
+                    'foto' => $user->internProfile?->foto ? asset('storage/'.$user->internProfile->foto) : null,
+                    'tentang_saya' => $user->internProfile?->tentang_saya,
+                    'jenis_kelamin' => $user->internProfile?->jenis_kelamin,
+                    'tempat_lahir' => $user->internProfile?->tempat_lahir,
+                    'tanggal_lahir' => optional($user->internProfile?->tanggal_lahir)->format('Y-m-d'),
+                    'notelp' => $user->internProfile?->notelp ?? $user->notelp,
+                    'provinsi' => $user->internProfile?->provinsi,
+                    'kabupaten' => $user->internProfile?->kabupaten,
+                    'detail_alamat' => $user->internProfile?->detail_alamat,
+                    'universitas' => $user->internProfile?->universitas,
+                    'jurusan' => $user->internProfile?->jurusan,
+                    'jenjang' => $user->internProfile?->jenjang,
+                    'ipk' => $user->internProfile?->ipk,
+                    'tahun_masuk' => $user->internProfile?->tahun_masuk,
+                    'tahun_lulus' => $user->internProfile?->tahun_lulus,
+                    'linkedin' => $user->internProfile?->linkedin,
+                    'instagram' => $user->internProfile?->instagram,
+                    'cv_pdf' => $user->internProfile?->cv_pdf ? asset('storage/'.$user->internProfile->cv_pdf) : null,
+                    'portofolio_pdf' => $user->internProfile?->portofolio_pdf ? asset('storage/'.$user->internProfile->portofolio_pdf) : null,
+                    'skor_pretest' => $user->internProfile?->skor_pretest ?? 0,
+                    'test_started_at' => optional($user->internProfile?->test_started_at)->toDateTimeString(),
+                    'test_finished_at' => optional($user->internProfile?->test_finished_at)->toDateTimeString(),
+                    'is_profile_complete' => (bool) ($user->internProfile?->is_profile_complete ?? false),
+                ],
             ]),
             'pagination' => [
                 'total' => $talents->total(),
