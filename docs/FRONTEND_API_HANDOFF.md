@@ -61,6 +61,65 @@ Response:
 }
 ```
 
+### `GET /api/partners`
+
+Dipakai untuk daftar semua partner/perusahaan aktif yang bisa ditampilkan ke user intern atau halaman publik.
+
+Query opsional:
+- `search`
+- `per_page`
+
+Contoh:
+
+```http
+GET /api/partners?per_page=12
+GET /api/partners?search=teknologi
+```
+
+Response:
+
+```json
+{
+  "status": "success",
+  "summary": {
+    "total_partners": 12,
+    "current_page": 1,
+    "per_page": 12
+  },
+  "data": [
+    {
+      "id": 1,
+      "company_id": 1,
+      "nama_perusahaan": "PT Maju Teknologi",
+      "company_name": "PT Maju Teknologi",
+      "industri": "Teknologi",
+      "industry": "Teknologi",
+      "location": "Surabaya",
+      "website_url": "https://contoh.com",
+      "logo_url": "http://localhost:8000/storage/company/logos/logo.png",
+      "banner_url": null,
+      "active_jobs_count": 3,
+      "display": {
+        "title": "PT Maju Teknologi",
+        "subtitle": "Teknologi",
+        "image": "http://localhost:8000/storage/company/logos/logo.png",
+        "meta": {
+          "location": "Surabaya",
+          "website": "https://contoh.com",
+          "active_jobs_count": 3
+        }
+      }
+    }
+  ],
+  "pagination": {
+    "total": 12,
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 12
+  }
+}
+```
+
 ## Auth Endpoints
 
 ### `POST /api/register`

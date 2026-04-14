@@ -235,4 +235,79 @@ class CompanyController extends Controller
 
         return response()->json(['status' => 'success', 'data' => $jobs]);
     }
+
+    public function getPublicPartners(Request $request)
+    {
+        $query = CompanyProfile::query()
+            ->where('status_mitra', 'active')
+            ->withCount([
+                'lowongans as active_jobs_count' => fn ($q) => $q->whereIn('status', ['ACTIVE', 'OPEN']),
+            ])
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->string('search')->value();
+
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_perusahaan', 'like', "%{$search}%")
+                    ->orWhere('industri', 'like', "%{$search}%")
+                    ->orWhere('alamat_kantor_pusat', 'like', "%{$search}%");
+            });
+        }
+
+        $partners = $query->paginate((int) $request->integer('per_page', 12));
+
+        return response()->json([
+            'status' => 'success',
+            'summary' => [
+                'total_partners' => $partners->total(),
+                'current_page' => $partners->currentPage(),
+                'per_page' => $partners->perPage(),
+            ],
+            'data' => $partners->getCollection()->map(fn ($company) => [
+                'id' => $company->id,
+                'company_id' => $company->id,
+                'nama_perusahaan' => $company->nama_perusahaan,
+                'name' => $company->nama_perusahaan,
+                'company_name' => $company->nama_perusahaan,
+                'industri' => $company->industri,
+                'industry' => $company->industri,
+                'ukuran_perusahaan' => $company->ukuran_perusahaan,
+                'company_size' => $company->ukuran_perusahaan,
+                'deskripsi' => $company->deskripsi,
+                'description' => $company->deskripsi,
+                'notelp' => $company->notelp,
+                'alamat_kantor_pusat' => $company->alamat_kantor_pusat,
+                'location' => $company->alamat_kantor_pusat,
+                'website_url' => $company->website_url,
+                'website' => $company->website_url,
+                'logo_url' => $company->logo_perusahaan ? asset('storage/'.$company->logo_perusahaan) : null,
+                'logo' => $company->logo_perusahaan ? asset('storage/'.$company->logo_perusahaan) : null,
+                'banner_url' => $company->banner_perusahaan ? asset('storage/'.$company->banner_perusahaan) : null,
+                'banner' => $company->banner_perusahaan ? asset('storage/'.$company->banner_perusahaan) : null,
+                'linkedin_url' => $company->linkedin_url,
+                'instagram_url' => $company->instagram_url,
+                'twitter_url' => $company->twitter_url,
+                'active_jobs_count' => $company->active_jobs_count ?? 0,
+                'open_positions' => $company->active_jobs_count ?? 0,
+                'created_at' => optional($company->created_at)->format('d M Y') ?? 'N/A',
+                'display' => [
+                    'title' => $company->nama_perusahaan,
+                    'subtitle' => $company->industri ?: ($company->alamat_kantor_pusat ?: 'Partner Vocaseek'),
+                    'image' => $company->logo_perusahaan ? asset('storage/'.$company->logo_perusahaan) : null,
+                    'meta' => [
+                        'location' => $company->alamat_kantor_pusat,
+                        'website' => $company->website_url,
+                        'active_jobs_count' => $company->active_jobs_count ?? 0,
+                    ],
+                ],
+            ]),
+            'pagination' => [
+                'total' => $partners->total(),
+                'current_page' => $partners->currentPage(),
+                'last_page' => $partners->lastPage(),
+                'per_page' => $partners->perPage(),
+            ],
+        ]);
+    }
 }

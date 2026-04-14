@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
 class AdminProfileController extends Controller
@@ -55,7 +53,7 @@ class AdminProfileController extends Controller
         ]);
 
         auth()->user()->update([
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
         ]);
 
         return response()->json(['message' => 'Kata sandi berhasil diperbarui!']);

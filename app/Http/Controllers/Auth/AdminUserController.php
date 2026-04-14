@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
 class AdminUserController extends Controller
@@ -72,7 +71,7 @@ class AdminUserController extends Controller
             'email' => $validated['email'],
             'notelp' => $validated['notelp'],
             'role' => $validated['role'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'],
             'status' => 'Active' // Default saat baru dibuat
         ]);
 

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\CompanyProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -107,7 +106,7 @@ class AdminPartnerController extends Controller
             $user = User::create([
                 'nama' => $validated['nama_pic'],
                 'email' => $validated['email'],
-                'password' => Hash::make(Str::random(12)),
+                'password' => Str::random(12),
                 'role' => 'company',
                 'notelp' => $validated['notelp']
             ]);

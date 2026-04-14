@@ -109,6 +109,29 @@ paths:
         '200':
           description: Daftar lowongan publik
 
+  /partners:
+    get:
+      tags: [Public]
+      summary: Ambil semua partner aktif
+      description: |
+        Endpoint publik untuk daftar perusahaan/partner aktif.
+        Bisa dipakai oleh halaman intern atau halaman publik.
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 12
+      responses:
+        '200':
+          description: Daftar partner aktif
+
   /test:
     get:
       tags: [Public]

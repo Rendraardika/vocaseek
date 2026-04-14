@@ -24,6 +24,7 @@ use App\Http\Controllers\Auth\AdminProfileController;
 
 Route::get('/landing-stats', [CompanyController::class, 'getPublicStats']);
 Route::get('/popular-vacancies', [CompanyController::class, 'getPublicJobs']);
+Route::get('/partners', [CompanyController::class, 'getPublicPartners']);
 
 // Auth Utama
 Route::post('/register', [AuthController::class, 'register']);

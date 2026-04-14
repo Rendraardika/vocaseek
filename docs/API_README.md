@@ -223,6 +223,7 @@ Flow ini lebih cocok untuk SPA/mobile, tetapi frontend harus sudah mendapatkan t
 
 - `GET /api/landing-stats`
 - `GET /api/popular-vacancies`
+- `GET /api/partners`
 - `GET /api/test`
 
 ## Intern Endpoints

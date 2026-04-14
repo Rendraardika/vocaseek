@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\InternProfile;
 use App\Models\CompanyProfile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,7 +38,7 @@ class RegisterController extends Controller
             $user = User::create([
                 'nama'     => $request->nama,
                 'email'    => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => $request->password,
                 'role'     => $request->role,
                 'notelp'   => $request->notelp,
             ]);

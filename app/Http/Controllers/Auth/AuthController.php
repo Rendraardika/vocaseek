@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\InternProfile;
@@ -94,7 +93,7 @@ class AuthController extends Controller
                 $user = User::create([
                     'nama'     => $request->nama,
                     'email'    => $request->email,
-                    'password' => Hash::make($request->password),
+                    'password' => $request->password,
                     'role'     => $request->role,
                     'notelp'   => $request->notelp,
                     'preferred_locale' => app()->getLocale(),

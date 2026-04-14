@@ -9,7 +9,6 @@ use App\Models\JobApplication;
 use App\Models\InternProfile;
 use App\Notifications\CandidateStatusUpdated;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class TalentController extends Controller
@@ -127,7 +126,7 @@ class TalentController extends Controller
             $user = User::create([
                 'nama' => $validated['nama'],
                 'email' => $validated['email'],
-                'password' => Hash::make(Str::random(16)),
+                'password' => Str::random(16),
                 'role' => 'intern',
                 'notelp' => $validated['notelp'],
             ]);
