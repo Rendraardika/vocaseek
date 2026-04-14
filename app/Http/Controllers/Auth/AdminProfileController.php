@@ -26,7 +26,7 @@ class AdminProfileController extends Controller
                 'id_karyawan' => 'VK-2024-' . str_pad($user->user_id, 3, '0', STR_PAD_LEFT),
                 'role_name' => $user->role === 'super_admin' ? 'Master Admin Platform' : 'Staff Admin Platform',
                 'foto' => $user->foto,
-                'terdaftar_sejak' => $user->created_at->format('M Y'),
+                'terdaftar_sejak' => optional($user->created_at)->format('M Y') ?? 'N/A',
                 'riwayat_aktivitas' => [
                     ['pesan' => 'Login Berhasil', 'waktu' => now()->format('H:i \W\I\B')],
                     ['pesan' => 'Memperbarui Pengguna: J. Doe', 'waktu' => 'Kemarin, 14:20 WIB'],

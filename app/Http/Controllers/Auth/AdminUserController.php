@@ -30,6 +30,13 @@ class AdminUserController extends Controller
             ],
             'data' => $admins->map(fn($user) => [
                 'id' => $user->user_id,
+                'user_id' => $user->user_id,
+                'nama' => $user->nama,
+                'name' => $user->nama,
+                'full_name' => $user->nama,
+                'email' => $user->email,
+                'email_address' => $user->email,
+                'foto' => $user->foto,
                 'identity' => [
                     'nama' => $user->nama,
                     'email' => $user->email,
@@ -72,7 +79,18 @@ class AdminUserController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Admin Website Baru Berhasil Ditambahkan!',
-            'data' => $admin
+            'data' => [
+                'id' => $admin->user_id,
+                'user_id' => $admin->user_id,
+                'nama' => $admin->nama,
+                'name' => $admin->nama,
+                'full_name' => $admin->nama,
+                'email' => $admin->email,
+                'email_address' => $admin->email,
+                'notelp' => $admin->notelp,
+                'role' => strtoupper(str_replace('_', ' ', $admin->role)),
+                'status' => $admin->status ?? 'Active',
+            ]
         ]);
     }
 
