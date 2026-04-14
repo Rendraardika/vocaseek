@@ -19,9 +19,18 @@ class AdminProfileController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'nama' => $user->nama,
+            'name' => $user->nama,
+            'full_name' => $user->nama,
+            'email' => $user->email,
+            'email_address' => $user->email,
+            'role' => $user->role,
             'data' => [
                 'nama' => $user->nama,
+                'name' => $user->nama,
+                'full_name' => $user->nama,
                 'email' => $user->email,
+                'email_address' => $user->email,
                 'notelp' => $user->notelp,
                 'id_karyawan' => 'VK-2024-' . str_pad($user->user_id, 3, '0', STR_PAD_LEFT),
                 'role_name' => $user->role === 'super_admin' ? 'Master Admin Platform' : 'Staff Admin Platform',
@@ -61,6 +70,7 @@ class AdminProfileController extends Controller
 
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $user->user_id . ',user_id',
             'notelp' => 'required|string',
         ]);
 
@@ -68,7 +78,12 @@ class AdminProfileController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data profil berhasil disimpan!'
+            'message' => 'Data profil berhasil disimpan!',
+            'data' => [
+                'nama' => $user->nama,
+                'email' => $user->email,
+                'notelp' => $user->notelp,
+            ],
         ]);
     }
 }

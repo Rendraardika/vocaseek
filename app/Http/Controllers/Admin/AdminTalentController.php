@@ -54,7 +54,14 @@ class AdminTalentController extends Controller
             ],
             'data' => $talents->map(fn ($user) => [
                 'id' => $user->user_id,
+                'user_id' => $user->user_id,
                 'id_talenta' => 'TLA-'.str_pad($user->user_id, 3, '0', STR_PAD_LEFT),
+                'nama' => $user->nama,
+                'name' => $user->nama,
+                'full_name' => $user->nama,
+                'email' => $user->email,
+                'email_address' => $user->email,
+                'foto' => $user->foto,
                 'nama_talenta' => [
                     'nama' => $user->nama,
                     'email' => $user->email,

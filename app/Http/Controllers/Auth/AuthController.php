@@ -21,9 +21,15 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        if (Auth::check()) {
+            Auth::logout();
+        }
+
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Email atau Password salah'], 401);
         }
+
+        $request->session()->regenerate();
 
         $user = Auth::user();
 
@@ -40,6 +46,8 @@ class AuthController extends Controller
             }
         }
 
+        $user->tokens()->delete();
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -47,6 +55,13 @@ class AuthController extends Controller
             'token' => $token,
             'role' => $user->role, 
             'user' => $user->nama,
+            'user_data' => [
+                'user_id' => $user->user_id,
+                'nama' => $user->nama,
+                'email' => $user->email,
+                'role' => $user->role,
+                'notelp' => $user->notelp,
+            ],
             'locale' => $user->preferred_locale ?? app()->getLocale(),
         ]);
     }
