@@ -44,6 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/auth/google',
             'api/auth/google/callback',
             'api/company/jobs', 
+            'api/admin/users-management*',
             'api/admin/verification/*', // Tambahkan ini agar verifikasi admin lancar
         ]);
     })
