@@ -77,6 +77,11 @@ class InternController extends Controller
                 'kabupaten' => $profile->kabupaten,
                 'foto' => $profile->foto ? asset('storage/' . $profile->foto) : null,
                 'cv' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
+                'cv_pdf' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
+                'portofolio_pdf' => $profile->portofolio_pdf ? asset('storage/' . $profile->portofolio_pdf) : null,
+                'surat_rekomendasi_pdf' => $profile->surat_rekomendasi_pdf ? asset('storage/' . $profile->surat_rekomendasi_pdf) : null,
+                'ktp_pdf' => $profile->ktp_pdf ? asset('storage/' . $profile->ktp_pdf) : null,
+                'transkrip_nilai_pdf' => $profile->transkrip_nilai_pdf ? asset('storage/' . $profile->transkrip_nilai_pdf) : null,
                 'instagram' => $profile->instagram,
                 'is_complete' => (int) $profile->is_profile_complete,
                 'pengalaman' => $experiences,
@@ -97,6 +102,9 @@ class InternController extends Controller
             'foto'           => 'nullable|image|max:2048',
             'cv_pdf'         => 'nullable|mimes:pdf|max:5120',
             'portofolio_pdf' => 'nullable|mimes:pdf|max:5120',
+            'surat_rekomendasi_pdf' => 'nullable|mimes:pdf|max:5120',
+            'ktp_pdf' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
+            'transkrip_nilai_pdf' => 'nullable|mimes:pdf|max:5120',
             'ipk'            => 'nullable|numeric|between:0,4.00',
         ]);
 
@@ -111,6 +119,18 @@ class InternController extends Controller
         if ($request->hasFile('portofolio_pdf')) {
             if ($profile->portofolio_pdf) Storage::disk('public')->delete($profile->portofolio_pdf);
             $profile->portofolio_pdf = $request->file('portofolio_pdf')->store('profiles/documents', 'public');
+        }
+        if ($request->hasFile('surat_rekomendasi_pdf')) {
+            if ($profile->surat_rekomendasi_pdf) Storage::disk('public')->delete($profile->surat_rekomendasi_pdf);
+            $profile->surat_rekomendasi_pdf = $request->file('surat_rekomendasi_pdf')->store('profiles/documents', 'public');
+        }
+        if ($request->hasFile('ktp_pdf')) {
+            if ($profile->ktp_pdf) Storage::disk('public')->delete($profile->ktp_pdf);
+            $profile->ktp_pdf = $request->file('ktp_pdf')->store('profiles/documents', 'public');
+        }
+        if ($request->hasFile('transkrip_nilai_pdf')) {
+            if ($profile->transkrip_nilai_pdf) Storage::disk('public')->delete($profile->transkrip_nilai_pdf);
+            $profile->transkrip_nilai_pdf = $request->file('transkrip_nilai_pdf')->store('profiles/documents', 'public');
         }
 
         $profile->update($request->only([

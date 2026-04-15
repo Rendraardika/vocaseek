@@ -104,9 +104,11 @@ class TalentController extends Controller
                 ],
                 // Bagian Kanan: Dokumen
                 'documents' => [
-                    'cv' => $profile->cv_path ? url('storage/'.$profile->cv_path) : null,
-                    'portfolio' => $profile->portfolio_url,
-                    'ktp' => $profile->ktp_path ? url('storage/'.$profile->ktp_path) : null,
+                    'cv' => $profile->cv_pdf ? asset('storage/'.$profile->cv_pdf) : null,
+                    'portfolio' => $profile->portofolio_pdf ? asset('storage/'.$profile->portofolio_pdf) : null,
+                    'ktp' => $profile->ktp_pdf ? asset('storage/'.$profile->ktp_pdf) : null,
+                    'recommendation_letter' => $profile->surat_rekomendasi_pdf ? asset('storage/'.$profile->surat_rekomendasi_pdf) : null,
+                    'transcript' => $profile->transkrip_nilai_pdf ? asset('storage/'.$profile->transkrip_nilai_pdf) : null,
                 ]
             ]
         ]);

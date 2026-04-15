@@ -139,6 +139,9 @@ class AdminTalentController extends Controller
             ->values();
         $cvUrl = $this->assetFromPublicDisk($profile?->cv_pdf);
         $portfolioUrl = $this->assetFromPublicDisk($profile?->portofolio_pdf);
+        $recommendationUrl = $this->assetFromPublicDisk($profile?->surat_rekomendasi_pdf);
+        $ktpUrl = $this->assetFromPublicDisk($profile?->ktp_pdf);
+        $transcriptUrl = $this->assetFromPublicDisk($profile?->transkrip_nilai_pdf);
         $cvDownloadUrl = $cvUrl ? url('/api/admin/talents/'.$user->user_id.'/download-cv') : null;
         $birthPlace = $profile?->tempat_lahir;
         $birthDate = optional($profile?->tanggal_lahir)->format('d M Y');
@@ -234,9 +237,12 @@ class AdminTalentController extends Controller
                 'cv_download_url' => $cvDownloadUrl,
                 'portfolio' => $portfolioUrl,
                 'portfolio_url' => $portfolioUrl,
-                'ktp' => null,
-                'recommendation_letter' => null,
-                'transcript' => null,
+                'ktp' => $ktpUrl,
+                'ktp_url' => $ktpUrl,
+                'recommendation_letter' => $recommendationUrl,
+                'recommendation_letter_url' => $recommendationUrl,
+                'transcript' => $transcriptUrl,
+                'transcript_url' => $transcriptUrl,
             ],
             'profile' => [
                 'foto' => $this->assetFromPublicDisk($profile?->foto),
@@ -259,6 +265,9 @@ class AdminTalentController extends Controller
                 'cv_pdf' => $cvUrl,
                 'cv_download_url' => $cvDownloadUrl,
                 'portofolio_pdf' => $portfolioUrl,
+                'surat_rekomendasi_pdf' => $recommendationUrl,
+                'ktp_pdf' => $ktpUrl,
+                'transkrip_nilai_pdf' => $transcriptUrl,
                 'skor_pretest' => $profile?->skor_pretest ?? 0,
                 'test_started_at' => optional($profile?->test_started_at)->toDateTimeString(),
                 'test_finished_at' => optional($profile?->test_finished_at)->toDateTimeString(),
