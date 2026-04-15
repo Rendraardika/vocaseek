@@ -11,6 +11,7 @@ use App\Models\InternCertification;
 use App\Models\Lowongan; // Pastikan Abang buat model untuk tabel lowongan
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class InternController extends Controller
@@ -97,6 +98,8 @@ class InternController extends Controller
     {
         $user = Auth::user();
         $profile = InternProfile::where('user_id', $user->user_id)->first();
+        $pengalaman = $this->normalizeArrayInput($request->input('pengalaman', $request->input('experiences')));
+        $sertifikasi = $this->normalizeArrayInput($request->input('sertifikasi', $request->input('certifications')));
 
         $request->validate([
             'foto'           => 'nullable|image|max:2048',
@@ -108,42 +111,84 @@ class InternController extends Controller
             'ipk'            => 'nullable|numeric|between:0,4.00',
         ]);
 
-        if ($request->hasFile('foto')) {
-            if ($profile->foto) Storage::disk('public')->delete($profile->foto);
-            $profile->foto = $request->file('foto')->store('profiles/photos', 'public');
-        }
-        if ($request->hasFile('cv_pdf')) {
-            if ($profile->cv_pdf) Storage::disk('public')->delete($profile->cv_pdf);
-            $profile->cv_pdf = $request->file('cv_pdf')->store('profiles/documents', 'public');
-        }
-        if ($request->hasFile('portofolio_pdf')) {
-            if ($profile->portofolio_pdf) Storage::disk('public')->delete($profile->portofolio_pdf);
-            $profile->portofolio_pdf = $request->file('portofolio_pdf')->store('profiles/documents', 'public');
-        }
-        if ($request->hasFile('surat_rekomendasi_pdf')) {
-            if ($profile->surat_rekomendasi_pdf) Storage::disk('public')->delete($profile->surat_rekomendasi_pdf);
-            $profile->surat_rekomendasi_pdf = $request->file('surat_rekomendasi_pdf')->store('profiles/documents', 'public');
-        }
-        if ($request->hasFile('ktp_pdf')) {
-            if ($profile->ktp_pdf) Storage::disk('public')->delete($profile->ktp_pdf);
-            $profile->ktp_pdf = $request->file('ktp_pdf')->store('profiles/documents', 'public');
-        }
-        if ($request->hasFile('transkrip_nilai_pdf')) {
-            if ($profile->transkrip_nilai_pdf) Storage::disk('public')->delete($profile->transkrip_nilai_pdf);
-            $profile->transkrip_nilai_pdf = $request->file('transkrip_nilai_pdf')->store('profiles/documents', 'public');
-        }
+        DB::transaction(function () use ($request, $profile, $user, $pengalaman, $sertifikasi) {
+            if ($request->hasFile('foto')) {
+                if ($profile->foto) Storage::disk('public')->delete($profile->foto);
+                $profile->foto = $request->file('foto')->store('profiles/photos', 'public');
+            }
+            if ($request->hasFile('cv_pdf')) {
+                if ($profile->cv_pdf) Storage::disk('public')->delete($profile->cv_pdf);
+                $profile->cv_pdf = $request->file('cv_pdf')->store('profiles/documents', 'public');
+            }
+            if ($request->hasFile('portofolio_pdf')) {
+                if ($profile->portofolio_pdf) Storage::disk('public')->delete($profile->portofolio_pdf);
+                $profile->portofolio_pdf = $request->file('portofolio_pdf')->store('profiles/documents', 'public');
+            }
+            if ($request->hasFile('surat_rekomendasi_pdf')) {
+                if ($profile->surat_rekomendasi_pdf) Storage::disk('public')->delete($profile->surat_rekomendasi_pdf);
+                $profile->surat_rekomendasi_pdf = $request->file('surat_rekomendasi_pdf')->store('profiles/documents', 'public');
+            }
+            if ($request->hasFile('ktp_pdf')) {
+                if ($profile->ktp_pdf) Storage::disk('public')->delete($profile->ktp_pdf);
+                $profile->ktp_pdf = $request->file('ktp_pdf')->store('profiles/documents', 'public');
+            }
+            if ($request->hasFile('transkrip_nilai_pdf')) {
+                if ($profile->transkrip_nilai_pdf) Storage::disk('public')->delete($profile->transkrip_nilai_pdf);
+                $profile->transkrip_nilai_pdf = $request->file('transkrip_nilai_pdf')->store('profiles/documents', 'public');
+            }
 
-        $profile->update($request->only([
-            'tentang_saya', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin',
-            'provinsi', 'kabupaten', 'detail_alamat', 'universitas', 'jurusan',
-            'jenjang', 'ipk', 'tahun_masuk', 'tahun_lulus', 'linkedin', 'instagram', 'notelp'
-        ]));
+            $profile->fill($request->only([
+                'tentang_saya', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin',
+                'provinsi', 'kabupaten', 'detail_alamat', 'universitas', 'jurusan',
+                'jenjang', 'ipk', 'tahun_masuk', 'tahun_lulus', 'linkedin', 'instagram', 'notelp'
+            ]));
 
-        // Update status kelengkapan
-        if ($profile->foto && $profile->cv_pdf && $profile->universitas) {
-            $profile->is_profile_complete = 1;
+            if ($profile->foto && $profile->cv_pdf && $profile->universitas) {
+                $profile->is_profile_complete = 1;
+            }
+
             $profile->save();
-        }
+
+            if ($request->exists('pengalaman') || $request->exists('experiences')) {
+                InternExperience::where('user_id', $user->user_id)->delete();
+
+                foreach ($pengalaman as $item) {
+                    $title = trim((string) ($item['title'] ?? $item['jabatan'] ?? ''));
+                    $company = trim((string) ($item['company'] ?? $item['perusahaan'] ?? ''));
+                    $period = trim((string) ($item['period'] ?? $item['periode'] ?? ''));
+
+                    if ($title === '' && $company === '' && $period === '') {
+                        continue;
+                    }
+
+                    InternExperience::create([
+                        'user_id' => $user->user_id,
+                        'title' => $title !== '' ? $title : '-',
+                        'company' => $company !== '' ? $company : '-',
+                        'period' => $period !== '' ? $period : '-',
+                    ]);
+                }
+            }
+
+            if ($request->exists('sertifikasi') || $request->exists('certifications')) {
+                InternCertification::where('user_id', $user->user_id)->delete();
+
+                foreach ($sertifikasi as $item) {
+                    $name = is_array($item)
+                        ? trim((string) ($item['name'] ?? $item['nama'] ?? ''))
+                        : trim((string) $item);
+
+                    if ($name === '') {
+                        continue;
+                    }
+
+                    InternCertification::create([
+                        'user_id' => $user->user_id,
+                        'name' => $name,
+                    ]);
+                }
+            }
+        });
 
         return response()->json(['status' => 'success', 'message' => 'Profil diperbarui!']);
     }
@@ -341,5 +386,15 @@ class InternController extends Controller
         return now()->greaterThan(
             Carbon::parse($profile->test_started_at)->addMinutes($this->pretestDurationMinutes())
         );
+    }
+
+    private function normalizeArrayInput(mixed $value): array
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($value) ? $value : [];
     }
 }
