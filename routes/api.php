@@ -105,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::prefix('profile')->group(function () {
                 Route::get('/', [AdminProfileController::class, 'show']);
                 Route::post('/update', [AdminProfileController::class, 'update']);
+                Route::post('/change-password', [AdminProfileController::class, 'changePassword']);
                 Route::put('/change-password', [AdminProfileController::class, 'changePassword']);
             });
 

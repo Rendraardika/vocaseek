@@ -10,6 +10,23 @@ use Illuminate\Validation\Rules;
 
 class AdminProfileController extends Controller
 {
+    private function normalizePasswordPayload(Request $request): void
+    {
+        $request->merge([
+            'current_password' => $request->input('current_password')
+                ?? $request->input('old_password')
+                ?? $request->input('currentPassword')
+                ?? $request->input('oldPassword'),
+            'password' => $request->input('password')
+                ?? $request->input('new_password')
+                ?? $request->input('newPassword'),
+            'password_confirmation' => $request->input('password_confirmation')
+                ?? $request->input('confirm_password')
+                ?? $request->input('confirmPassword')
+                ?? $request->input('new_password_confirmation'),
+        ]);
+    }
+
     /**
      * 1. GET DATA PROFIL (Gambar Utama)
      */
@@ -49,6 +66,8 @@ class AdminProfileController extends Controller
      */
     public function changePassword(Request $request)
     {
+        $this->normalizePasswordPayload($request);
+
         $request->validate([
             'current_password' => ['required', 'current_password'], // Cek sandi lama bener apa kagak
             'password' => ['required', 'confirmed', Rules\Password::defaults()],

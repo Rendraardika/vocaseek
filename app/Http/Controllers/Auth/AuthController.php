@@ -9,9 +9,15 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\InternProfile;
 use App\Models\CompanyProfile;
+use Illuminate\Contracts\Auth\StatefulGuard;
 
 class AuthController extends Controller
 {
+    private function webGuard(): StatefulGuard
+    {
+        return Auth::guard('web');
+    }
+
     // 1. FUNGSI LOGIN
     public function login(Request $request)
     {
@@ -20,23 +26,32 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::check()) {
-            Auth::logout();
+        $guard = $this->webGuard();
+
+        if ($guard->check()) {
+            $guard->logout();
         }
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! $guard->attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Email atau Password salah'], 401);
         }
 
-        $request->session()->regenerate();
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
-        $user = Auth::user();
+        $user = $guard->user();
 
         if ($user->role === 'company') {
             $companyProfile = $user->companyProfile;
 
             if (!$companyProfile || $companyProfile->status_mitra !== 'active') {
-                Auth::logout();
+                $guard->logout();
+
+                if ($request->hasSession()) {
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                }
 
                 return response()->json([
                     'status' => 'error',
