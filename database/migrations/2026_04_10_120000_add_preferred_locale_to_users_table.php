@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('users', 'preferred_locale')) {
+            return;
+        }
+
         Schema::table('users', function (Blueprint $table) {
             $table->string('preferred_locale', 5)->default('id')->after('notelp');
         });
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (!Schema::hasColumn('users', 'preferred_locale')) {
+            return;
+        }
+
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('preferred_locale');
         });

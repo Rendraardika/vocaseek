@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -35,7 +36,9 @@ class SetLocale
                 $user = $accessToken?->tokenable;
             }
 
-            $locale = $user?->preferred_locale;
+            if ($user && User::supportsPreferredLocale()) {
+                $locale = $user->preferred_locale;
+            }
         }
 
         if (!$locale) {

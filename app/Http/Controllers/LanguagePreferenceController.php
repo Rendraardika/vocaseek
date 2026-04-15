@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class LanguagePreferenceController extends Controller
@@ -10,7 +11,7 @@ class LanguagePreferenceController extends Controller
     {
         $availableLocales = config('app.available_locales', ['id', 'en']);
         $user = $request->user();
-        $locale = $user?->preferred_locale ?: app()->getLocale();
+        $locale = $user?->getResolvedLocale() ?: app()->getLocale();
 
         if (!in_array($locale, $availableLocales, true)) {
             $locale = config('app.locale', 'id');
@@ -35,7 +36,7 @@ class LanguagePreferenceController extends Controller
 
         $user = $request->user();
 
-        if ($user) {
+        if ($user && User::supportsPreferredLocale()) {
             $user->update([
                 'preferred_locale' => $validated['locale'],
             ]);

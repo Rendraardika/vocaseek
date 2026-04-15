@@ -61,7 +61,7 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'notelp' => $user->notelp,
             ],
-            'locale' => $user->preferred_locale ?? app()->getLocale(),
+            'locale' => $user->getResolvedLocale(),
         ]);
     }
 
@@ -89,15 +89,20 @@ class AuthController extends Controller
 
         try {
             $user = DB::transaction(function () use ($request) {
-                // Simpan ke tabel users
-                $user = User::create([
+                $userData = [
                     'nama'     => $request->nama,
                     'email'    => $request->email,
                     'password' => $request->password,
                     'role'     => $request->role,
                     'notelp'   => $request->notelp,
-                    'preferred_locale' => app()->getLocale(),
-                ]);
+                ];
+
+                if (User::supportsPreferredLocale()) {
+                    $userData['preferred_locale'] = app()->getLocale();
+                }
+
+                // Simpan ke tabel users
+                $user = User::create($userData);
 
                 if ($request->role === 'company') {
                     // Simpan file ke storage/public/company/documents
@@ -131,7 +136,7 @@ class AuthController extends Controller
                     'message' => __('messages.auth.company_register_pending'),
                     'user'    => $user->nama,
                     'role'    => $user->role,
-                    'locale'  => $user->preferred_locale ?? app()->getLocale(),
+                    'locale'  => $user->getResolvedLocale(),
                 ], 201);
             }
 
@@ -143,7 +148,7 @@ class AuthController extends Controller
                 'token'   => $token,
                 'user'    => $user->nama,
                 'role'    => $user->role,
-                'locale'  => $user->preferred_locale ?? app()->getLocale(),
+                'locale'  => $user->getResolvedLocale(),
             ], 201);
 
         } catch (\Exception $e) {
@@ -186,7 +191,7 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'role' => $user->role,
                 'notelp' => $user->notelp,
-                'preferred_locale' => $user->preferred_locale ?? app()->getLocale(),
+                'preferred_locale' => $user->getResolvedLocale(),
                 'google_id' => $user->google_id,
             ],
         ]);

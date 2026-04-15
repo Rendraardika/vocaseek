@@ -47,7 +47,7 @@ class ForgotPasswordController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Kata sandi berhasil diperbarui!']) // Sesuai layar ke-3 Figma
+            ? response()->json(['message' => 'Kata sandi berhasil diperbarui!'])
             : response()->json(['message' => 'Token tidak valid atau sudah kadaluarsa.'], 400);
     }
 }

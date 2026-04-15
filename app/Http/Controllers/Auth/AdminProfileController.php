@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
 class AdminProfileController extends Controller
@@ -49,12 +50,17 @@ class AdminProfileController extends Controller
     {
         $request->validate([
             'current_password' => ['required', 'current_password'], // Cek sandi lama bener apa kagak
-            'password' => ['required', 'confirmed', Rules\Password::defaults()], // Sandi baru + konfirmasi
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        auth()->user()->update([
-            'password' => $request->password,
-        ]);
+        $user = auth()->user();
+
+        $user->forceFill([
+            'password' => $request->string('password')->value(),
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        $user->tokens()->delete();
 
         return response()->json(['message' => 'Kata sandi berhasil diperbarui!']);
     }

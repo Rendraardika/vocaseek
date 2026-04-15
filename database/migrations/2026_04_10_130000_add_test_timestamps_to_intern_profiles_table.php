@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('intern_profiles', function (Blueprint $table) {
-            $table->timestamp('test_started_at')->nullable()->after('skor_pretest');
-            $table->timestamp('test_finished_at')->nullable()->after('test_started_at');
+            if (!Schema::hasColumn('intern_profiles', 'test_started_at')) {
+                $table->timestamp('test_started_at')->nullable()->after('skor_pretest');
+            }
+
+            if (!Schema::hasColumn('intern_profiles', 'test_finished_at')) {
+                $table->timestamp('test_finished_at')->nullable()->after('test_started_at');
+            }
         });
     }
 
@@ -23,7 +28,19 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('intern_profiles', function (Blueprint $table) {
-            $table->dropColumn(['test_started_at', 'test_finished_at']);
+            $columnsToDrop = [];
+
+            if (Schema::hasColumn('intern_profiles', 'test_started_at')) {
+                $columnsToDrop[] = 'test_started_at';
+            }
+
+            if (Schema::hasColumn('intern_profiles', 'test_finished_at')) {
+                $columnsToDrop[] = 'test_finished_at';
+            }
+
+            if ($columnsToDrop !== []) {
+                $table->dropColumn($columnsToDrop);
+            }
         });
     }
 };

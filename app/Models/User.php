@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected static ?bool $hasPreferredLocaleColumn = null;
 
     protected $table = 'users';
     
@@ -103,5 +106,23 @@ HTML;
     private function passwordResetExpiryMinutes(): int
     {
         return (int) config('auth.passwords.'.config('auth.defaults.passwords').'.expire', 60);
+    }
+
+    public static function supportsPreferredLocale(): bool
+    {
+        if (self::$hasPreferredLocaleColumn === null) {
+            self::$hasPreferredLocaleColumn = Schema::hasColumn('users', 'preferred_locale');
+        }
+
+        return self::$hasPreferredLocaleColumn;
+    }
+
+    public function getResolvedLocale(): string
+    {
+        if (self::supportsPreferredLocale() && filled($this->preferred_locale)) {
+            return $this->preferred_locale;
+        }
+
+        return app()->getLocale();
     }
 }
