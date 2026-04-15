@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class InternCertification extends Model
 {
-    protected $fillable = ['user_id', 'name'];
+    protected $fillable = ['user_id', 'name', 'document_path'];
 
     public function user()
     {

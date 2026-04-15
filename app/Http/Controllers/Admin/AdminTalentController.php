@@ -123,19 +123,23 @@ class AdminTalentController extends Controller
             ->values();
         $experiences = InternExperience::where('user_id', $user->user_id)
             ->orderByDesc('id')
-            ->get(['title', 'company', 'period'])
-            ->map(fn ($experience) => [
+            ->get(['id', 'title', 'company', 'period', 'document_path'])
+            ->map(fn ($experience) => $this->transformDocumentItem([
+                'id' => $experience->id,
                 'title' => $experience->title,
                 'company' => $experience->company,
                 'period' => $experience->period,
-            ])
+                'document_path' => $experience->document_path,
+            ]))
             ->values();
         $certifications = InternCertification::where('user_id', $user->user_id)
             ->orderByDesc('id')
-            ->get(['name'])
-            ->map(fn ($certification) => [
+            ->get(['id', 'name', 'document_path'])
+            ->map(fn ($certification) => $this->transformDocumentItem([
+                'id' => $certification->id,
                 'name' => $certification->name,
-            ])
+                'document_path' => $certification->document_path,
+            ]))
             ->values();
         $cvUrl = $this->assetFromPublicDisk($profile?->cv_pdf);
         $portfolioUrl = $this->assetFromPublicDisk($profile?->portofolio_pdf);
@@ -214,7 +218,6 @@ class AdminTalentController extends Controller
                 'experiences' => $experiences,
                 'experience' => $experiences,
                 'certifications' => $certifications,
-                'skills' => [],
             ],
             'assessment' => [
                 'score' => $profile?->skor_pretest ?? 0,
@@ -290,5 +293,19 @@ class AdminTalentController extends Controller
         }
 
         return asset('storage/' . ltrim($path, '/'));
+    }
+
+    private function transformDocumentItem(array $item): array
+    {
+        $documentUrl = $this->assetFromPublicDisk($item['document_path'] ?? null);
+
+        return array_merge($item, [
+            'document' => $documentUrl,
+            'file' => $documentUrl,
+            'document_url' => $documentUrl,
+            'file_url' => $documentUrl,
+            'preview_url' => $documentUrl,
+            'supporting_document_url' => $documentUrl,
+        ]);
     }
 }

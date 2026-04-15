@@ -63,8 +63,24 @@ class InternController extends Controller
         
         if (!$profile) return response()->json(['message' => 'Profil tidak ditemukan'], 404);
 
-        $experiences = InternExperience::where('user_id', $user->user_id)->get();
-        $certifications = InternCertification::where('user_id', $user->user_id)->get();
+        $experiences = InternExperience::where('user_id', $user->user_id)
+            ->get()
+            ->map(fn ($experience) => $this->transformDocumentItem([
+                'id' => $experience->id,
+                'title' => $experience->title,
+                'company' => $experience->company,
+                'period' => $experience->period,
+                'document_path' => $experience->document_path,
+            ]))
+            ->values();
+        $certifications = InternCertification::where('user_id', $user->user_id)
+            ->get()
+            ->map(fn ($certification) => $this->transformDocumentItem([
+                'id' => $certification->id,
+                'name' => $certification->name,
+                'document_path' => $certification->document_path,
+            ]))
+            ->values();
 
         return response()->json([
             'status' => 'success',
@@ -100,6 +116,8 @@ class InternController extends Controller
         $profile = InternProfile::where('user_id', $user->user_id)->first();
         $pengalaman = $this->normalizeArrayInput($request->input('pengalaman', $request->input('experiences')));
         $sertifikasi = $this->normalizeArrayInput($request->input('sertifikasi', $request->input('certifications')));
+        $pengalamanFiles = $this->normalizeNestedFiles($request->file('pengalaman', $request->file('experiences', [])));
+        $sertifikasiFiles = $this->normalizeNestedFiles($request->file('sertifikasi', $request->file('certifications', [])));
 
         $request->validate([
             'foto'           => 'nullable|image|max:2048',
@@ -150,14 +168,27 @@ class InternController extends Controller
             $profile->save();
 
             if ($request->exists('pengalaman') || $request->exists('experiences')) {
+                $existingExperiences = InternExperience::where('user_id', $user->user_id)->get();
+
+                foreach ($existingExperiences as $existingExperience) {
+                    if ($existingExperience->document_path) {
+                        Storage::disk('public')->delete($existingExperience->document_path);
+                    }
+                }
+
                 InternExperience::where('user_id', $user->user_id)->delete();
 
-                foreach ($pengalaman as $item) {
+                foreach ($pengalaman as $index => $item) {
                     $title = trim((string) ($item['title'] ?? $item['jabatan'] ?? ''));
                     $company = trim((string) ($item['company'] ?? $item['perusahaan'] ?? ''));
                     $period = trim((string) ($item['period'] ?? $item['periode'] ?? ''));
+                    $documentPath = $this->storeNestedDocument(
+                        $pengalamanFiles,
+                        $index,
+                        ['document', 'document_file', 'file', 'supporting_document']
+                    );
 
-                    if ($title === '' && $company === '' && $period === '') {
+                    if ($title === '' && $company === '' && $period === '' && !$documentPath) {
                         continue;
                     }
 
@@ -166,25 +197,40 @@ class InternController extends Controller
                         'title' => $title !== '' ? $title : '-',
                         'company' => $company !== '' ? $company : '-',
                         'period' => $period !== '' ? $period : '-',
+                        'document_path' => $documentPath,
                     ]);
                 }
             }
 
             if ($request->exists('sertifikasi') || $request->exists('certifications')) {
+                $existingCertifications = InternCertification::where('user_id', $user->user_id)->get();
+
+                foreach ($existingCertifications as $existingCertification) {
+                    if ($existingCertification->document_path) {
+                        Storage::disk('public')->delete($existingCertification->document_path);
+                    }
+                }
+
                 InternCertification::where('user_id', $user->user_id)->delete();
 
-                foreach ($sertifikasi as $item) {
+                foreach ($sertifikasi as $index => $item) {
                     $name = is_array($item)
                         ? trim((string) ($item['name'] ?? $item['nama'] ?? ''))
                         : trim((string) $item);
+                    $documentPath = $this->storeNestedDocument(
+                        $sertifikasiFiles,
+                        $index,
+                        ['document', 'document_file', 'file', 'supporting_document']
+                    );
 
-                    if ($name === '') {
+                    if ($name === '' && !$documentPath) {
                         continue;
                     }
 
                     InternCertification::create([
                         'user_id' => $user->user_id,
-                        'name' => $name,
+                        'name' => $name !== '' ? $name : 'Dokumen Pendukung',
+                        'document_path' => $documentPath,
                     ]);
                 }
             }
@@ -396,5 +442,48 @@ class InternController extends Controller
         }
 
         return is_array($value) ? $value : [];
+    }
+
+    private function normalizeNestedFiles(mixed $value): array
+    {
+        return is_array($value) ? $value : [];
+    }
+
+    private function storeNestedDocument(array $items, int $index, array $keys): ?string
+    {
+        $item = $items[$index] ?? null;
+
+        if (!is_array($item)) {
+            return null;
+        }
+
+        foreach ($keys as $key) {
+            $file = $item[$key] ?? null;
+
+            if ($file) {
+                return $file->store('profiles/documents', 'public');
+            }
+        }
+
+        return null;
+    }
+
+    private function transformDocumentItem(array $item): array
+    {
+        $documentUrl = $this->documentUrl($item['document_path'] ?? null);
+
+        return array_merge($item, [
+            'document' => $documentUrl,
+            'file' => $documentUrl,
+            'document_url' => $documentUrl,
+            'file_url' => $documentUrl,
+            'preview_url' => $documentUrl,
+            'supporting_document_url' => $documentUrl,
+        ]);
+    }
+
+    private function documentUrl(?string $path): ?string
+    {
+        return $path ? asset('storage/' . ltrim($path, '/')) : null;
     }
 }
