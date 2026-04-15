@@ -31,6 +31,7 @@ class InternProfile extends Model
         'ipk',
         'tahun_masuk',
         'tahun_lulus',
+        'dokumen_pendidikan_pdf',
         'cv_pdf',
         'portofolio_pdf',
         'surat_rekomendasi_pdf',

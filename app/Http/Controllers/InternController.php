@@ -90,11 +90,16 @@ class InternController extends Controller
                 'universitas' => $profile->universitas,
                 'jurusan' => $profile->jurusan,
                 'ipk' => $profile->ipk,
+                'tahun_masuk' => $profile->tahun_masuk,
+                'tahun_lulus' => $profile->tahun_lulus,
                 'provinsi' => $profile->provinsi,
                 'kabupaten' => $profile->kabupaten,
                 'foto' => $profile->foto ? asset('storage/' . $profile->foto) : null,
                 'cv' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
                 'cv_pdf' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
+                'dokumen_pendidikan_pdf' => $profile->dokumen_pendidikan_pdf ? asset('storage/' . $profile->dokumen_pendidikan_pdf) : null,
+                'education_document' => $profile->dokumen_pendidikan_pdf ? asset('storage/' . $profile->dokumen_pendidikan_pdf) : null,
+                'education_document_url' => $profile->dokumen_pendidikan_pdf ? asset('storage/' . $profile->dokumen_pendidikan_pdf) : null,
                 'portofolio_pdf' => $profile->portofolio_pdf ? asset('storage/' . $profile->portofolio_pdf) : null,
                 'surat_rekomendasi_pdf' => $profile->surat_rekomendasi_pdf ? asset('storage/' . $profile->surat_rekomendasi_pdf) : null,
                 'ktp_pdf' => $profile->ktp_pdf ? asset('storage/' . $profile->ktp_pdf) : null,
@@ -122,6 +127,8 @@ class InternController extends Controller
         $request->validate([
             'foto'           => 'nullable|image|max:2048',
             'cv_pdf'         => 'nullable|mimes:pdf|max:5120',
+            'dokumen_pendidikan_pdf' => 'nullable|mimes:pdf|max:5120',
+            'education_document' => 'nullable|mimes:pdf|max:5120',
             'portofolio_pdf' => 'nullable|mimes:pdf|max:5120',
             'surat_rekomendasi_pdf' => 'nullable|mimes:pdf|max:5120',
             'ktp_pdf' => 'nullable|mimes:pdf|max:5120',
@@ -129,7 +136,15 @@ class InternController extends Controller
             'ipk'            => 'nullable|numeric|between:0,4.00',
         ]);
 
-        DB::transaction(function () use ($request, $profile, $user, $pengalaman, $sertifikasi) {
+        DB::transaction(function () use (
+            $request,
+            $profile,
+            $user,
+            $pengalaman,
+            $sertifikasi,
+            $pengalamanFiles,
+            $sertifikasiFiles
+        ) {
             if ($request->hasFile('foto')) {
                 if ($profile->foto) Storage::disk('public')->delete($profile->foto);
                 $profile->foto = $request->file('foto')->store('profiles/photos', 'public');
@@ -137,6 +152,13 @@ class InternController extends Controller
             if ($request->hasFile('cv_pdf')) {
                 if ($profile->cv_pdf) Storage::disk('public')->delete($profile->cv_pdf);
                 $profile->cv_pdf = $request->file('cv_pdf')->store('profiles/documents', 'public');
+            }
+            $educationDocument = $request->file('dokumen_pendidikan_pdf', $request->file('education_document'));
+            if ($educationDocument) {
+                if ($profile->dokumen_pendidikan_pdf) {
+                    Storage::disk('public')->delete($profile->dokumen_pendidikan_pdf);
+                }
+                $profile->dokumen_pendidikan_pdf = $educationDocument->store('profiles/documents', 'public');
             }
             if ($request->hasFile('portofolio_pdf')) {
                 if ($profile->portofolio_pdf) Storage::disk('public')->delete($profile->portofolio_pdf);

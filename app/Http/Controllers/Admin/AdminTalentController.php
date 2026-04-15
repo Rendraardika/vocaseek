@@ -142,6 +142,7 @@ class AdminTalentController extends Controller
             ]))
             ->values();
         $cvUrl = $this->assetFromPublicDisk($profile?->cv_pdf);
+        $educationDocumentUrl = $this->assetFromPublicDisk($profile?->dokumen_pendidikan_pdf);
         $portfolioUrl = $this->assetFromPublicDisk($profile?->portofolio_pdf);
         $recommendationUrl = $this->assetFromPublicDisk($profile?->surat_rekomendasi_pdf);
         $ktpUrl = $this->assetFromPublicDisk($profile?->ktp_pdf);
@@ -172,6 +173,9 @@ class AdminTalentController extends Controller
             'cv_pdf' => $cvUrl,
             'cv_url' => $cvUrl,
             'cv_download_url' => $cvDownloadUrl,
+            'dokumen_pendidikan_pdf' => $educationDocumentUrl,
+            'education_document' => $educationDocumentUrl,
+            'education_document_url' => $educationDocumentUrl,
             'portofolio_pdf' => $portfolioUrl,
             'portofolio_url' => $portfolioUrl,
             'skor_pretest' => $profile?->skor_pretest ?? 0,
@@ -208,6 +212,12 @@ class AdminTalentController extends Controller
                     'ipk' => $profile?->ipk,
                     'tahun_masuk' => $profile?->tahun_masuk,
                     'tahun_lulus' => $profile?->tahun_lulus,
+                    'document' => $educationDocumentUrl,
+                    'file' => $educationDocumentUrl,
+                    'document_url' => $educationDocumentUrl,
+                    'file_url' => $educationDocumentUrl,
+                    'preview_url' => $educationDocumentUrl,
+                    'supporting_document_url' => $educationDocumentUrl,
                 ],
                 'university' => $profile?->universitas ?? '-',
                 'major' => $profile?->jurusan ?? '-',
@@ -215,6 +225,12 @@ class AdminTalentController extends Controller
                 'ipk' => $profile?->ipk,
                 'graduation' => $profile?->tahun_lulus ?? '-',
                 'entry_year' => $profile?->tahun_masuk ?? '-',
+                'document' => $educationDocumentUrl,
+                'file' => $educationDocumentUrl,
+                'document_url' => $educationDocumentUrl,
+                'file_url' => $educationDocumentUrl,
+                'preview_url' => $educationDocumentUrl,
+                'supporting_document_url' => $educationDocumentUrl,
                 'experiences' => $experiences,
                 'experience' => $experiences,
                 'certifications' => $certifications,
@@ -267,6 +283,9 @@ class AdminTalentController extends Controller
                 'instagram' => $profile?->instagram,
                 'cv_pdf' => $cvUrl,
                 'cv_download_url' => $cvDownloadUrl,
+                'dokumen_pendidikan_pdf' => $educationDocumentUrl,
+                'education_document' => $educationDocumentUrl,
+                'education_document_url' => $educationDocumentUrl,
                 'portofolio_pdf' => $portfolioUrl,
                 'surat_rekomendasi_pdf' => $recommendationUrl,
                 'ktp_pdf' => $ktpUrl,
