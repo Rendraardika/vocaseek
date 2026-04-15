@@ -131,6 +131,29 @@ class AdminPartnerController extends Controller
         ]);
     }
 
+    /**
+     * 4. HAPUS MITRA (SUPER ADMIN)
+     */
+    public function destroy($id)
+    {
+        $partner = CompanyProfile::with('user')->findOrFail($id);
+
+        DB::transaction(function () use ($partner) {
+            $user = $partner->user;
+
+            $partner->delete();
+
+            if ($user) {
+                $user->delete();
+            }
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mitra berhasil dihapus.',
+        ]);
+    }
+
     private function formatStatus(?string $statusMitra): string
     {
         return match ($statusMitra) {

@@ -110,6 +110,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::get('/overview', [AdminDashboardController::class, 'getOverview']);
             Route::get('/talents', [AdminTalentController::class, 'index']);
+            Route::get('/talents/{id}', [AdminTalentController::class, 'show']);
+            Route::get('/talents/{id}/download-cv', [AdminTalentController::class, 'downloadCv']);
             Route::get('/partners', [AdminPartnerController::class, 'index']);
             Route::get('/partners/{id}', [AdminPartnerController::class, 'show']); 
             
