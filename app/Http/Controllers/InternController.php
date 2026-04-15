@@ -103,7 +103,7 @@ class InternController extends Controller
             'cv_pdf'         => 'nullable|mimes:pdf|max:5120',
             'portofolio_pdf' => 'nullable|mimes:pdf|max:5120',
             'surat_rekomendasi_pdf' => 'nullable|mimes:pdf|max:5120',
-            'ktp_pdf' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
+            'ktp_pdf' => 'nullable|mimes:pdf|max:5120',
             'transkrip_nilai_pdf' => 'nullable|mimes:pdf|max:5120',
             'ipk'            => 'nullable|numeric|between:0,4.00',
         ]);
