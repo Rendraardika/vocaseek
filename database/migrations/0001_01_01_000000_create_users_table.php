@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('nama', 100); 
             $table->string('email')->unique();
             $table->string('password');
-            // Gunakan enum agar role lebih terjaga (hanya bisa diisi intern atau company)
-            $table->enum('role', ['intern', 'company'])->default('intern'); 
+            // Role user mencakup akun aplikasi dan admin internal.
+            $table->enum('role', ['intern', 'company', 'super_admin', 'staff_admin'])->default('intern');
             $table->string('notelp', 20)->nullable();
             $table->rememberToken();
             $table->timestamps();

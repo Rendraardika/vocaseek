@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
@@ -56,7 +57,7 @@ class AdminProfileController extends Controller
         $user = auth()->user();
 
         $user->forceFill([
-            'password' => $request->string('password')->value(),
+            'password' => Hash::make($request->string('password')->value()),
             'remember_token' => Str::random(60),
         ])->save();
 
