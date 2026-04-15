@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CompanyProfile;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,7 +47,7 @@ class AdminVerificationController extends Controller
      */
     public function updateReviewStatus(Request $request, $id)
     {
-        $company = CompanyProfile::findOrFail($id);
+        $company = $this->resolveCompanyProfile($id);
         $normalizedStatus = $this->normalizeVerificationInput(
             $request->input('status', $request->input('action'))
         );
@@ -87,17 +86,57 @@ class AdminVerificationController extends Controller
      */
     public function show($id)
     {
-        $company = CompanyProfile::with('user')->findOrFail($id);
+        $company = $this->resolveCompanyProfile($id, true);
 
         return response()->json([
             'status' => 'success',
             'data' => [
-                'perusahaan' => $company,
+                'perusahaan' => [
+                    'id' => $company->id,
+                    'user_id' => $company->user_id,
+                    'id_perusahaan' => 'CMP-' . str_pad($company->id, 3, '0', STR_PAD_LEFT),
+                    'nama_perusahaan' => $company->nama_perusahaan,
+                    'industri' => $company->industri,
+                    'notelp' => $company->notelp,
+                    'alamat_kantor_pusat' => $company->alamat_kantor_pusat,
+                    'nib' => $company->nib,
+                    'status_mitra' => $company->status_mitra,
+                    'email' => $company->user?->email,
+                    'loa_pdf' => $company->loa_pdf,
+                    'akta_pdf' => $company->akta_pdf,
+                    'loa_url' => $this->buildDocumentUrl($company->loa_pdf),
+                    'akta_url' => $this->buildDocumentUrl($company->akta_pdf),
+                    'created_at' => optional($company->created_at)->format('d M Y'),
+                ],
                 'dokumen' => [
-                    ['id' => 1, 'nama' => 'NIB', 'file' => $company->nib ? asset('storage/'.$company->nib) : null],
-                    ['id' => 2, 'nama' => 'Letter of Agreement (LoA)', 'file' => $company->loa_pdf ? asset('storage/'.$company->loa_pdf) : null],
-                    ['id' => 3, 'nama' => 'Akta Perusahaan', 'file' => $company->akta_pdf ? asset('storage/'.$company->akta_pdf) : null],
-                ]
+                    [
+                        'id' => 1,
+                        'nama' => 'Nomor Induk Berusaha (NIB)',
+                        'jenis' => 'text',
+                        'value' => $company->nib,
+                        'file' => null,
+                        'path' => null,
+                        'preview_url' => null,
+                    ],
+                    [
+                        'id' => 2,
+                        'nama' => 'Letter of Acceptance (LoA)',
+                        'jenis' => 'file',
+                        'value' => basename((string) $company->loa_pdf),
+                        'file' => $this->buildDocumentUrl($company->loa_pdf),
+                        'path' => $company->loa_pdf,
+                        'preview_url' => $this->buildDocumentUrl($company->loa_pdf),
+                    ],
+                    [
+                        'id' => 3,
+                        'nama' => 'Akta Pendirian Perusahaan',
+                        'jenis' => 'file',
+                        'value' => basename((string) $company->akta_pdf),
+                        'file' => $this->buildDocumentUrl($company->akta_pdf),
+                        'path' => $company->akta_pdf,
+                        'preview_url' => $this->buildDocumentUrl($company->akta_pdf),
+                    ],
+                ],
             ]
         ]);
     }
@@ -112,7 +151,7 @@ class AdminVerificationController extends Controller
             return response()->json(['message' => __('messages.verification.super_admin_only')], 403);
         }
 
-        $company = CompanyProfile::findOrFail($id);
+        $company = $this->resolveCompanyProfile($id, true);
         $normalizedStatus = $this->normalizeVerificationInput(
             $request->input('action', $request->input('status'))
         );
@@ -126,11 +165,11 @@ class AdminVerificationController extends Controller
 
         if ($normalizedStatus === 'active') {
             DB::transaction(function () use ($company) {
-                // Update tabel profile
                 $company->update(['status_mitra' => 'active']);
-                
-                // Update tabel users agar statusnya 'active'
-                $company->user->update(['status' => 'active']);
+
+                if ($company->user) {
+                    $company->user->update(['status' => 'active']);
+                }
             });
 
             return response()->json(['status' => 'success', 'message' => __('messages.verification.company_approved')]);
@@ -139,10 +178,36 @@ class AdminVerificationController extends Controller
         // Jika Reject
         DB::transaction(function () use ($company) {
             $company->update(['status_mitra' => 'rejected']);
-            $company->user->update(['status' => 'rejected']);
+
+            if ($company->user) {
+                $company->user->update(['status' => 'rejected']);
+            }
         });
 
         return response()->json(['status' => 'success', 'message' => __('messages.verification.company_rejected')]);
+    }
+
+    private function resolveCompanyProfile($identifier, bool $withUser = false): CompanyProfile
+    {
+        $query = CompanyProfile::query();
+
+        if ($withUser) {
+            $query->with('user');
+        }
+
+        return $query
+            ->where('id', $identifier)
+            ->orWhere('user_id', $identifier)
+            ->firstOrFail();
+    }
+
+    private function buildDocumentUrl(?string $path): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+        return asset('storage/' . ltrim($path, '/'));
     }
 
     private function normalizeVerificationInput(?string $value): ?string
