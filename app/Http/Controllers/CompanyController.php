@@ -29,14 +29,14 @@ class CompanyController extends Controller
             'status' => 'required|in:ACTIVE,OPEN,CLOSED,DRAFT',
         ]);
 
-        $validated['tgl_tutup_lamaran'] = $validated['tanggal_penutupan_lamaran']
+        $validated['tanggal_penutupan_lamaran'] = $validated['tanggal_penutupan_lamaran']
             ?? $validated['tgl_tutup_lamaran']
             ?? null;
-        $validated['tgl_mulai_kerja'] = $validated['tanggal_mulai_kerja']
+        $validated['tanggal_mulai_kerja'] = $validated['tanggal_mulai_kerja']
             ?? $validated['tgl_mulai_kerja']
             ?? null;
 
-        unset($validated['tanggal_penutupan_lamaran'], $validated['tanggal_mulai_kerja']);
+        unset($validated['tgl_tutup_lamaran'], $validated['tgl_mulai_kerja']);
 
         if (($validated['status'] ?? null) === 'ACTIVE') {
             $validated['status'] = 'OPEN';
