@@ -13,6 +13,38 @@ use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
+    private function normalizeJobPayload(Request $request): array
+    {
+        $validated = $request->validate([
+            'judul_posisi' => 'required|string|max:255',
+            'deskripsi_pekerjaan' => 'required|string',
+            'persyaratan' => 'required|string',
+            'lokasi' => 'required|string',
+            'tipe_magang' => 'required|in:remote,onsite,hybrid',
+            'gaji_per_bulan' => 'nullable|string',
+            'tanggal_penutupan_lamaran' => 'nullable|date',
+            'tanggal_mulai_kerja' => 'nullable|date',
+            'tgl_tutup_lamaran' => 'nullable|date',
+            'tgl_mulai_kerja' => 'nullable|date',
+            'status' => 'required|in:ACTIVE,OPEN,CLOSED,DRAFT',
+        ]);
+
+        $validated['tgl_tutup_lamaran'] = $validated['tanggal_penutupan_lamaran']
+            ?? $validated['tgl_tutup_lamaran']
+            ?? null;
+        $validated['tgl_mulai_kerja'] = $validated['tanggal_mulai_kerja']
+            ?? $validated['tgl_mulai_kerja']
+            ?? null;
+
+        unset($validated['tanggal_penutupan_lamaran'], $validated['tanggal_mulai_kerja']);
+
+        if (($validated['status'] ?? null) === 'ACTIVE') {
+            $validated['status'] = 'OPEN';
+        }
+
+        return $validated;
+    }
+
     /**
      * Helper: Ambil profil company yang sedang login
      */
@@ -174,15 +206,7 @@ class CompanyController extends Controller
             ], 403);
         }
         
-        $validated = $request->validate([
-            'judul_posisi' => 'required|string|max:255',
-            'deskripsi_pekerjaan' => 'required|string',
-            'persyaratan' => 'required|string',
-            'lokasi' => 'required|string',
-            'tipe_magang' => 'required|in:remote,onsite,hybrid',
-            'gaji_per_bulan' => 'nullable|string',
-            'status' => 'required|in:ACTIVE,CLOSED,DRAFT',
-        ]);
+        $validated = $this->normalizeJobPayload($request);
 
         $job = Lowongan::create(array_merge($validated, ['company_profile_id' => $company->id]));
 
@@ -197,8 +221,8 @@ class CompanyController extends Controller
     {
         $company = $this->getMyCompany();
         $job = Lowongan::where('id', $id)->where('company_profile_id', $company->id)->firstOrFail();
-        
-        $job->update($request->all());
+
+        $job->update($this->normalizeJobPayload($request));
         
         return response()->json(['status' => 'success', 'message' => 'Lowongan berhasil diupdate!']);
     }

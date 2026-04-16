@@ -27,9 +27,7 @@ class AdminProfileController extends Controller
         ]);
     }
 
-    /**
-     * 1. GET DATA PROFIL (Gambar Utama)
-     */
+    
     public function show()
     {
         $user = auth()->user();
@@ -61,15 +59,13 @@ class AdminProfileController extends Controller
         ]);
     }
 
-    /**
-     * 2. GANTI PASSWORD (Hanya ini yang krusial untuk keamanan)
-     */
+    
     public function changePassword(Request $request)
     {
         $this->normalizePasswordPayload($request);
 
         $request->validate([
-            'current_password' => ['required', 'current_password'], // Cek sandi lama bener apa kagak
+            'current_password' => ['required', 'current_password'], 
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -85,9 +81,7 @@ class AdminProfileController extends Controller
         return response()->json(['message' => 'Kata sandi berhasil diperbarui!']);
     }
 
-    /**
-     * 3. UPDATE DATA INFORMASI AKUN (Nama & Telp)
-     */
+    
     public function update(Request $request)
     {
         $user = auth()->user();

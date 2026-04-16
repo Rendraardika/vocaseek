@@ -11,9 +11,7 @@ use Illuminate\Support\Str;
 
 class AdminPartnerController extends Controller
 {
-    /**
-     * 1. LIST PARTNER (Gambar 1)
-     */
+    
     public function index(Request $request)
     {
         $query = CompanyProfile::with(['user']);
@@ -50,9 +48,7 @@ class AdminPartnerController extends Controller
         ]);
     }
 
-    /**
-     * 2. DETAIL MITRA (Gambar 2 & 6)
-     */
+    
     public function show($id)
     {
         $partner = CompanyProfile::with(['user', 'lowongans'])->findOrFail($id);
@@ -67,12 +63,12 @@ class AdminPartnerController extends Controller
                     'email' => $partner->user->email,
                     'phone' => $partner->user->notelp
                 ],
-                // Simulasi Riwayat Aktivitas (Gambar 6)
+               
                 'aktivitas' => [
                     ['tgl' => now()->format('d M Y'), 'pesan' => 'Membuka lowongan baru'],
                     ['tgl' => $partner->updated_at->format('d M Y'), 'pesan' => 'Dokumen MOU diverifikasi'],
                 ],
-                // Dokumen Kerjasama (Gambar 2/6)
+                
                 'dokumen' => [
                     ['nama' => 'MOU_Vokaseek.pdf', 'status' => 'Terverifikasi'],
                     ['nama' => 'SIUP_License.jpg', 'status' => 'Terverifikasi'],
@@ -81,9 +77,7 @@ class AdminPartnerController extends Controller
         ]);
     }
 
-    /**
-     * 3. TAMBAH MITRA BARU (Gambar 3, 4, 5)
-     */
+    
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -102,7 +96,7 @@ class AdminPartnerController extends Controller
         ]);
 
         $partner = DB::transaction(function () use ($validated) {
-            // Create User Account
+            
             $user = User::create([
                 'nama' => $validated['nama_pic'],
                 'email' => $validated['email'],
@@ -111,7 +105,7 @@ class AdminPartnerController extends Controller
                 'notelp' => $validated['notelp']
             ]);
 
-            // Create Profile
+            
             return CompanyProfile::create([
                 'user_id' => $user->user_id,
                 'nama_perusahaan' => $validated['nama_perusahaan'],
@@ -131,9 +125,7 @@ class AdminPartnerController extends Controller
         ]);
     }
 
-    /**
-     * 4. HAPUS MITRA (SUPER ADMIN)
-     */
+    
     public function destroy($id)
     {
         $partner = CompanyProfile::with('user')->findOrFail($id);

@@ -52,18 +52,16 @@ class AdminUserController extends Controller
         ]);
     }
 
-    /**
-     * 2. TAMBAH ADMIN WEBSITE BARU (Proses Gambar 2, 3, 4)
-     */
+    
     public function store(Request $request)
     {
-        // Validasi sesuai form di Gambar 2 & 3
+        
         $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
             'notelp' => 'required|string',
-            'role' => 'required|in:super_admin,staff_admin', // Dropdown Peran
-            'password' => 'required|min:8|confirmed', // Konfirmasi Password (Gambar 3)
+            'role' => 'required|in:super_admin,staff_admin', 
+            'password' => 'required|min:8|confirmed', 
         ]);
 
         $admin = User::create([
@@ -72,7 +70,7 @@ class AdminUserController extends Controller
             'notelp' => $validated['notelp'],
             'role' => $validated['role'],
             'password' => $validated['password'],
-            'status' => 'Active' // Default saat baru dibuat
+            'status' => 'Active' 
         ]);
 
         return response()->json([
@@ -93,25 +91,21 @@ class AdminUserController extends Controller
         ]);
     }
 
-    /**
-     * 3. UPDATE STATUS (Misal: Menonaktifkan Staff)
-     */
+    
     public function updateStatus(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->update(['status' => $request->status]); // Active atau Inactive
+        $user->update(['status' => $request->status]); 
 
         return response()->json(['message' => 'Status Admin berhasil diubah']);
     }
 
-    /**
-     * 4. HAPUS ADMIN (Icon Sampah - Gambar 1)
-     */
+    
     public function destroy($id)
     {
         $admin = User::findOrFail($id);
         
-        // Proteksi: Jangan biarkan Super Admin menghapus dirinya sendiri
+        
         if (auth()->id() == $admin->user_id) {
             return response()->json(['message' => 'Bahaya! Anda tidak bisa menghapus akun sendiri'], 403);
         }
