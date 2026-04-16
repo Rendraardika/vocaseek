@@ -7,6 +7,9 @@ use App\Models\User;
 use App\Models\Lowongan;
 use App\Models\JobApplication;
 use App\Models\InternProfile;
+use App\Models\InternExperience;
+use App\Models\InternCertification;
+use App\Models\TestAnswer;
 use App\Notifications\CandidateStatusUpdated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -71,6 +74,49 @@ class TalentController extends Controller
 
         $user = $application->user;
         $profile = $user->internProfile;
+        $answers = TestAnswer::where('user_id', $user->user_id)
+            ->orderBy('id')
+            ->get(['id', 'question_text', 'user_answer'])
+            ->map(fn ($answer, $index) => [
+                'id' => $answer->id,
+                'nomor' => $index + 1,
+                'question' => $answer->question_text,
+                'question_text' => $answer->question_text,
+                'answer' => $answer->user_answer,
+                'user_answer' => $answer->user_answer,
+            ])
+            ->values();
+        $experiences = InternExperience::where('user_id', $user->user_id)
+            ->orderByDesc('id')
+            ->get(['id', 'title', 'company', 'period', 'document_path'])
+            ->map(fn ($experience) => $this->transformDocumentItem([
+                'id' => $experience->id,
+                'title' => $experience->title,
+                'company' => $experience->company,
+                'period' => $experience->period,
+                'document_path' => $experience->document_path,
+            ]))
+            ->values();
+        $certifications = InternCertification::where('user_id', $user->user_id)
+            ->orderByDesc('id')
+            ->get(['id', 'name', 'document_path'])
+            ->map(fn ($certification) => $this->transformDocumentItem([
+                'id' => $certification->id,
+                'name' => $certification->name,
+                'document_path' => $certification->document_path,
+            ]))
+            ->values();
+        $photoUrl = $this->assetFromPublicDisk($profile?->foto);
+        $educationDocumentUrl = $this->assetFromPublicDisk($profile?->dokumen_pendidikan_pdf);
+        $cvUrl = $this->assetFromPublicDisk($profile?->cv_pdf);
+        $portfolioUrl = $this->assetFromPublicDisk($profile?->portofolio_pdf);
+        $recommendationUrl = $this->assetFromPublicDisk($profile?->surat_rekomendasi_pdf);
+        $ktpUrl = $this->assetFromPublicDisk($profile?->ktp_pdf);
+        $transcriptUrl = $this->assetFromPublicDisk($profile?->transkrip_nilai_pdf);
+        $birthDisplay = trim(collect([
+            $profile?->tempat_lahir,
+            optional($profile?->tanggal_lahir)->format('d M Y'),
+        ])->filter()->implode(', '));
 
         return response()->json([
             'status' => 'success',
@@ -78,38 +124,80 @@ class TalentController extends Controller
                 // Bagian Kiri UI: Data Pribadi
                 'personal' => [
                     'name' => $user->nama,
-                    'role' => $profile->posisi_sekarang ?? 'Candidate',
-                    'biodata' => $profile->biodata ?? 'Belum ada biodata.',
-                    'gender' => $profile->jenis_kelamin ?? '-',
-                    'birth' => ($profile->tempat_lahir ?? '-') . ', ' . ($profile->tgl_lahir ?? '-'),
+                    'photo' => $photoUrl,
+                    'foto' => $photoUrl,
+                    'role' => $profile?->jenjang ?? 'Candidate',
+                    'biodata' => $profile?->tentang_saya ?? 'Belum ada biodata.',
+                    'gender' => $profile?->jenis_kelamin ?? '-',
+                    'birth' => $birthDisplay !== '' ? $birthDisplay : '-',
                     'email' => $user->email,
-                    'phone' => $user->notelp,
-                    'address' => $profile->alamat ?? '-',
+                    'phone' => $profile?->notelp ?? $user->notelp,
+                    'address' => trim(collect([
+                        $profile?->detail_alamat,
+                        $profile?->kabupaten,
+                        $profile?->provinsi,
+                    ])->filter()->implode(', ')) ?: '-',
                     'socials' => [
-                        'linkedin' => $profile->linkedin_url,
-                        'instagram' => $profile->instagram_url,
+                        'linkedin' => $profile?->linkedin,
+                        'instagram' => $profile?->instagram,
                     ]
                 ],
                 // Bagian Tengah: Akademik & Assessment
                 'academic' => [
-                    'university' => $profile->asal_kampus,
-                    'major' => $profile->prodi,
-                    'ipk' => $profile->ipk ?? '0.00',
-                    'graduation' => $profile->tahun_lulus ?? '-',
+                    'education' => [
+                        'universitas' => $profile?->universitas ?? '-',
+                        'jurusan' => $profile?->jurusan ?? '-',
+                        'jenjang' => $profile?->jenjang ?? '-',
+                        'ipk' => $profile?->ipk,
+                        'tahun_masuk' => $profile?->tahun_masuk,
+                        'tahun_lulus' => $profile?->tahun_lulus,
+                        'document' => $educationDocumentUrl,
+                        'document_url' => $educationDocumentUrl,
+                    ],
+                    'university' => $profile?->universitas ?? '-',
+                    'major' => $profile?->jurusan ?? '-',
+                    'ipk' => $profile?->ipk ?? '0.00',
+                    'graduation' => $profile?->tahun_lulus ?? '-',
+                    'experiences' => $experiences,
+                    'experience' => $experiences,
+                    'certifications' => $certifications,
                 ],
                 'assessment' => [
-                    'score' => $application->test_score ?? 0,
-                    'summary' => 'Kandidat memiliki potensi teknis yang stabil.',
-                    'date' => $application->created_at->format('d M Y')
+                    'score' => $profile?->skor_pretest ?? 0,
+                    'summary' => $answers->isNotEmpty()
+                        ? 'Jawaban pre-test tersedia untuk direview oleh mitra.'
+                        : 'Belum ada hasil assessment untuk ditampilkan.',
+                    'date' => optional($profile?->test_finished_at)->format('d M Y, H:i') ?? '-',
+                    'answers' => $answers,
                 ],
                 // Bagian Kanan: Dokumen
                 'documents' => [
-                    'cv' => $profile->cv_pdf ? asset('storage/'.$profile->cv_pdf) : null,
-                    'portfolio' => $profile->portofolio_pdf ? asset('storage/'.$profile->portofolio_pdf) : null,
-                    'ktp' => $profile->ktp_pdf ? asset('storage/'.$profile->ktp_pdf) : null,
-                    'recommendation_letter' => $profile->surat_rekomendasi_pdf ? asset('storage/'.$profile->surat_rekomendasi_pdf) : null,
-                    'transcript' => $profile->transkrip_nilai_pdf ? asset('storage/'.$profile->transkrip_nilai_pdf) : null,
-                ]
+                    'cv' => $cvUrl,
+                    'portfolio' => $portfolioUrl,
+                    'ktp' => $ktpUrl,
+                    'recommendation_letter' => $recommendationUrl,
+                    'transcript' => $transcriptUrl,
+                    'education_document' => $educationDocumentUrl,
+                ],
+                'profile' => [
+                    'foto' => $photoUrl,
+                    'tentang_saya' => $profile?->tentang_saya,
+                    'jenis_kelamin' => $profile?->jenis_kelamin,
+                    'tempat_lahir' => $profile?->tempat_lahir,
+                    'tanggal_lahir' => optional($profile?->tanggal_lahir)->format('Y-m-d'),
+                    'notelp' => $profile?->notelp ?? $user->notelp,
+                    'provinsi' => $profile?->provinsi,
+                    'kabupaten' => $profile?->kabupaten,
+                    'detail_alamat' => $profile?->detail_alamat,
+                    'universitas' => $profile?->universitas,
+                    'jurusan' => $profile?->jurusan,
+                    'jenjang' => $profile?->jenjang,
+                    'ipk' => $profile?->ipk,
+                    'tahun_masuk' => $profile?->tahun_masuk,
+                    'tahun_lulus' => $profile?->tahun_lulus,
+                    'linkedin' => $profile?->linkedin,
+                    'instagram' => $profile?->instagram,
+                ],
             ]
         ]);
     }
@@ -191,6 +279,29 @@ class TalentController extends Controller
                 'position' => $app->lowongan->judul_posisi ?? $app->lowongan->judul_pekerjaan,
                 'status' => $app->status,
             ])
+        ]);
+    }
+
+    private function assetFromPublicDisk(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+
+        return asset('storage/' . ltrim($path, '/'));
+    }
+
+    private function transformDocumentItem(array $item): array
+    {
+        $documentUrl = $this->assetFromPublicDisk($item['document_path'] ?? null);
+
+        return array_merge($item, [
+            'document' => $documentUrl,
+            'file' => $documentUrl,
+            'document_url' => $documentUrl,
+            'file_url' => $documentUrl,
+            'preview_url' => $documentUrl,
+            'supporting_document_url' => $documentUrl,
         ]);
     }
 }
