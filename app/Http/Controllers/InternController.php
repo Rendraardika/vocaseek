@@ -16,6 +16,24 @@ use Illuminate\Support\Facades\Storage;
 
 class InternController extends Controller
 {
+    private function normalizeApplicationStatus(?string $status): string
+    {
+        return match ($status) {
+            'HIRED', 'ACCEPTED', 'OFFER' => 'HIRED',
+            'REJECTED', 'DECLINED' => 'REJECTED',
+            default => 'PENDING',
+        };
+    }
+
+    private function internStatusLabel(?string $status): string
+    {
+        return match ($this->normalizeApplicationStatus($status)) {
+            'HIRED' => 'Diterima',
+            'REJECTED' => 'Ditolak',
+            default => 'Pending',
+        };
+    }
+
     public function getTestQuestions()
     {
         $user = Auth::user();
@@ -422,6 +440,57 @@ class InternController extends Controller
         ]);
 
         return response()->json(['status' => 'success', 'message' => 'Lamaran berhasil terkirim!']);
+    }
+
+    public function getMyApplications()
+    {
+        $user = Auth::user();
+
+        $applications = JobApplication::with(['lowongan.companyProfile'])
+            ->where('user_id', $user->user_id)
+            ->latest()
+            ->get();
+
+        $data = $applications->map(function ($application) {
+            $job = $application->lowongan;
+            $company = $job?->companyProfile;
+            $normalizedStatus = $this->normalizeApplicationStatus($application->status);
+
+            return [
+                'id' => $application->application_id,
+                'application_id' => $application->application_id,
+                'job_id' => $application->job_id,
+                'status' => $normalizedStatus,
+                'status_label' => $this->internStatusLabel($application->status),
+                'raw_status' => $application->status,
+                'applied_at' => optional($application->created_at)->format('d M Y'),
+                'applied_at_iso' => optional($application->created_at)->toDateTimeString(),
+                'job' => [
+                    'id' => $job?->id,
+                    'title' => $job?->judul_posisi ?? $job?->judul_pekerjaan ?? 'N/A',
+                    'position' => $job?->judul_posisi ?? $job?->judul_pekerjaan ?? 'N/A',
+                    'location' => $job?->lokasi ?? '-',
+                    'type' => $job?->tipe_magang ?? $job?->tipe_pekerjaan ?? '-',
+                    'salary' => $job?->gaji_per_bulan,
+                    'tanggal_penutupan_lamaran' => optional($job?->tanggal_penutupan_lamaran)->format('Y-m-d'),
+                    'tanggal_mulai_kerja' => optional($job?->tanggal_mulai_kerja)->format('Y-m-d'),
+                    'close_date' => optional($job?->tanggal_penutupan_lamaran)->format('d M Y'),
+                    'start_date' => optional($job?->tanggal_mulai_kerja)->format('d M Y'),
+                ],
+                'company' => [
+                    'id' => $company?->id,
+                    'name' => $company?->nama_perusahaan ?? 'N/A',
+                    'company_name' => $company?->nama_perusahaan ?? 'N/A',
+                    'logo_url' => $company?->logo_perusahaan ? asset('storage/' . ltrim($company->logo_perusahaan, '/')) : null,
+                    'location' => $company?->alamat_kantor_pusat ?? '-',
+                ],
+            ];
+        })->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ]);
     }
 
     private function pretestQuestions(): array
