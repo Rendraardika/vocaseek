@@ -48,6 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/intern/submit-test',
             'api/intern/apply',
             'api/company/jobs*',
+            'api/company/profile*',
             'api/company/talent/candidates*',
             'api/admin/profile/*',
             'api/admin/talents*',
