@@ -16,6 +16,24 @@ use Illuminate\Support\Str;
 
 class TalentController extends Controller
 {
+    private function normalizeCandidateStatus(?string $status): string
+    {
+        return match ($status) {
+            'HIRED', 'ACCEPTED', 'OFFER' => 'HIRED',
+            'REJECTED', 'DECLINED' => 'REJECTED',
+            default => 'PENDING',
+        };
+    }
+
+    private function companyStatusLabel(?string $status): string
+    {
+        return match ($this->normalizeCandidateStatus($status)) {
+            'HIRED' => 'Diterima',
+            'REJECTED' => 'Ditolak',
+            default => 'Pending',
+        };
+    }
+
 
     public function getAllCandidates(Request $request)
     {
@@ -39,9 +57,10 @@ class TalentController extends Controller
         $applications = $query->latest()->get();
 
         $stats = [
-            'total_shortlisted' => $applications->where('status', 'SHORTLISTED')->count(),
-            'total_interviews'  => $applications->where('status', 'INTERVIEW')->count(),
-            'accepted_this_month' => $applications->where('status', 'OFFER')
+            'pending' => $applications->filter(fn ($app) => $this->normalizeCandidateStatus($app->status) === 'PENDING')->count(),
+            'accepted'  => $applications->filter(fn ($app) => $this->normalizeCandidateStatus($app->status) === 'HIRED')->count(),
+            'rejected' => $applications->filter(fn ($app) => $this->normalizeCandidateStatus($app->status) === 'REJECTED')->count(),
+            'accepted_this_month' => $applications->filter(fn ($app) => $this->normalizeCandidateStatus($app->status) === 'HIRED')
                                     ->where('updated_at', '>=', now()->startOfMonth())->count(),
         ];
 
@@ -54,7 +73,8 @@ class TalentController extends Controller
             'position' => $app->lowongan->judul_posisi ?? $app->lowongan->judul_pekerjaan ?? 'N/A',
             'type' => $app->lowongan->tipe_magang ?? $app->lowongan->tipe_pekerjaan ?? 'Internship',
             'date_applied' => $app->created_at->format('d M Y'),
-            'status' => $app->status,
+            'status' => $this->normalizeCandidateStatus($app->status),
+            'status_label' => $this->companyStatusLabel($app->status),
         ]);
 
         return response()->json([
@@ -238,18 +258,19 @@ class TalentController extends Controller
     public function updateCandidateStatus(Request $request, $id)
     {
         $validated = $request->validate([
-            'status' => 'required|in:PENDING,REVIEWED,SHORTLISTED,INTERVIEW,REJECTED,OFFER', 
+            'status' => 'required|in:PENDING,HIRED,REJECTED,ACCEPTED,OFFER,DECLINED,SHORTLISTED,INTERVIEW,REVIEWED', 
         ]);
 
         $application = JobApplication::with(['user', 'lowongan.companyProfile'])
             ->where('application_id', $id)
             ->firstOrFail();
-        $application->update(['status' => $validated['status']]);
+        $normalizedStatus = $this->normalizeCandidateStatus($validated['status']);
+        $application->update(['status' => $normalizedStatus]);
 
         if ($request->send_notification && $application->user) {
             $application->user->notify(new CandidateStatusUpdated(
-                $validated['status'], 
-                $application->lowongan->judul_pekerjaan, 
+                $normalizedStatus,
+                $application->lowongan->judul_posisi ?? $application->lowongan->judul_pekerjaan,
                 $application->lowongan->companyProfile->nama_perusahaan ?? 'Vokaseek'
             ));
         }
@@ -266,7 +287,7 @@ class TalentController extends Controller
             ->whereHas('lowongan', function($q) use ($company) {
                 $q->where('company_profile_id', $company->id);
             })
-            ->whereIn('status', ['OFFER', 'SHORTLISTED', 'INTERVIEW'])
+            ->where('status', 'HIRED')
             ->latest()->get();
 
         return response()->json([
@@ -277,7 +298,8 @@ class TalentController extends Controller
                 'candidate_id' => 'KDT-' . str_pad($app->user_id, 3, '0', STR_PAD_LEFT),
                 'name' => $app->user->nama,
                 'position' => $app->lowongan->judul_posisi ?? $app->lowongan->judul_pekerjaan,
-                'status' => $app->status,
+                'status' => 'HIRED',
+                'status_label' => 'Diterima',
             ])
         ]);
     }
