@@ -49,6 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/intern/apply',
             'api/company/jobs*',
             'api/admin/profile/*',
+            'api/admin/talents*',
             'api/admin/users-management*',
             'api/admin/partners*',
             'api/admin/verification/*', // Tambahkan ini agar verifikasi admin lancar
