@@ -44,7 +44,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/auth/google',
             'api/auth/google/callback',
             'api/intern/update-profile',
+            'api/intern/start-test',
+            'api/intern/submit-test',
             'api/company/jobs', 
+            'api/admin/profile/*',
             'api/admin/users-management*',
             'api/admin/partners*',
             'api/admin/verification/*', // Tambahkan ini agar verifikasi admin lancar
