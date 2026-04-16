@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Lowongan; // Pastikan nama model sesuai
+use App\Models\Lowongan;
 use App\Models\JobApplication;
 use App\Models\CompanyProfile;
 use App\Models\User;

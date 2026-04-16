@@ -43,12 +43,13 @@ class TalentController extends Controller
         ];
 
         $tableData = $applications->map(fn($app) => [
-            'id' => $app->id,
+            'id' => $app->application_id,
+            'application_id' => $app->application_id,
             'candidate_id' => 'KDT-' . str_pad($app->user_id, 3, '0', STR_PAD_LEFT),
             'name' => $app->user->nama ?? 'N/A',
             'email' => $app->user->email ?? '-',
-            'position' => $app->lowongan->judul_pekerjaan ?? 'N/A',
-            'type' => $app->lowongan->tipe_pekerjaan ?? 'Internship',
+            'position' => $app->lowongan->judul_posisi ?? $app->lowongan->judul_pekerjaan ?? 'N/A',
+            'type' => $app->lowongan->tipe_magang ?? $app->lowongan->tipe_pekerjaan ?? 'Internship',
             'date_applied' => $app->created_at->format('d M Y'),
             'status' => $app->status,
         ]);
@@ -63,11 +64,10 @@ class TalentController extends Controller
     
     public function getCandidateDetail($id)
     {
-        // $id adalah ID lamaran
         $application = JobApplication::with([
             'user.internProfile', 
             'lowongan'
-        ])->findOrFail($id);
+        ])->where('application_id', $id)->firstOrFail();
 
         $user = $application->user;
         $profile = $user->internProfile;
@@ -153,7 +153,9 @@ class TalentController extends Controller
             'status' => 'required|in:PENDING,REVIEWED,SHORTLISTED,INTERVIEW,REJECTED,OFFER', 
         ]);
 
-        $application = JobApplication::with(['user', 'lowongan.companyProfile'])->findOrFail($id);
+        $application = JobApplication::with(['user', 'lowongan.companyProfile'])
+            ->where('application_id', $id)
+            ->firstOrFail();
         $application->update(['status' => $validated['status']]);
 
         if ($request->send_notification && $application->user) {
@@ -182,10 +184,11 @@ class TalentController extends Controller
         return response()->json([
             'status' => 'success', 
             'data' => $candidates->map(fn($app) => [
-                'id' => $app->id,
+                'id' => $app->application_id,
+                'application_id' => $app->application_id,
                 'candidate_id' => 'KDT-' . str_pad($app->user_id, 3, '0', STR_PAD_LEFT),
                 'name' => $app->user->nama,
-                'position' => $app->lowongan->judul_pekerjaan,
+                'position' => $app->lowongan->judul_posisi ?? $app->lowongan->judul_pekerjaan,
                 'status' => $app->status,
             ])
         ]);
