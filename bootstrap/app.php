@@ -46,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/intern/update-profile',
             'api/intern/start-test',
             'api/intern/submit-test',
+            'api/intern/apply',
             'api/company/jobs*',
             'api/admin/profile/*',
             'api/admin/users-management*',
