@@ -19,7 +19,7 @@ class InternController extends Controller
     private function normalizeApplicationStatus(?string $status): string
     {
         return match ($status) {
-            'HIRED', 'ACCEPTED', 'OFFER' => 'HIRED',
+            'HIRED', 'ACCEPTED', 'OFFER', 'SHORTLISTED' => 'HIRED',
             'REJECTED', 'DECLINED' => 'REJECTED',
             default => 'PENDING',
         };

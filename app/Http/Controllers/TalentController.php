@@ -19,8 +19,17 @@ class TalentController extends Controller
     private function normalizeCandidateStatus(?string $status): string
     {
         return match ($status) {
-            'HIRED', 'ACCEPTED', 'OFFER' => 'HIRED',
+            'HIRED', 'ACCEPTED', 'OFFER', 'SHORTLISTED' => 'HIRED',
             'REJECTED', 'DECLINED' => 'REJECTED',
+            default => 'PENDING',
+        };
+    }
+
+    private function persistentCandidateStatus(?string $status): string
+    {
+        return match ($this->normalizeCandidateStatus($status)) {
+            'HIRED' => 'SHORTLISTED',
+            'REJECTED' => 'REJECTED',
             default => 'PENDING',
         };
     }
@@ -265,7 +274,7 @@ class TalentController extends Controller
             ->where('application_id', $id)
             ->firstOrFail();
         $normalizedStatus = $this->normalizeCandidateStatus($validated['status']);
-        $application->update(['status' => $normalizedStatus]);
+        $application->update(['status' => $this->persistentCandidateStatus($normalizedStatus)]);
 
         if ($request->send_notification && $application->user) {
             $application->user->notify(new CandidateStatusUpdated(
@@ -287,7 +296,7 @@ class TalentController extends Controller
             ->whereHas('lowongan', function($q) use ($company) {
                 $q->where('company_profile_id', $company->id);
             })
-            ->where('status', 'HIRED')
+            ->where('status', 'SHORTLISTED')
             ->latest()->get();
 
         return response()->json([
