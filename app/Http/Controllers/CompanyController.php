@@ -38,8 +38,8 @@ class CompanyController extends Controller
 
         unset($validated['tgl_tutup_lamaran'], $validated['tgl_mulai_kerja']);
 
-        if (($validated['status'] ?? null) === 'ACTIVE') {
-            $validated['status'] = 'OPEN';
+        if (($validated['status'] ?? null) === 'OPEN') {
+            $validated['status'] = 'ACTIVE';
         }
 
         return $validated;
