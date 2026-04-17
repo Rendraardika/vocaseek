@@ -109,6 +109,8 @@ class AdminTalentController extends Controller
     {
         $profile = $user->internProfile;
         $latestApplication = $user->applications->sortByDesc('created_at')->first();
+        $latestJob = $latestApplication?->lowongan;
+        $latestCompany = $latestJob?->companyProfile;
         $answers = TestAnswer::where('user_id', $user->user_id)
             ->orderBy('id')
             ->get(['id', 'question_text', 'user_answer'])
@@ -304,14 +306,14 @@ class AdminTalentController extends Controller
             'latest_application' => $latestApplication ? [
                 'application_id' => $latestApplication->application_id,
                 'job_id' => $latestApplication->job_id,
-                'job_title' => $latestApplication->lowongan?->judul_posisi ?? $latestApplication->lowongan?->judul_pekerjaan,
-                'company_name' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
-                'nama_perusahaan' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
+                'job_title' => $latestJob?->judul_posisi ?? $latestJob?->judul_pekerjaan,
+                'company_name' => $latestCompany?->nama_perusahaan,
+                'nama_perusahaan' => $latestCompany?->nama_perusahaan,
                 'status' => $latestApplication->status,
                 'applied_at' => optional($latestApplication->created_at)->format('d M Y, H:i'),
             ] : null,
-            'company_name' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
-            'nama_perusahaan' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
+            'company_name' => $latestCompany?->nama_perusahaan,
+            'nama_perusahaan' => $latestCompany?->nama_perusahaan,
         ];
     }
 
