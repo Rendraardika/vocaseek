@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'notelp',
+        'foto',
         'preferred_locale',
         'google_id', 
     ];

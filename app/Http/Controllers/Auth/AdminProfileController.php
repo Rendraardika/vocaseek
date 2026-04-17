@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
@@ -40,6 +41,7 @@ class AdminProfileController extends Controller
             'email' => $user->email,
             'email_address' => $user->email,
             'role' => $user->role,
+            'foto' => $user->foto ? asset('storage/' . ltrim($user->foto, '/')) : null,
             'data' => [
                 'nama' => $user->nama,
                 'name' => $user->nama,
@@ -49,7 +51,7 @@ class AdminProfileController extends Controller
                 'notelp' => $user->notelp,
                 'id_karyawan' => 'VK-2024-' . str_pad($user->user_id, 3, '0', STR_PAD_LEFT),
                 'role_name' => $user->role === 'super_admin' ? 'Master Admin Platform' : 'Staff Admin Platform',
-                'foto' => $user->foto,
+                'foto' => $user->foto ? asset('storage/' . ltrim($user->foto, '/')) : null,
                 'terdaftar_sejak' => optional($user->created_at)->format('M Y') ?? 'N/A',
                 'riwayat_aktivitas' => [
                     ['pesan' => 'Login Berhasil', 'waktu' => now()->format('H:i \W\I\B')],
@@ -90,7 +92,25 @@ class AdminProfileController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $user->user_id . ',user_id',
             'notelp' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'remove_foto' => 'nullable|boolean',
         ]);
+
+        if ($request->boolean('remove_foto')) {
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
+            $validated['foto'] = null;
+        }
+
+        if ($request->hasFile('foto')) {
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
+            $validated['foto'] = $request->file('foto')->store('admin/photos', 'public');
+        }
 
         $user->update($validated);
 
@@ -101,6 +121,7 @@ class AdminProfileController extends Controller
                 'nama' => $user->nama,
                 'email' => $user->email,
                 'notelp' => $user->notelp,
+                'foto' => $user->foto ? asset('storage/' . ltrim($user->foto, '/')) : null,
             ],
         ]);
     }
