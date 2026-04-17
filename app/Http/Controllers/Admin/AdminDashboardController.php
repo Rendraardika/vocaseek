@@ -33,9 +33,13 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get()
             ->map(fn ($app) => [
+                'application_id' => $app->application_id,
+                'user_id' => $app->user_id,
                 'name' => $app->user->nama ?? 'Unknown',
-                'role_category' => $app->lowongan->judul_pekerjaan ?? 'N/A',
+                'role_category' => $app->lowongan->judul_posisi ?? $app->lowongan->judul_pekerjaan ?? 'N/A',
                 'organization' => $app->lowongan->companyProfile->nama_perusahaan ?? 'N/A',
+                'company_name' => $app->lowongan->companyProfile->nama_perusahaan ?? 'N/A',
+                'nama_perusahaan' => $app->lowongan->companyProfile->nama_perusahaan ?? 'N/A',
                 'status' => $this->formatStatus($app->status),
             ]);
 

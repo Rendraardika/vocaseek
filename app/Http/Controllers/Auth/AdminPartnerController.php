@@ -8,9 +8,52 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AdminPartnerController extends Controller
 {
+    private function normalizePartnerPayload(Request $request): void
+    {
+        $request->merge([
+            'nama_perusahaan' => $request->input('nama_perusahaan')
+                ?? $request->input('company_name')
+                ?? $request->input('companyName'),
+            'industri' => $request->input('industri')
+                ?? $request->input('industry'),
+            'website' => $request->input('website')
+                ?? $request->input('website_url')
+                ?? $request->input('websiteUrl'),
+            'deskripsi' => $request->input('deskripsi')
+                ?? $request->input('description'),
+            'nama_pic' => $request->input('nama_pic')
+                ?? $request->input('pic_name')
+                ?? $request->input('picName'),
+            'jabatan_pic' => $request->input('jabatan_pic')
+                ?? $request->input('pic_position')
+                ?? $request->input('picPosition')
+                ?? $request->input('jabatan'),
+            'email' => $request->input('email')
+                ?? $request->input('email_pic')
+                ?? $request->input('pic_email')
+                ?? $request->input('picEmail'),
+            'notelp' => $request->input('notelp')
+                ?? $request->input('phone')
+                ?? $request->input('phone_number')
+                ?? $request->input('phoneNumber')
+                ?? $request->input('whatsapp'),
+            'alamat_lengkap' => $request->input('alamat_lengkap')
+                ?? $request->input('address')
+                ?? $request->input('alamat'),
+            'kota' => $request->input('kota')
+                ?? $request->input('city'),
+            'provinsi' => $request->input('provinsi')
+                ?? $request->input('province'),
+            'kode_pos' => $request->input('kode_pos')
+                ?? $request->input('postal_code')
+                ?? $request->input('postalCode'),
+        ]);
+    }
+
     
     public function index(Request $request)
     {
@@ -80,6 +123,8 @@ class AdminPartnerController extends Controller
     
     public function store(Request $request)
     {
+        $this->normalizePartnerPayload($request);
+
         $validated = $request->validate([
             'nama_perusahaan' => 'required|string',
             'industri' => 'required',
@@ -93,9 +138,11 @@ class AdminPartnerController extends Controller
             'kota' => 'required',
             'provinsi' => 'required',
             'kode_pos' => 'required',
+            'document' => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:5120',
+            'supporting_document' => 'nullable|file|mimes:pdf,doc,docx,png,jpg,jpeg|max:5120',
         ]);
 
-        $partner = DB::transaction(function () use ($validated) {
+        $partner = DB::transaction(function () use ($validated, $request) {
             
             $user = User::create([
                 'nama' => $validated['nama_pic'],
@@ -105,6 +152,8 @@ class AdminPartnerController extends Controller
                 'notelp' => $validated['notelp']
             ]);
 
+            $document = $request->file('document', $request->file('supporting_document'));
+            $documentPath = $document?->store('company/documents', 'public');
             
             return CompanyProfile::create([
                 'user_id' => $user->user_id,
@@ -113,6 +162,7 @@ class AdminPartnerController extends Controller
                 'website_url' => $validated['website'] ?? null,
                 'deskripsi' => $validated['deskripsi'] ?? null,
                 'notelp' => $validated['notelp'],
+                'loa_pdf' => $documentPath,
                 'alamat_kantor_pusat' => $validated['alamat_lengkap'] . ', ' . $validated['kota'] . ', ' . $validated['provinsi'] . ' ' . $validated['kode_pos'],
                 'status_mitra' => 'active',
             ]);
@@ -122,7 +172,7 @@ class AdminPartnerController extends Controller
             'status' => 'success',
             'message' => 'Perusahaan Berhasil Ditambahkan!',
             'data' => $partner
-        ]);
+        ], 201);
     }
 
     

@@ -25,7 +25,7 @@ class AdminTalentController extends Controller
             ->whereYear('created_at', now()->year)
             ->count();
 
-        $query = User::where('role', 'intern')->with(['internProfile', 'applications.lowongan']);
+        $query = User::where('role', 'intern')->with(['internProfile', 'applications.lowongan.companyProfile']);
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -68,7 +68,7 @@ class AdminTalentController extends Controller
     public function show($id)
     {
         $user = User::where('role', 'intern')
-            ->with(['internProfile', 'applications.lowongan'])
+            ->with(['internProfile', 'applications.lowongan.companyProfile'])
             ->findOrFail($id);
 
         return response()->json([
@@ -298,10 +298,14 @@ class AdminTalentController extends Controller
             'latest_application' => $latestApplication ? [
                 'application_id' => $latestApplication->application_id,
                 'job_id' => $latestApplication->job_id,
-                'job_title' => $latestApplication->lowongan?->judul_posisi,
+                'job_title' => $latestApplication->lowongan?->judul_posisi ?? $latestApplication->lowongan?->judul_pekerjaan,
+                'company_name' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
+                'nama_perusahaan' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
                 'status' => $latestApplication->status,
                 'applied_at' => optional($latestApplication->created_at)->format('d M Y, H:i'),
             ] : null,
+            'company_name' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
+            'nama_perusahaan' => $latestApplication->lowongan?->companyProfile?->nama_perusahaan,
         ];
     }
 
