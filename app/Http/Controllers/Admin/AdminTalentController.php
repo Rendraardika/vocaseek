@@ -111,6 +111,10 @@ class AdminTalentController extends Controller
         $latestApplication = $user->applications->sortByDesc('created_at')->first();
         $latestJob = $latestApplication?->lowongan;
         $latestCompany = $latestJob?->companyProfile;
+        $registeredAt = $user->created_at
+            ?? $profile?->created_at
+            ?? $latestApplication?->created_at
+            ?? now();
         $answers = TestAnswer::where('user_id', $user->user_id)
             ->orderBy('id')
             ->get(['id', 'question_text', 'user_answer'])
@@ -170,13 +174,13 @@ class AdminTalentController extends Controller
             'ipk' => $profile?->ipk,
             'tahun_masuk' => $profile?->tahun_masuk,
             'tahun_lulus' => $profile?->tahun_lulus,
-            'tanggal_daftar' => optional($user->created_at)->format('d M Y, H:i') ?? 'N/A',
-            'tanggal_daftar_label' => optional($user->created_at)->format('d M Y') ?? 'N/A',
-            'registered_at' => optional($user->created_at)->toDateTimeString(),
-            'registered_at_label' => optional($user->created_at)->format('d M Y') ?? 'N/A',
-            'joined_at' => optional($user->created_at)->toDateTimeString(),
-            'joined_at_label' => optional($user->created_at)->format('d M Y') ?? 'N/A',
-            'created_at' => optional($user->created_at)->toDateTimeString(),
+            'tanggal_daftar' => optional($registeredAt)->format('d M Y, H:i') ?? 'N/A',
+            'tanggal_daftar_label' => optional($registeredAt)->format('d M Y') ?? 'N/A',
+            'registered_at' => optional($registeredAt)->toDateTimeString(),
+            'registered_at_label' => optional($registeredAt)->format('d M Y') ?? 'N/A',
+            'joined_at' => optional($registeredAt)->toDateTimeString(),
+            'joined_at_label' => optional($registeredAt)->format('d M Y') ?? 'N/A',
+            'created_at' => optional($registeredAt)->toDateTimeString(),
             'status' => $latestApplication?->status ?? 'PENDING',
             'cv_pdf' => $cvUrl,
             'cv_url' => $cvUrl,
