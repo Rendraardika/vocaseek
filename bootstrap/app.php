@@ -43,6 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/reset-password',
             'api/auth/google',
             'api/auth/google/callback',
+            'api/auth/google/token',
             'api/intern/update-profile',
             'api/intern/start-test',
             'api/intern/submit-test',

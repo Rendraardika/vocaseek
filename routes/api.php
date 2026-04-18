@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 // --- AUTH CONTROLLERS ---
 use App\Http\Controllers\Auth\AuthController;
@@ -39,7 +41,11 @@ Route::get('/auth/google/callback', function () {
     return redirect()->route('google.callback', request()->query());
 });
 
-Route::post('/auth/google/token', [GoogleController::class, 'loginWithGoogleToken']);
+Route::post('/auth/google/token', [GoogleController::class, 'loginWithGoogleToken'])
+    ->withoutMiddleware([
+        EnsureFrontendRequestsAreStateful::class,
+        VerifyCsrfToken::class,
+    ]);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/forgot-password/validate-token', [ForgotPasswordController::class, 'validateResetToken']);
@@ -64,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('intern')->middleware('role:intern')->group(function () {
         Route::get('/profile', [InternController::class, 'getProfile']);
         Route::get('/test/questions', [InternController::class, 'getTestQuestions']);
+        Route::post('/update-profile', [InternController::class, 'updateProfile']);
         Route::put('/update-profile', [InternController::class, 'updateProfile']);
         Route::post('/start-test', [InternController::class, 'startTest']);
         Route::post('/submit-test', [InternController::class, 'submitPreTest']);

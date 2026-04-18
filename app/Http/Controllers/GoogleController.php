@@ -94,8 +94,12 @@ class GoogleController extends Controller
 
     private function getGoogleRedirectUrl(): string
     {
-        return config('services.google.redirect')
-            ?: rtrim(config('app.url'), '/') . '/api/auth/google/callback';
+        if (app()->runningInConsole()) {
+            return config('services.google.redirect')
+                ?: rtrim(config('app.url'), '/') . '/api/auth/google/callback';
+        }
+
+        return url('/api/auth/google/callback');
     }
 
     private function findOrCreateGoogleUser(object $googleUser): User

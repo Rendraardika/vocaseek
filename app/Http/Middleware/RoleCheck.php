@@ -9,10 +9,21 @@ class RoleCheck
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (!$request->user() || !in_array($request->user()->role, $roles)) {
+        $user = $request->user();
+
+        if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Akses Ditolak! Menu ini hanya untuk Super Admin.'
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        if (!in_array($user->role, $roles, true)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Akses Ditolak!',
+                'required_roles' => $roles,
+                'current_role' => $user->role,
             ], 403);
         }
 
