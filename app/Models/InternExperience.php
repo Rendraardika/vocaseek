@@ -8,7 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class InternExperience extends Model
 {
     // Mass Assignment agar bisa simpan data lewat InternExperience::create()
-    protected $fillable = ['user_id', 'title', 'company', 'period', 'document_path'];
+    protected $fillable = [
+        'user_id',
+        'title',
+        'type',
+        'company',
+        'start_date',
+        'end_date',
+        'period',
+        'document_path',
+    ];
 
     /**
      * Relasi ke model User

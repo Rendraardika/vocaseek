@@ -11,6 +11,7 @@ use App\Models\InternExperience;
 use App\Models\InternCertification;
 use App\Models\TestAnswer;
 use App\Notifications\CandidateStatusUpdated;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -117,23 +118,13 @@ class TalentController extends Controller
             ->values();
         $experiences = InternExperience::where('user_id', $user->user_id)
             ->orderByDesc('id')
-            ->get(['id', 'title', 'company', 'period', 'document_path'])
-            ->map(fn ($experience) => $this->transformDocumentItem([
-                'id' => $experience->id,
-                'title' => $experience->title,
-                'company' => $experience->company,
-                'period' => $experience->period,
-                'document_path' => $experience->document_path,
-            ]))
+            ->get()
+            ->map(fn ($experience) => $this->transformExperienceItem($experience))
             ->values();
         $certifications = InternCertification::where('user_id', $user->user_id)
             ->orderByDesc('id')
-            ->get(['id', 'name', 'document_path'])
-            ->map(fn ($certification) => $this->transformDocumentItem([
-                'id' => $certification->id,
-                'name' => $certification->name,
-                'document_path' => $certification->document_path,
-            ]))
+            ->get()
+            ->map(fn ($certification) => $this->transformCertificationItem($certification))
             ->values();
         $photoUrl = $this->assetFromPublicDisk($profile?->foto);
         $educationDocumentUrl = $this->assetFromPublicDisk($profile?->dokumen_pendidikan_pdf);
@@ -190,6 +181,8 @@ class TalentController extends Controller
                     'experiences' => $experiences,
                     'experience' => $experiences,
                     'certifications' => $certifications,
+                    'pengalaman' => $experiences,
+                    'sertifikasi' => $certifications,
                 ],
                 'assessment' => [
                     'score' => $profile?->skor_pretest ?? 0,
@@ -334,5 +327,45 @@ class TalentController extends Controller
             'preview_url' => $documentUrl,
             'supporting_document_url' => $documentUrl,
         ]);
+    }
+
+    private function transformExperienceItem(InternExperience $experience): array
+    {
+        return $this->transformDocumentItem([
+            'id' => $experience->id,
+            'title' => $experience->title,
+            'type' => $experience->type,
+            'company' => $experience->company,
+            'start_date' => $this->formatDateOutput($experience->start_date),
+            'end_date' => $this->formatDateOutput($experience->end_date),
+            'period' => $experience->period,
+            'document_path' => $experience->document_path,
+        ]);
+    }
+
+    private function transformCertificationItem(InternCertification $certification): array
+    {
+        return $this->transformDocumentItem([
+            'id' => $certification->id,
+            'name' => $certification->name,
+            'issuer' => $certification->issuer,
+            'issue_date' => $this->formatDateOutput($certification->issue_date),
+            'certificate_number' => $certification->certificate_number,
+            'description' => $certification->description,
+            'document_path' => $certification->document_path,
+        ]);
+    }
+
+    private function formatDateOutput(mixed $value): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse((string) $value)->format('Y-m-d');
+        } catch (\Throwable) {
+            return is_string($value) ? $value : null;
+        }
     }
 }

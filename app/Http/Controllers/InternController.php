@@ -83,21 +83,11 @@ class InternController extends Controller
 
         $experiences = InternExperience::where('user_id', $user->user_id)
             ->get()
-            ->map(fn ($experience) => $this->transformDocumentItem([
-                'id' => $experience->id,
-                'title' => $experience->title,
-                'company' => $experience->company,
-                'period' => $experience->period,
-                'document_path' => $experience->document_path,
-            ]))
+            ->map(fn ($experience) => $this->transformExperienceItem($experience))
             ->values();
         $certifications = InternCertification::where('user_id', $user->user_id)
             ->get()
-            ->map(fn ($certification) => $this->transformDocumentItem([
-                'id' => $certification->id,
-                'name' => $certification->name,
-                'document_path' => $certification->document_path,
-            ]))
+            ->map(fn ($certification) => $this->transformCertificationItem($certification))
             ->values();
 
         return response()->json([
@@ -220,22 +210,40 @@ class InternController extends Controller
 
                 foreach ($pengalaman as $index => $item) {
                     $title = trim((string) ($item['title'] ?? $item['jabatan'] ?? ''));
+                    $type = trim((string) ($item['type'] ?? $item['jenis'] ?? ''));
                     $company = trim((string) ($item['company'] ?? $item['perusahaan'] ?? ''));
-                    $period = trim((string) ($item['period'] ?? $item['periode'] ?? ''));
+                    $startDate = $this->normalizeDateValue($item['start_date'] ?? $item['mulai'] ?? null);
+                    $endDate = $this->normalizeDateValue($item['end_date'] ?? $item['akhir'] ?? null);
+                    $period = $this->buildPeriod(
+                        $item['period'] ?? $item['periode'] ?? null,
+                        $startDate,
+                        $endDate
+                    );
                     $documentPath = $this->storeNestedDocument(
                         $pengalamanFiles,
                         $index,
                         ['document', 'document_file', 'file', 'supporting_document']
                     );
 
-                    if ($title === '' && $company === '' && $period === '' && !$documentPath) {
+                    if (
+                        $title === '' &&
+                        $type === '' &&
+                        $company === '' &&
+                        !$startDate &&
+                        !$endDate &&
+                        $period === '' &&
+                        !$documentPath
+                    ) {
                         continue;
                     }
 
                     InternExperience::create([
                         'user_id' => $user->user_id,
                         'title' => $title !== '' ? $title : '-',
+                        'type' => $type !== '' ? $type : null,
                         'company' => $company !== '' ? $company : '-',
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
                         'period' => $period !== '' ? $period : '-',
                         'document_path' => $documentPath,
                     ]);
@@ -257,19 +265,42 @@ class InternController extends Controller
                     $name = is_array($item)
                         ? trim((string) ($item['name'] ?? $item['nama'] ?? ''))
                         : trim((string) $item);
+                    $issuer = is_array($item)
+                        ? trim((string) ($item['issuer'] ?? $item['penerbit'] ?? ''))
+                        : '';
+                    $issueDate = is_array($item)
+                        ? $this->normalizeDateValue($item['issue_date'] ?? $item['tanggal'] ?? null)
+                        : null;
+                    $certificateNumber = is_array($item)
+                        ? trim((string) ($item['certificate_number'] ?? $item['nomor'] ?? ''))
+                        : '';
+                    $description = is_array($item)
+                        ? trim((string) ($item['description'] ?? $item['deskripsi'] ?? ''))
+                        : '';
                     $documentPath = $this->storeNestedDocument(
                         $sertifikasiFiles,
                         $index,
                         ['document', 'document_file', 'file', 'supporting_document']
                     );
 
-                    if ($name === '' && !$documentPath) {
+                    if (
+                        $name === '' &&
+                        $issuer === '' &&
+                        !$issueDate &&
+                        $certificateNumber === '' &&
+                        $description === '' &&
+                        !$documentPath
+                    ) {
                         continue;
                     }
 
                     InternCertification::create([
                         'user_id' => $user->user_id,
                         'name' => $name !== '' ? $name : 'Dokumen Pendukung',
+                        'issuer' => $issuer !== '' ? $issuer : null,
+                        'issue_date' => $issueDate,
+                        'certificate_number' => $certificateNumber !== '' ? $certificateNumber : null,
+                        'description' => $description !== '' ? $description : null,
                         'document_path' => $documentPath,
                     ]);
                 }
@@ -571,6 +602,82 @@ class InternController extends Controller
             'preview_url' => $documentUrl,
             'supporting_document_url' => $documentUrl,
         ]);
+    }
+
+    private function transformExperienceItem(InternExperience $experience): array
+    {
+        return $this->transformDocumentItem([
+            'id' => $experience->id,
+            'title' => $experience->title,
+            'type' => $experience->type,
+            'company' => $experience->company,
+            'start_date' => $this->formatDateOutput($experience->start_date),
+            'end_date' => $this->formatDateOutput($experience->end_date),
+            'period' => $experience->period,
+            'document_path' => $experience->document_path,
+        ]);
+    }
+
+    private function transformCertificationItem(InternCertification $certification): array
+    {
+        return $this->transformDocumentItem([
+            'id' => $certification->id,
+            'name' => $certification->name,
+            'issuer' => $certification->issuer,
+            'issue_date' => $this->formatDateOutput($certification->issue_date),
+            'certificate_number' => $certification->certificate_number,
+            'description' => $certification->description,
+            'document_path' => $certification->document_path,
+        ]);
+    }
+
+    private function normalizeDateValue(mixed $value): ?string
+    {
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    private function buildPeriod(mixed $period, ?string $startDate, ?string $endDate): string
+    {
+        $period = is_string($period) ? trim($period) : '';
+
+        if ($period !== '') {
+            return $period;
+        }
+
+        if ($startDate && $endDate) {
+            return $startDate . ' - ' . $endDate;
+        }
+
+        if ($startDate) {
+            return $startDate;
+        }
+
+        if ($endDate) {
+            return $endDate;
+        }
+
+        return '';
+    }
+
+    private function formatDateOutput(mixed $value): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse((string) $value)->format('Y-m-d');
+        } catch (\Throwable) {
+            return is_string($value) ? $value : null;
+        }
     }
 
     private function documentUrl(?string $path): ?string
