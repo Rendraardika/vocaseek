@@ -10,6 +10,7 @@ use App\Models\InternExperience;
 use App\Models\InternCertification;
 use App\Models\Lowongan; // Pastikan Abang buat model untuk tabel lowongan
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -89,6 +90,22 @@ class InternController extends Controller
             ->get()
             ->map(fn ($certification) => $this->transformCertificationItem($certification))
             ->values();
+        $photoUrl = $this->documentUrl($profile->foto);
+        $cvUrl = $this->documentUrl($profile->cv_pdf);
+        $educationDocumentUrl = $this->documentUrl($profile->dokumen_pendidikan_pdf);
+        $portfolioUrl = $this->documentUrl($profile->portofolio_pdf);
+        $recommendationUrl = $this->documentUrl($profile->surat_rekomendasi_pdf);
+        $ktpUrl = $this->documentUrl($profile->ktp_pdf);
+        $transcriptUrl = $this->documentUrl($profile->transkrip_nilai_pdf);
+        $birthDisplay = trim(collect([
+            $profile->tempat_lahir,
+            optional($profile->tanggal_lahir)->format('d M Y'),
+        ])->filter()->implode(', '));
+        $addressDisplay = trim(collect([
+            $profile->detail_alamat,
+            $profile->kabupaten,
+            $profile->provinsi,
+        ])->filter()->implode(', '));
 
         return response()->json([
             'status' => 'success',
@@ -97,25 +114,139 @@ class InternController extends Controller
                 'email' => $user->email,
                 'universitas' => $profile->universitas,
                 'jurusan' => $profile->jurusan,
+                'jenjang' => $profile->jenjang,
                 'ipk' => $profile->ipk,
                 'tahun_masuk' => $profile->tahun_masuk,
                 'tahun_lulus' => $profile->tahun_lulus,
                 'provinsi' => $profile->provinsi,
                 'kabupaten' => $profile->kabupaten,
-                'foto' => $profile->foto ? asset('storage/' . $profile->foto) : null,
-                'cv' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
-                'cv_pdf' => $profile->cv_pdf ? asset('storage/' . $profile->cv_pdf) : null,
-                'dokumen_pendidikan_pdf' => $profile->dokumen_pendidikan_pdf ? asset('storage/' . $profile->dokumen_pendidikan_pdf) : null,
-                'education_document' => $profile->dokumen_pendidikan_pdf ? asset('storage/' . $profile->dokumen_pendidikan_pdf) : null,
-                'education_document_url' => $profile->dokumen_pendidikan_pdf ? asset('storage/' . $profile->dokumen_pendidikan_pdf) : null,
-                'portofolio_pdf' => $profile->portofolio_pdf ? asset('storage/' . $profile->portofolio_pdf) : null,
-                'surat_rekomendasi_pdf' => $profile->surat_rekomendasi_pdf ? asset('storage/' . $profile->surat_rekomendasi_pdf) : null,
-                'ktp_pdf' => $profile->ktp_pdf ? asset('storage/' . $profile->ktp_pdf) : null,
-                'transkrip_nilai_pdf' => $profile->transkrip_nilai_pdf ? asset('storage/' . $profile->transkrip_nilai_pdf) : null,
+                'foto' => $photoUrl,
+                'photo' => $photoUrl,
+                'cv' => $cvUrl,
+                'cv_pdf' => $cvUrl,
+                'cv_url' => $cvUrl,
+                'dokumen_pendidikan_pdf' => $educationDocumentUrl,
+                'education_document' => $educationDocumentUrl,
+                'education_document_url' => $educationDocumentUrl,
+                'portofolio_pdf' => $portfolioUrl,
+                'portofolio_url' => $portfolioUrl,
+                'portfolio' => $portfolioUrl,
+                'portfolio_url' => $portfolioUrl,
+                'surat_rekomendasi_pdf' => $recommendationUrl,
+                'recommendation_letter' => $recommendationUrl,
+                'recommendation_letter_url' => $recommendationUrl,
+                'ktp_pdf' => $ktpUrl,
+                'ktp' => $ktpUrl,
+                'ktp_url' => $ktpUrl,
+                'transkrip_nilai_pdf' => $transcriptUrl,
+                'transcript' => $transcriptUrl,
+                'transcript_url' => $transcriptUrl,
+                'tentang_saya' => $profile->tentang_saya,
+                'tempat_lahir' => $profile->tempat_lahir,
+                'tanggal_lahir' => optional($profile->tanggal_lahir)->format('Y-m-d'),
+                'jenis_kelamin' => $profile->jenis_kelamin,
+                'detail_alamat' => $profile->detail_alamat,
+                'linkedin' => $profile->linkedin,
                 'instagram' => $profile->instagram,
+                'notelp' => $profile->notelp ?? $user->notelp,
                 'is_complete' => (int) $profile->is_profile_complete,
+                'is_profile_complete' => (bool) $profile->is_profile_complete,
                 'pengalaman' => $experiences,
-                'sertifikasi' => $certifications
+                'experiences' => $experiences,
+                'experience' => $experiences,
+                'sertifikasi' => $certifications,
+                'certifications' => $certifications,
+                'personal' => [
+                    'name' => $user->nama,
+                    'photo' => $photoUrl,
+                    'foto' => $photoUrl,
+                    'role' => $profile->jenjang ?? 'Talent',
+                    'biodata' => $profile->tentang_saya ?? '-',
+                    'gender' => $profile->jenis_kelamin ?? '-',
+                    'birth' => $birthDisplay !== '' ? $birthDisplay : '-',
+                    'email' => $user->email,
+                    'phone' => $profile->notelp ?? $user->notelp,
+                    'address' => $addressDisplay !== '' ? $addressDisplay : '-',
+                    'socials' => [
+                        'linkedin' => $profile->linkedin,
+                        'instagram' => $profile->instagram,
+                    ],
+                ],
+                'academic' => [
+                    'education' => [
+                        'universitas' => $profile->universitas ?? '-',
+                        'jurusan' => $profile->jurusan ?? '-',
+                        'jenjang' => $profile->jenjang ?? '-',
+                        'ipk' => $profile->ipk,
+                        'tahun_masuk' => $profile->tahun_masuk,
+                        'tahun_lulus' => $profile->tahun_lulus,
+                        'document' => $educationDocumentUrl,
+                        'file' => $educationDocumentUrl,
+                        'document_url' => $educationDocumentUrl,
+                        'file_url' => $educationDocumentUrl,
+                        'preview_url' => $educationDocumentUrl,
+                        'supporting_document_url' => $educationDocumentUrl,
+                    ],
+                    'university' => $profile->universitas ?? '-',
+                    'major' => $profile->jurusan ?? '-',
+                    'degree' => $profile->jenjang ?? '-',
+                    'ipk' => $profile->ipk,
+                    'graduation' => $profile->tahun_lulus ?? '-',
+                    'entry_year' => $profile->tahun_masuk ?? '-',
+                    'document' => $educationDocumentUrl,
+                    'file' => $educationDocumentUrl,
+                    'document_url' => $educationDocumentUrl,
+                    'file_url' => $educationDocumentUrl,
+                    'preview_url' => $educationDocumentUrl,
+                    'supporting_document_url' => $educationDocumentUrl,
+                    'experiences' => $experiences,
+                    'experience' => $experiences,
+                    'certifications' => $certifications,
+                    'pengalaman' => $experiences,
+                    'sertifikasi' => $certifications,
+                ],
+                'documents' => [
+                    'cv' => $cvUrl,
+                    'cv_url' => $cvUrl,
+                    'portfolio' => $portfolioUrl,
+                    'portfolio_url' => $portfolioUrl,
+                    'ktp' => $ktpUrl,
+                    'ktp_url' => $ktpUrl,
+                    'recommendation_letter' => $recommendationUrl,
+                    'recommendation_letter_url' => $recommendationUrl,
+                    'transcript' => $transcriptUrl,
+                    'transcript_url' => $transcriptUrl,
+                    'education_document' => $educationDocumentUrl,
+                    'education_document_url' => $educationDocumentUrl,
+                ],
+                'profile' => [
+                    'foto' => $photoUrl,
+                    'tentang_saya' => $profile->tentang_saya,
+                    'tempat_lahir' => $profile->tempat_lahir,
+                    'tanggal_lahir' => optional($profile->tanggal_lahir)->format('Y-m-d'),
+                    'jenis_kelamin' => $profile->jenis_kelamin,
+                    'notelp' => $profile->notelp ?? $user->notelp,
+                    'provinsi' => $profile->provinsi,
+                    'kabupaten' => $profile->kabupaten,
+                    'detail_alamat' => $profile->detail_alamat,
+                    'universitas' => $profile->universitas,
+                    'jurusan' => $profile->jurusan,
+                    'jenjang' => $profile->jenjang,
+                    'ipk' => $profile->ipk,
+                    'tahun_masuk' => $profile->tahun_masuk,
+                    'tahun_lulus' => $profile->tahun_lulus,
+                    'linkedin' => $profile->linkedin,
+                    'instagram' => $profile->instagram,
+                    'cv_pdf' => $cvUrl,
+                    'dokumen_pendidikan_pdf' => $educationDocumentUrl,
+                    'education_document' => $educationDocumentUrl,
+                    'education_document_url' => $educationDocumentUrl,
+                    'portofolio_pdf' => $portfolioUrl,
+                    'surat_rekomendasi_pdf' => $recommendationUrl,
+                    'ktp_pdf' => $ktpUrl,
+                    'transkrip_nilai_pdf' => $transcriptUrl,
+                    'is_profile_complete' => (bool) $profile->is_profile_complete,
+                ],
             ]
         ]);
     }
@@ -129,8 +260,22 @@ class InternController extends Controller
         $profile = InternProfile::where('user_id', $user->user_id)->first();
         $pengalaman = $this->normalizeArrayInput($request->input('pengalaman', $request->input('experiences')));
         $sertifikasi = $this->normalizeArrayInput($request->input('sertifikasi', $request->input('certifications')));
-        $pengalamanFiles = $this->normalizeNestedFiles($request->file('pengalaman', $request->file('experiences', [])));
-        $sertifikasiFiles = $this->normalizeNestedFiles($request->file('sertifikasi', $request->file('certifications', [])));
+        $pengalamanFiles = $this->mergeNestedFileInputs(
+            $request->file('pengalaman'),
+            $request->file('experiences'),
+            $request->file('pengalaman_files'),
+            $request->file('experience_files'),
+            $request->file('experienceDocuments'),
+            $request->file('pengalamanDocuments')
+        );
+        $sertifikasiFiles = $this->mergeNestedFileInputs(
+            $request->file('sertifikasi'),
+            $request->file('certifications'),
+            $request->file('sertifikasi_files'),
+            $request->file('certification_files'),
+            $request->file('license_files'),
+            $request->file('sertifikat_files')
+        );
 
         $request->validate([
             'foto'           => 'nullable|image|max:2048',
@@ -197,7 +342,10 @@ class InternController extends Controller
 
             $profile->save();
 
-            if ($request->exists('pengalaman') || $request->exists('experiences')) {
+            if (
+                ($request->exists('pengalaman') || $request->exists('experiences'))
+                && $this->shouldSyncNestedItems($pengalaman, $pengalamanFiles)
+            ) {
                 $existingExperiences = InternExperience::where('user_id', $user->user_id)->get();
 
                 foreach ($existingExperiences as $existingExperience) {
@@ -222,7 +370,7 @@ class InternController extends Controller
                     $documentPath = $this->storeNestedDocument(
                         $pengalamanFiles,
                         $index,
-                        ['document', 'document_file', 'file', 'supporting_document']
+                        ['document', 'document_file', 'file', 'supporting_document', 'dokumen', 'upload', 'attachment', 'certificate', 'certificate_file']
                     );
 
                     if (
@@ -250,7 +398,10 @@ class InternController extends Controller
                 }
             }
 
-            if ($request->exists('sertifikasi') || $request->exists('certifications')) {
+            if (
+                ($request->exists('sertifikasi') || $request->exists('certifications'))
+                && $this->shouldSyncNestedItems($sertifikasi, $sertifikasiFiles)
+            ) {
                 $existingCertifications = InternCertification::where('user_id', $user->user_id)->get();
 
                 foreach ($existingCertifications as $existingCertification) {
@@ -280,7 +431,7 @@ class InternController extends Controller
                     $documentPath = $this->storeNestedDocument(
                         $sertifikasiFiles,
                         $index,
-                        ['document', 'document_file', 'file', 'supporting_document']
+                        ['document', 'document_file', 'file', 'supporting_document', 'dokumen', 'upload', 'attachment', 'certificate_file']
                     );
 
                     if (
@@ -568,22 +719,97 @@ class InternController extends Controller
 
     private function normalizeNestedFiles(mixed $value): array
     {
+        if ($value instanceof UploadedFile) {
+            return [$value];
+        }
+
         return is_array($value) ? $value : [];
+    }
+
+    private function mergeNestedFileInputs(mixed ...$sources): array
+    {
+        $merged = [];
+
+        foreach ($sources as $source) {
+            $normalized = $this->normalizeNestedFiles($source);
+
+            if ($normalized === []) {
+                continue;
+            }
+
+            $merged = array_replace_recursive($merged, $normalized);
+        }
+
+        return $merged;
+    }
+
+    private function shouldSyncNestedItems(array $items, array $files): bool
+    {
+        if ($this->extractUploadedFile($files)) {
+            return true;
+        }
+
+        foreach ($items as $item) {
+            if (is_array($item)) {
+                foreach ($item as $value) {
+                    if (is_string($value) && trim($value) !== '') {
+                        return true;
+                    }
+                }
+
+                continue;
+            }
+
+            if (is_string($item) && trim($item) !== '') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function storeNestedDocument(array $items, int $index, array $keys): ?string
     {
-        $item = $items[$index] ?? null;
+        $file = $this->extractUploadedFile($items[$index] ?? null, $keys);
 
-        if (!is_array($item)) {
+        if ($file) {
+            return $file->store('profiles/documents', 'public');
+        }
+
+        return null;
+    }
+
+    private function extractUploadedFile(mixed $value, array $preferredKeys = []): ?UploadedFile
+    {
+        if ($value instanceof UploadedFile) {
+            return $value;
+        }
+
+        if (!is_array($value)) {
             return null;
         }
 
-        foreach ($keys as $key) {
-            $file = $item[$key] ?? null;
+        foreach ($preferredKeys as $key) {
+            $candidate = $value[$key] ?? null;
 
-            if ($file) {
-                return $file->store('profiles/documents', 'public');
+            if ($candidate instanceof UploadedFile) {
+                return $candidate;
+            }
+
+            if (is_array($candidate)) {
+                $found = $this->extractUploadedFile($candidate, $preferredKeys);
+
+                if ($found) {
+                    return $found;
+                }
+            }
+        }
+
+        foreach ($value as $candidate) {
+            $found = $this->extractUploadedFile($candidate, $preferredKeys);
+
+            if ($found) {
+                return $found;
             }
         }
 
@@ -601,6 +827,12 @@ class InternController extends Controller
             'file_url' => $documentUrl,
             'preview_url' => $documentUrl,
             'supporting_document_url' => $documentUrl,
+            'document_name' => isset($item['document_path']) && $item['document_path']
+                ? basename((string) $item['document_path'])
+                : null,
+            'file_name' => isset($item['document_path']) && $item['document_path']
+                ? basename((string) $item['document_path'])
+                : null,
         ]);
     }
 
