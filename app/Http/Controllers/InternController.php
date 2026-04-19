@@ -174,9 +174,9 @@ class InternController extends Controller
                 ],
                 'academic' => [
                     'education' => [
-                        'universitas' => $profile->universitas ?? '-',
-                        'jurusan' => $profile->jurusan ?? '-',
-                        'jenjang' => $profile->jenjang ?? '-',
+                        'universitas' => $profile->universitas,
+                        'jurusan' => $profile->jurusan,
+                        'jenjang' => $profile->jenjang,
                         'ipk' => $profile->ipk,
                         'tahun_masuk' => $profile->tahun_masuk,
                         'tahun_lulus' => $profile->tahun_lulus,
@@ -187,12 +187,12 @@ class InternController extends Controller
                         'preview_url' => $educationDocumentUrl,
                         'supporting_document_url' => $educationDocumentUrl,
                     ],
-                    'university' => $profile->universitas ?? '-',
-                    'major' => $profile->jurusan ?? '-',
-                    'degree' => $profile->jenjang ?? '-',
+                    'university' => $profile->universitas,
+                    'major' => $profile->jurusan,
+                    'degree' => $profile->jenjang,
                     'ipk' => $profile->ipk,
-                    'graduation' => $profile->tahun_lulus ?? '-',
-                    'entry_year' => $profile->tahun_masuk ?? '-',
+                    'graduation' => $profile->tahun_lulus,
+                    'entry_year' => $profile->tahun_masuk,
                     'document' => $educationDocumentUrl,
                     'file' => $educationDocumentUrl,
                     'document_url' => $educationDocumentUrl,
@@ -298,43 +298,81 @@ class InternController extends Controller
             $pengalamanFiles,
             $sertifikasiFiles
         ) {
+            // Handle foto
             if ($request->hasFile('foto')) {
                 if ($profile->foto) Storage::disk('public')->delete($profile->foto);
                 $profile->foto = $request->file('foto')->store('profiles/photos', 'public');
+            } elseif ($request->has('foto_delete') || $request->filled('foto') && is_null($request->input('foto'))) {
+                if ($profile->foto) Storage::disk('public')->delete($profile->foto);
+                $profile->foto = null;
             }
+
+            // Handle cv_pdf
             if ($request->hasFile('cv_pdf')) {
                 if ($profile->cv_pdf) Storage::disk('public')->delete($profile->cv_pdf);
                 $profile->cv_pdf = $request->file('cv_pdf')->store('profiles/documents', 'public');
+            } elseif ($request->has('cv_pdf_delete') || $request->filled('cv_pdf') && is_null($request->input('cv_pdf'))) {
+                if ($profile->cv_pdf) Storage::disk('public')->delete($profile->cv_pdf);
+                $profile->cv_pdf = null;
             }
-            $educationDocument = $request->file('dokumen_pendidikan_pdf', $request->file('education_document'));
+
+            // Handle dokumen_pendidikan_pdf / education_document
+            $educationDocument = $request->file('dokumen_pendidikan_pdf') ?: $request->file('education_document');
             if ($educationDocument) {
                 if ($profile->dokumen_pendidikan_pdf) {
                     Storage::disk('public')->delete($profile->dokumen_pendidikan_pdf);
                 }
                 $profile->dokumen_pendidikan_pdf = $educationDocument->store('profiles/documents', 'public');
+            } elseif ($request->has('dokumen_pendidikan_pdf_delete') || $request->has('education_document_delete') || ($request->filled('dokumen_pendidikan_pdf') && is_null($request->input('dokumen_pendidikan_pdf')))) {
+                if ($profile->dokumen_pendidikan_pdf) {
+                    Storage::disk('public')->delete($profile->dokumen_pendidikan_pdf);
+                }
+                $profile->dokumen_pendidikan_pdf = null;
             }
+
+            // Handle portofolio_pdf
             if ($request->hasFile('portofolio_pdf')) {
                 if ($profile->portofolio_pdf) Storage::disk('public')->delete($profile->portofolio_pdf);
                 $profile->portofolio_pdf = $request->file('portofolio_pdf')->store('profiles/documents', 'public');
+            } elseif ($request->has('portofolio_pdf_delete') || ($request->filled('portofolio_pdf') && is_null($request->input('portofolio_pdf')))) {
+                if ($profile->portofolio_pdf) Storage::disk('public')->delete($profile->portofolio_pdf);
+                $profile->portofolio_pdf = null;
             }
+
+            // Handle surat_rekomendasi_pdf
             if ($request->hasFile('surat_rekomendasi_pdf')) {
                 if ($profile->surat_rekomendasi_pdf) Storage::disk('public')->delete($profile->surat_rekomendasi_pdf);
                 $profile->surat_rekomendasi_pdf = $request->file('surat_rekomendasi_pdf')->store('profiles/documents', 'public');
+            } elseif ($request->has('surat_rekomendasi_pdf_delete') || ($request->filled('surat_rekomendasi_pdf') && is_null($request->input('surat_rekomendasi_pdf')))) {
+                if ($profile->surat_rekomendasi_pdf) Storage::disk('public')->delete($profile->surat_rekomendasi_pdf);
+                $profile->surat_rekomendasi_pdf = null;
             }
+
+            // Handle ktp_pdf
             if ($request->hasFile('ktp_pdf')) {
                 if ($profile->ktp_pdf) Storage::disk('public')->delete($profile->ktp_pdf);
                 $profile->ktp_pdf = $request->file('ktp_pdf')->store('profiles/documents', 'public');
+            } elseif ($request->has('ktp_pdf_delete') || ($request->filled('ktp_pdf') && is_null($request->input('ktp_pdf')))) {
+                if ($profile->ktp_pdf) Storage::disk('public')->delete($profile->ktp_pdf);
+                $profile->ktp_pdf = null;
             }
+
+            // Handle transkrip_nilai_pdf
             if ($request->hasFile('transkrip_nilai_pdf')) {
                 if ($profile->transkrip_nilai_pdf) Storage::disk('public')->delete($profile->transkrip_nilai_pdf);
                 $profile->transkrip_nilai_pdf = $request->file('transkrip_nilai_pdf')->store('profiles/documents', 'public');
+            } elseif ($request->has('transkrip_nilai_pdf_delete') || ($request->filled('transkrip_nilai_pdf') && is_null($request->input('transkrip_nilai_pdf')))) {
+                if ($profile->transkrip_nilai_pdf) Storage::disk('public')->delete($profile->transkrip_nilai_pdf);
+                $profile->transkrip_nilai_pdf = null;
             }
 
-            $profile->fill($request->only([
-                'tentang_saya', 'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin',
+            $profileData = $request->only([
+                'tentang_saya', 'tempat_lahir', 'jenis_kelamin',
                 'provinsi', 'kabupaten', 'detail_alamat', 'universitas', 'jurusan',
                 'jenjang', 'ipk', 'tahun_masuk', 'tahun_lulus', 'linkedin', 'instagram', 'notelp'
-            ]));
+            ]);
+            $profileData['tanggal_lahir'] = $this->normalizeDateValue($request->input('tanggal_lahir'));
+            $profile->fill($profileData);
 
             if ($profile->foto && $profile->cv_pdf && $profile->universitas) {
                 $profile->is_profile_complete = 1;
@@ -342,21 +380,23 @@ class InternController extends Controller
 
             $profile->save();
 
-            if (
-                ($request->exists('pengalaman') || $request->exists('experiences'))
-                && $this->shouldSyncNestedItems($pengalaman, $pengalamanFiles)
-            ) {
-                $existingExperiences = InternExperience::where('user_id', $user->user_id)->get();
+            if ($request->exists('pengalaman') || $request->exists('experiences')) {
+                $existingExperiences = InternExperience::where('user_id', $user->user_id)
+                    ->get()
+                    ->keyBy('id');
 
-                foreach ($existingExperiences as $existingExperience) {
-                    if ($existingExperience->document_path) {
-                        Storage::disk('public')->delete($existingExperience->document_path);
-                    }
-                }
-
-                InternExperience::where('user_id', $user->user_id)->delete();
+                $retainedExperienceIds = [];
 
                 foreach ($pengalaman as $index => $item) {
+                    if (!is_array($item)) {
+                        continue;
+                    }
+
+                    $experienceId = isset($item['id']) ? (int) $item['id'] : null;
+                    $existingExperience = $experienceId
+                        ? $existingExperiences->get($experienceId)
+                        : null;
+
                     $title = trim((string) ($item['title'] ?? $item['jabatan'] ?? ''));
                     $type = trim((string) ($item['type'] ?? $item['jenis'] ?? ''));
                     $company = trim((string) ($item['company'] ?? $item['perusahaan'] ?? ''));
@@ -367,11 +407,21 @@ class InternController extends Controller
                         $startDate,
                         $endDate
                     );
-                    $documentPath = $this->storeNestedDocument(
+
+                    $newDocumentPath = $this->storeNestedDocument(
                         $pengalamanFiles,
                         $index,
                         ['document', 'document_file', 'file', 'supporting_document', 'dokumen', 'upload', 'attachment', 'certificate', 'certificate_file']
                     );
+
+                    $documentPath = $existingExperience?->document_path;
+
+                    if ($newDocumentPath) {
+                        if ($existingExperience?->document_path) {
+                            Storage::disk('public')->delete($existingExperience->document_path);
+                        }
+                        $documentPath = $newDocumentPath;
+                    }
 
                     if (
                         $title === '' &&
@@ -385,54 +435,86 @@ class InternController extends Controller
                         continue;
                     }
 
-                    InternExperience::create([
-                        'user_id' => $user->user_id,
-                        'title' => $title !== '' ? $title : '-',
-                        'type' => $type !== '' ? $type : null,
-                        'company' => $company !== '' ? $company : '-',
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'period' => $period !== '' ? $period : '-',
-                        'document_path' => $documentPath,
-                    ]);
-                }
-            }
+                    if ($existingExperience) {
+                        $existingExperience->update([
+                            'title' => $title !== '' ? $title : '-',
+                            'type' => $type !== '' ? $type : null,
+                            'company' => $company !== '' ? $company : '-',
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'period' => $period !== '' ? $period : '-',
+                            'document_path' => $documentPath,
+                        ]);
 
-            if (
-                ($request->exists('sertifikasi') || $request->exists('certifications'))
-                && $this->shouldSyncNestedItems($sertifikasi, $sertifikasiFiles)
-            ) {
-                $existingCertifications = InternCertification::where('user_id', $user->user_id)->get();
+                        $retainedExperienceIds[] = $existingExperience->id;
+                    } else {
+                        $createdExperience = InternExperience::create([
+                            'user_id' => $user->user_id,
+                            'title' => $title !== '' ? $title : '-',
+                            'type' => $type !== '' ? $type : null,
+                            'company' => $company !== '' ? $company : '-',
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'period' => $period !== '' ? $period : '-',
+                            'document_path' => $documentPath,
+                        ]);
 
-                foreach ($existingCertifications as $existingCertification) {
-                    if ($existingCertification->document_path) {
-                        Storage::disk('public')->delete($existingCertification->document_path);
+                        $retainedExperienceIds[] = $createdExperience->id;
                     }
                 }
 
-                InternCertification::where('user_id', $user->user_id)->delete();
+                $experiencesToDelete = InternExperience::where('user_id', $user->user_id)
+                    ->when(!empty($retainedExperienceIds), function ($query) use ($retainedExperienceIds) {
+                        $query->whereNotIn('id', $retainedExperienceIds);
+                    })
+                    ->get();
+
+                foreach ($experiencesToDelete as $experienceToDelete) {
+                    if ($experienceToDelete->document_path) {
+                        Storage::disk('public')->delete($experienceToDelete->document_path);
+                    }
+                    $experienceToDelete->delete();
+                }
+            }
+
+            if ($request->exists('sertifikasi') || $request->exists('certifications')) {
+                $existingCertifications = InternCertification::where('user_id', $user->user_id)
+                    ->get()
+                    ->keyBy('id');
+
+                $retainedCertificationIds = [];
 
                 foreach ($sertifikasi as $index => $item) {
-                    $name = is_array($item)
-                        ? trim((string) ($item['name'] ?? $item['nama'] ?? ''))
-                        : trim((string) $item);
-                    $issuer = is_array($item)
-                        ? trim((string) ($item['issuer'] ?? $item['penerbit'] ?? ''))
-                        : '';
-                    $issueDate = is_array($item)
-                        ? $this->normalizeDateValue($item['issue_date'] ?? $item['tanggal'] ?? null)
+                    if (!is_array($item) && !is_string($item)) {
+                        continue;
+                    }
+
+                    $itemArray = is_array($item) ? $item : ['name' => $item];
+                    $certificationId = isset($itemArray['id']) ? (int) $itemArray['id'] : null;
+                    $existingCertification = $certificationId
+                        ? $existingCertifications->get($certificationId)
                         : null;
-                    $certificateNumber = is_array($item)
-                        ? trim((string) ($item['certificate_number'] ?? $item['nomor'] ?? ''))
-                        : '';
-                    $description = is_array($item)
-                        ? trim((string) ($item['description'] ?? $item['deskripsi'] ?? ''))
-                        : '';
-                    $documentPath = $this->storeNestedDocument(
+
+                    $name = trim((string) ($itemArray['name'] ?? $itemArray['nama'] ?? ''));
+                    $issuer = trim((string) ($itemArray['issuer'] ?? $itemArray['penerbit'] ?? ''));
+                    $issueDate = $this->normalizeDateValue($itemArray['issue_date'] ?? $itemArray['tanggal'] ?? null);
+                    $certificateNumber = trim((string) ($itemArray['certificate_number'] ?? $itemArray['nomor'] ?? ''));
+                    $description = trim((string) ($itemArray['description'] ?? $itemArray['deskripsi'] ?? ''));
+
+                    $newDocumentPath = $this->storeNestedDocument(
                         $sertifikasiFiles,
                         $index,
                         ['document', 'document_file', 'file', 'supporting_document', 'dokumen', 'upload', 'attachment', 'certificate_file']
                     );
+
+                    $documentPath = $existingCertification?->document_path;
+
+                    if ($newDocumentPath) {
+                        if ($existingCertification?->document_path) {
+                            Storage::disk('public')->delete($existingCertification->document_path);
+                        }
+                        $documentPath = $newDocumentPath;
+                    }
 
                     if (
                         $name === '' &&
@@ -445,15 +527,43 @@ class InternController extends Controller
                         continue;
                     }
 
-                    InternCertification::create([
-                        'user_id' => $user->user_id,
-                        'name' => $name !== '' ? $name : 'Dokumen Pendukung',
-                        'issuer' => $issuer !== '' ? $issuer : null,
-                        'issue_date' => $issueDate,
-                        'certificate_number' => $certificateNumber !== '' ? $certificateNumber : null,
-                        'description' => $description !== '' ? $description : null,
-                        'document_path' => $documentPath,
-                    ]);
+                    if ($existingCertification) {
+                        $existingCertification->update([
+                            'name' => $name !== '' ? $name : 'Dokumen Pendukung',
+                            'issuer' => $issuer !== '' ? $issuer : null,
+                            'issue_date' => $issueDate,
+                            'certificate_number' => $certificateNumber !== '' ? $certificateNumber : null,
+                            'description' => $description !== '' ? $description : null,
+                            'document_path' => $documentPath,
+                        ]);
+
+                        $retainedCertificationIds[] = $existingCertification->id;
+                    } else {
+                        $createdCertification = InternCertification::create([
+                            'user_id' => $user->user_id,
+                            'name' => $name !== '' ? $name : 'Dokumen Pendukung',
+                            'issuer' => $issuer !== '' ? $issuer : null,
+                            'issue_date' => $issueDate,
+                            'certificate_number' => $certificateNumber !== '' ? $certificateNumber : null,
+                            'description' => $description !== '' ? $description : null,
+                            'document_path' => $documentPath,
+                        ]);
+
+                        $retainedCertificationIds[] = $createdCertification->id;
+                    }
+                }
+
+                $certificationsToDelete = InternCertification::where('user_id', $user->user_id)
+                    ->when(!empty($retainedCertificationIds), function ($query) use ($retainedCertificationIds) {
+                        $query->whereNotIn('id', $retainedCertificationIds);
+                    })
+                    ->get();
+
+                foreach ($certificationsToDelete as $certificationToDelete) {
+                    if ($certificationToDelete->document_path) {
+                        Storage::disk('public')->delete($certificationToDelete->document_path);
+                    }
+                    $certificationToDelete->delete();
                 }
             }
         });

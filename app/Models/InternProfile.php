@@ -43,6 +43,12 @@ class InternProfile extends Model
         'is_profile_complete'
     ];
 
+    protected $casts = [
+        'tanggal_lahir' => 'date:Y-m-d',
+        'test_started_at' => 'datetime',
+        'test_finished_at' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
