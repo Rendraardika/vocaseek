@@ -91,10 +91,10 @@ function extractTalentCollection(payload) {
 function extractResolvedTalentId(item) {
   return String(
     item?.user_id ||
-      item?.id ||
-      item?.user?.user_id ||
-      item?.user?.id ||
-      "",
+    item?.id ||
+    item?.user?.user_id ||
+    item?.user?.id ||
+    "",
   );
 }
 
@@ -365,10 +365,10 @@ export default function TalentDetail() {
                       {talent?.educationDocument?.available && (
                         <button
                           type="button"
-                          className="detail-support-document-button"
+                          className="detail-file-link"
                           onClick={() => openDocument(talent.educationDocument.url)}
                         >
-                          Preview Dokumen Pendidikan
+                          Lihat File
                         </button>
                       )}
                     </div>
@@ -393,10 +393,10 @@ export default function TalentDetail() {
                             {experience?.documentUrl && (
                               <button
                                 type="button"
-                                className="detail-support-document-button"
+                                className="detail-file-link"
                                 onClick={() => openDocument(experience.documentUrl)}
                               >
-                                Preview Dokumen
+                                Lihat File
                               </button>
                             )}
                           </div>
@@ -423,10 +423,10 @@ export default function TalentDetail() {
                           {certificate?.documentUrl && (
                             <button
                               type="button"
-                              className="detail-support-document-button compact"
+                              className="detail-file-link"
                               onClick={() => openDocument(certificate.documentUrl)}
                             >
-                              Preview Dokumen
+                              Lihat File
                             </button>
                           )}
                         </div>
