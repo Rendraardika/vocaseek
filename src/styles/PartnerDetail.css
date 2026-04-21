@@ -1,0 +1,494 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+.pd-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.pd-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pd-content {
+  padding: 26px 38px 28px;
+}
+
+.pd-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.pd-page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.pd-back-icon {
+  cursor: pointer;
+  color: #5b6475;
+  transition: 0.2s;
+}
+
+.pd-back-icon:hover {
+  color: #1b2234;
+}
+
+.pd-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7a8191;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.pd-breadcrumb .active {
+  color: #f0b400;
+}
+
+.pd-page-title {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 700;
+  color: #1a2032;
+  font-family: "Poppins", sans-serif;
+}
+
+.pd-delete-btn {
+  height: 44px;
+  border: 1px solid #ff4a3d;
+  color: #ff3b30;
+  background: #fff;
+  border-radius: 12px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.pd-company-card,
+.pd-card {
+  background: #fff;
+  border: 1px solid #e6ebf2;
+  border-radius: 18px;
+  box-shadow: 0 3px 14px rgba(16, 24, 40, 0.04);
+}
+
+.pd-company-card {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.pd-company-head {
+  display: flex;
+  gap: 24px;
+}
+
+.pd-company-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  background: #f2f4f8;
+  color: #959fb1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pd-company-main {
+  flex: 1;
+}
+
+.pd-company-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pd-company-title-row h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #161d2f;
+}
+
+.pd-mou-badge {
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #dff6e4;
+  color: #22a652;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pd-company-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #326cff;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.pd-company-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  padding-top: 16px;
+  border-top: 1px solid #edf1f6;
+}
+
+.pd-company-meta span {
+  display: block;
+  color: #7f8798;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.pd-company-meta strong {
+  color: #1c2436;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.pd-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(320px, 0.8fr);
+  gap: 24px;
+}
+
+.pd-left-column,
+.pd-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pd-card {
+  padding: 24px;
+}
+
+.pd-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #233c8b;
+}
+
+.pd-card-title h3 {
+  margin: 0;
+  color: #1a2235;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pd-contact-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+}
+
+.pd-contact-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pd-contact-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #68c27e, #52a96b);
+}
+
+.pd-contact-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a2133;
+}
+
+.pd-contact-role {
+  font-size: 14px;
+  color: #7b8292;
+}
+
+.pd-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pd-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1d2436;
+}
+
+.pd-contact-item svg {
+  color: #9ba4b5;
+}
+
+.pd-timeline {
+  position: relative;
+  padding-left: 2px;
+}
+
+.pd-timeline::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 9px;
+  bottom: 8px;
+  width: 2px;
+  background: #eceff4;
+}
+
+.pd-timeline-item {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  padding-bottom: 26px;
+}
+
+.pd-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.pd-timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #d3d7df;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.pd-timeline-item.active .pd-timeline-dot {
+  background: #f1b534;
+}
+
+.pd-timeline-content span {
+  display: block;
+  font-size: 14px;
+  color: #858c9d;
+  margin-bottom: 4px;
+}
+
+.pd-timeline-content p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a2234;
+}
+
+.pd-timeline-content strong {
+  color: #1f3e8f;
+}
+
+.pd-doc-card {
+  height: fit-content;
+}
+
+.pd-doc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.pd-doc-head h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1b2234;
+}
+
+.pd-plus-btn {
+  border: none;
+  background: transparent;
+  color: #2446a2;
+  cursor: pointer;
+}
+
+.pd-doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pd-doc-item {
+  border: 1px solid #e8ecf3;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.pd-doc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.pd-doc-status.verified {
+  background: #e5f8eb;
+  color: #20a651;
+}
+
+.pd-doc-status.review {
+  background: #fff3cf;
+  color: #c58c07;
+}
+
+.pd-doc-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.pd-doc-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.pd-doc-icon.red {
+  color: #e84d4d;
+  background: #fff0f0;
+}
+
+.pd-doc-icon.blue {
+  color: #3277ff;
+  background: #eef4ff;
+}
+
+.pd-doc-icon.green {
+  color: #28b463;
+  background: #eaf8ef;
+}
+
+.pd-doc-meta {
+  min-width: 0;
+}
+
+.pd-doc-meta strong {
+  display: block;
+  color: #1c2436;
+  font-size: 15px;
+  margin-bottom: 3px;
+}
+
+.pd-doc-meta span {
+  color: #7f8796;
+  font-size: 13px;
+}
+
+.pd-doc-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pd-doc-btn {
+  flex: 1;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pd-doc-btn.secondary {
+  border: 1px solid #dde3ec;
+  background: #fff;
+  color: #3d485d;
+}
+
+.pd-doc-btn.primary {
+  border: none;
+  background: #213f97;
+  color: #fff;
+}
+
+.pd-footer {
+  margin-top: 22px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #a0a8ba;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 1200px) {
+  .pd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .pd-top-row,
+  .pd-contact-row,
+  .pd-company-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pd-company-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .pd-content {
+    padding: 20px;
+  }
+}
+.pd-empty-state {
+  font-size: 14px;
+  color: #9aa3b2;
+  line-height: 1.7;
+}

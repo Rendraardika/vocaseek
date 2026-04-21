@@ -1,0 +1,555 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+/* =========================================
+   RESET + FOUNDATION
+========================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Jangan pakai word-wrap ke semua div/span sembarang */
+h1, h2, h3, h4, h5, h6, p, span, label, a, td, th {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* =========================================
+   GLOBAL PAGE LAYOUT
+========================================= */
+.app,
+.app-layout,
+.page-layout,
+.layout,
+.main-layout,
+.dashboard,
+.job-postings,
+.company-profile,
+.review-dokumen,
+.talent-management,
+.detail-talent,
+.create-job,
+.create-job-preview,
+.company-settings,
+.dashboard-mitra,
+.tambah-kandidat {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.page-layout,
+.dashboard,
+.company-profile,
+.job-postings,
+.talent-management,
+.review-dokumen,
+.create-job,
+.create-job-preview,
+.company-settings,
+.dashboard-mitra,
+.tambah-kandidat {
+  display: flex;
+  align-items: stretch;
+}
+
+/* SIDEBAR */
+.sidebar,
+.aside,
+.leftbar,
+.nav-sidebar {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+/* MAIN */
+.app-main,
+.dashboard-main,
+.pm-main,
+.content-main,
+.page-main,
+.main-content,
+.layout-main,
+.company-profile-main,
+.job-postings-main,
+.talent-main,
+.job-postings__main,
+.company-profile__main,
+.review-dokumen__main,
+.talent-management__main,
+.detail-talent__main,
+.create-job__main,
+.create-job-preview__main,
+.company-settings__main,
+.dashboard-mitra__main,
+.tambah-kandidat__main {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* fallback kalau parent flex */
+.flex-main,
+.content-area,
+.page-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* =========================================
+   SECTION / CONTAINER
+========================================= */
+.page-section,
+.content-section,
+.dashboard-section,
+.pm-section,
+.section-content,
+.job-postings__section,
+.company-profile__section,
+.review-dokumen__section,
+.talent-management__section,
+.detail-talent__section,
+.create-job__section,
+.create-job-preview__content,
+.company-settings__section,
+.dashboard-mitra__content,
+.tambah-kandidat__section,
+.container-fluid,
+.page-container,
+.content-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* =========================================
+   COMMON GRID SYSTEM
+========================================= */
+.dashboard-stats,
+.pm-summary-grid,
+.card-grid,
+.summary-grid,
+.stats-grid,
+.info-grid,
+.content-grid,
+.form-grid,
+.grid-2,
+.grid-3,
+.grid-4,
+.job-postings__stats-grid,
+.job-postings__mobile-meta,
+.create-job-preview__grid {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dashboard-stats,
+.pm-summary-grid,
+.card-grid,
+.stats-grid,
+.grid-4,
+.job-postings__stats-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.summary-grid,
+.info-grid,
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.form-grid,
+.grid-2,
+.content-grid,
+.create-job-preview__grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.job-postings__mobile-meta {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-stats > *,
+.pm-summary-grid > *,
+.card-grid > *,
+.summary-grid > *,
+.stats-grid > *,
+.info-grid > *,
+.content-grid > *,
+.form-grid > *,
+.grid-2 > *,
+.grid-3 > *,
+.grid-4 > *,
+.job-postings__stats-grid > *,
+.job-postings__mobile-meta > *,
+.create-job-preview__grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* pengecualian */
+.cv-summary-grid,
+.resume-grid,
+.document-preview-grid {
+  grid-template-columns: initial !important;
+}
+
+/* =========================================
+   CARD / PANEL / WRAPPER
+========================================= */
+.card,
+.panel,
+.info-card,
+.content-card,
+.widget-card,
+.section-card,
+.job-postings__stat-box,
+.job-postings__table-card,
+.job-postings__mobile-card,
+.create-job-preview__left-card,
+.create-job-preview__right-card,
+.create-job-preview__job-header,
+.create-job-preview__topbar,
+.create-job-preview__breadcrumb {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* =========================================
+   FLEX GROUPS
+========================================= */
+.header-row,
+.pm-header-row,
+.page-header-row,
+.toolbar-row,
+.action-row,
+.top-row,
+.form-row,
+.input-row,
+.field-row,
+.job-postings__header,
+.job-postings__table-toolbar,
+.job-postings__toolbar-actions,
+.job-postings__pagination,
+.job-postings__footer,
+.create-job-preview__topbar,
+.create-job-preview__breadcrumb,
+.create-job-preview__chip-row {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.header-row,
+.pm-header-row,
+.page-header-row,
+.toolbar-row,
+.action-row,
+.top-row,
+.job-postings__header,
+.job-postings__table-toolbar,
+.job-postings__toolbar-actions,
+.job-postings__pagination,
+.job-postings__footer,
+.create-job-preview__topbar {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-row > *,
+.input-row > *,
+.field-row > *,
+.header-left,
+.header-right,
+.toolbar-left,
+.toolbar-right {
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+/* =========================================
+   TABLE SAFE SCROLL
+========================================= */
+.table-wrapper,
+.pm-table-card,
+.table-card,
+.table-scroll,
+.responsive-table,
+.data-table-wrap,
+.job-postings__table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-wrapper table,
+.pm-table-card table,
+.table-card table,
+.table-scroll table,
+.responsive-table table,
+.data-table-wrap table,
+.job-postings__table-wrap table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+}
+
+/* =========================================
+   FORM SAFE
+========================================= */
+textarea {
+  resize: vertical;
+}
+
+/* =========================================
+   DESKTOP <= 1200
+========================================= */
+@media (max-width: 1200px) {
+  .dashboard-stats,
+  .pm-summary-grid,
+  .card-grid,
+  .stats-grid,
+  .grid-4,
+  .job-postings__stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .summary-grid,
+  .info-grid,
+  .grid-3,
+  .create-job-preview__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================
+   TABLET <= 992
+========================================= */
+@media (max-width: 992px) {
+  .summary-grid,
+  .dashboard-stats,
+  .pm-summary-grid,
+  .card-grid,
+  .stats-grid,
+  .info-grid,
+  .content-grid,
+  .form-grid,
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .job-postings__stats-grid,
+  .create-job-preview__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page-layout,
+  .dashboard,
+  .company-profile,
+  .job-postings,
+  .talent-management,
+  .review-dokumen,
+  .create-job,
+  .create-job-preview,
+  .company-settings,
+  .dashboard-mitra,
+  .tambah-kandidat {
+    flex-direction: column;
+  }
+
+  .sidebar,
+  .aside,
+  .leftbar,
+  .nav-sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* =========================================
+   MOBILE <= 768
+========================================= */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  .summary-grid,
+  .dashboard-stats,
+  .pm-summary-grid,
+  .card-grid,
+  .stats-grid,
+  .info-grid,
+  .content-grid,
+  .form-grid,
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .job-postings__stats-grid,
+  .create-job-preview__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-row,
+  .pm-header-row,
+  .page-header-row,
+  .toolbar-row,
+  .action-row,
+  .top-row,
+  .form-row,
+  .input-row,
+  .field-row,
+  .job-postings__header,
+  .job-postings__table-toolbar,
+  .job-postings__toolbar-actions,
+  .job-postings__pagination,
+  .job-postings__footer,
+  .create-job-preview__topbar,
+  .create-job-preview__breadcrumb,
+  .create-job-preview__chip-row {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  .header-row > *,
+  .pm-header-row > *,
+  .page-header-row > *,
+  .toolbar-row > *,
+  .action-row > *,
+  .top-row > *,
+  .job-postings__header > *,
+  .job-postings__toolbar-actions > *,
+  .job-postings__pagination > *,
+  .job-postings__footer > *,
+  .create-job-preview__topbar > *,
+  .create-job-preview__breadcrumb > *,
+  .create-job-preview__chip-row > * {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .table-wrapper table,
+  .pm-table-card table,
+  .table-card table,
+  .table-scroll table,
+  .responsive-table table,
+  .data-table-wrap table,
+  .job-postings__table-wrap table {
+    min-width: 640px;
+  }
+
+  /* khusus page preview */
+  .create-job-preview__left-card,
+  .create-job-preview__right-card,
+  .create-job-preview__job-header,
+  .create-job-preview__topbar,
+  .create-job-preview__breadcrumb,
+  .create-job-preview__divider {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE <= 480
+========================================= */
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
+  .dashboard-stats,
+  .pm-summary-grid,
+  .card-grid,
+  .summary-grid,
+  .stats-grid,
+  .info-grid,
+  .content-grid,
+  .form-grid,
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .job-postings__stats-grid,
+  .create-job-preview__grid {
+    gap: 12px;
+  }
+
+  .table-wrapper table,
+  .pm-table-card table,
+  .table-card table,
+  .table-scroll table,
+  .responsive-table table,
+  .data-table-wrap table,
+  .job-postings__table-wrap table {
+    min-width: 560px;
+  }
+
+  .card,
+  .panel,
+  .info-card,
+  .content-card,
+  .widget-card,
+  .section-card,
+  .create-job-preview__left-card,
+  .create-job-preview__right-card {
+    border-radius: 12px;
+  }
+}

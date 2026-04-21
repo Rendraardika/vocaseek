@@ -1,0 +1,97 @@
+/* GLOBAL FIX */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* CONTENT WRAPPER */
+.app-main,
+.dashboard-main,
+.pm-main,
+.content-main {
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* GRID FIX */
+.dashboard-stats,
+.pm-summary-grid,
+.card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* jangan ganggu layout khusus page CV */
+.cv-summary-grid {
+  grid-template-columns: initial !important;
+}
+
+/* TABLE FIX */
+.table-wrapper,
+.pm-table-card {
+  overflow-x: auto;
+}
+
+.table-wrapper table,
+.pm-table-card table {
+  min-width: 700px;
+}
+
+/* FLEX FIX */
+.header-row,
+.pm-header-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 992px) {
+  .summary-grid,
+  .dashboard-stats,
+  .pm-summary-grid,
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .summary-grid,
+  .dashboard-stats,
+  .pm-summary-grid,
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-row,
+  .pm-header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* jangan target semua button */
+  .header-row > button,
+  .pm-header-row > button,
+  .header-row .btn,
+  .pm-header-row .btn,
+  .header-row .action-btn,
+  .pm-header-row .action-btn,
+  .header-row .primary-btn,
+  .pm-header-row .primary-btn {
+    width: 100%;
+  }
+}

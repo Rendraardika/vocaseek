@@ -1,0 +1,473 @@
+.applicants-table {
+  margin-top: 2rem;
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 24px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.applicants-table__header {
+  padding: 2rem 1.75rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.applicants-table__title-wrap {
+  flex: 1;
+  min-width: 220px;
+}
+
+.applicants-table__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1c2434;
+  line-height: 1.3;
+}
+
+.applicants-table__subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.applicants-table__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.applicants-table__btn {
+  height: 46px;
+  padding: 0 1.25rem;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.applicants-table__btn--outline {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.applicants-table__btn--outline:hover {
+  background: #f8fafc;
+}
+
+.applicants-table__btn--soft {
+  background: #f3f4f6;
+}
+
+.applicants-table__btn--soft:hover {
+  background: #e5e7eb;
+}
+
+.applicants-table__desktop {
+  display: block;
+  border-top: 1px solid #eef1f5;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.applicants-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.applicants-table__table thead tr {
+  border-bottom: 1px solid #eef1f5;
+}
+
+.applicants-table__table th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.applicants-table__table th:first-child,
+.applicants-table__table td:first-child {
+  padding-left: 2rem;
+}
+
+.applicants-table__table th:last-child,
+.applicants-table__table td:last-child {
+  padding-right: 2rem;
+}
+
+.applicants-table__table tbody tr {
+  border-bottom: 1px solid #eef1f5;
+  font-size: 15px;
+  color: #1c2434;
+  transition: background 0.2s ease;
+}
+
+.applicants-table__table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.applicants-table__table td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+}
+
+.is-clickable {
+  cursor: pointer;
+}
+
+.muted {
+  color: #64748b;
+}
+
+.semi-bold {
+  font-weight: 500;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.applicants-table__candidate-cell,
+.applicant-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.applicants-table__candidate-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.applicants-table__candidate-avatar--fallback {
+  background: linear-gradient(135deg, #eef2ff, #dbe7ff);
+  border: 1px solid #d7e3ff;
+  position: relative;
+}
+
+.applicants-table__candidate-avatar--fallback::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #9fb6f5;
+  box-shadow: 0 12px 0 4px #c4d3fb;
+  transform: translate(12px, 5px);
+  position: absolute;
+}
+
+.applicants-table__icon-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.applicants-table__icon-btn:hover {
+  color: #334155;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: #f8e9a9;
+  color: #9e7500;
+}
+
+.status-badge.shortlisted {
+  background: #cff1d7;
+  color: #2f8b4b;
+}
+
+.status-badge.rejected {
+  background: #f8d3d3;
+  color: #c34747;
+}
+
+.status-badge.default {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.applicants-table__mobile {
+  display: none;
+  border-top: 1px solid #eef1f5;
+  padding: 1rem;
+}
+
+.applicant-card {
+  background: #ffffff;
+  border: 1px solid #eef1f5;
+  border-radius: 18px;
+  padding: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.applicant-card + .applicant-card {
+  margin-top: 1rem;
+}
+
+.applicant-card:hover {
+  background: #f8fafc;
+}
+
+.applicant-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.applicant-card__id {
+  margin: 0 0 0.35rem;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.applicant-card__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c2434;
+  line-height: 1.4;
+}
+
+.applicant-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.applicant-card__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.applicant-card__row .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.applicant-card__row .value {
+  font-size: 14px;
+  color: #1c2434;
+  line-height: 1.5;
+}
+
+.applicants-table__filter-wrap {
+  position: relative;
+}
+
+.applicants-table__btn.is-active {
+  background: #f9fbff;
+  border-color: #d6deea;
+}
+
+.applicants-table__filter-chevron {
+  transition: transform 0.2s ease;
+}
+
+.applicants-table__filter-chevron.open {
+  transform: rotate(180deg);
+}
+
+.applicants-table__filter-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 250px;
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  padding: 16px;
+  z-index: 50;
+}
+
+.applicants-table__filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.applicants-table__filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #445067;
+}
+
+.applicants-table__filter-select {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #334155;
+  outline: none;
+}
+
+.applicants-table__filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.applicants-table__filter-reset,
+.applicants-table__filter-apply {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.applicants-table__filter-reset {
+  border: 1px solid #dbe3ef;
+  background: #fff;
+  color: #556074;
+}
+
+.applicants-table__filter-apply {
+  border: none;
+  background: #f6c400;
+  color: #1b1d22;
+}
+
+@media (max-width: 768px) {
+  .applicants-table__filter-dropdown {
+    width: min(250px, calc(100vw - 32px));
+    right: 0;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .applicants-table__header {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+
+  .applicants-table__table th:first-child,
+  .applicants-table__table td:first-child {
+    padding-left: 1.25rem;
+  }
+
+  .applicants-table__table th:last-child,
+  .applicants-table__table td:last-child {
+    padding-right: 1.25rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .applicants-table {
+    border-radius: 20px;
+  }
+
+  .applicants-table__header {
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .applicants-table__title {
+    font-size: 20px;
+  }
+
+  .applicants-table__subtitle {
+    font-size: 13px;
+  }
+
+  .applicants-table__actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .applicants-table__btn {
+    width: 100%;
+    padding: 0 1rem;
+    font-size: 14px;
+  }
+
+  .applicants-table__desktop {
+    display: none;
+  }
+
+  .applicants-table__mobile {
+    display: block;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .applicants-table__header {
+    padding: 1rem;
+  }
+
+  .applicants-table__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .applicants-table__title {
+    font-size: 18px;
+  }
+
+  .applicant-card {
+    padding: 0.875rem;
+    border-radius: 16px;
+  }
+
+  .applicant-card__name {
+    font-size: 15px;
+  }
+
+  .status-badge {
+    font-size: 12px;
+    padding: 0.45rem 0.85rem;
+  }
+}

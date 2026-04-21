@@ -1,0 +1,295 @@
+/* ================= SAFE FIX ================= */
+.header {
+  position: relative;
+  z-index: 1000;
+}
+
+/* ================= ROOT ================= */
+.team-page {
+  background: #fefbf6;
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+}
+
+/* ================= HERO ================= */
+.team-hero {
+  max-width: 1280px;
+  margin: auto;
+  padding: 80px 32px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ORNAMENT CIRCLE */
+.hero-circle {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  border: 4px solid rgba(30, 58, 138, 0.08);
+  left: -180px;
+  top: 40px;
+}
+
+/* LEFT */
+.team-hero-left h1 {
+  font-size: 64px;
+  line-height: 1.1;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.team-hero-left .highlight {
+  position: relative;
+  z-index: 1;
+}
+
+.team-hero-left .highlight::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 100%;
+  height: 12px;
+  background: rgba(251, 191, 36, 0.4);
+  z-index: -1;
+}
+
+/* RIGHT */
+.team-hero-right {
+  max-width: 420px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.vertical-line {
+  width: 4px;
+  height: 100px;
+  background: #fbbf24;
+}
+
+.team-hero-right p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* ================= TEAM GRID ================= */
+.team-section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 80px 32px 120px;
+  background: #fefbf6;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px 28px;
+}
+
+/* ================= CARD ================= */
+.team-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 36px 28px 28px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 420px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.12);
+}
+
+/* ================= AVATAR ================= */
+.avatar-wrapper {
+  width: 110px;
+  height: 110px;
+  margin-bottom: 18px;
+  padding: 4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  background: #e5e7eb;
+  border-radius: 50%;
+}
+
+/* ================= TEXT ================= */
+.team-card h3 {
+  font-size: 18px;
+  margin-bottom: 6px;
+  font-family: "Poppins", sans-serif;
+  color: #1f2937;
+}
+
+.role {
+  font-size: 11px;
+  letter-spacing: 1.3px;
+  color: #fbbf24;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6b7280;
+  max-width: 220px;
+  margin: 0 auto;
+  flex-grow: 1;
+}
+
+/* ================= SOCIAL ================= */
+.socials {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.socials span {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.socials span:hover {
+  color: #fbbf24;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1100px) {
+  .team-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================= HAMBURGER ================= */
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 3px;
+  background: #111;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* MOBILE NAV */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+    position: relative;
+    z-index: 1202;
+    cursor: pointer;
+  }
+
+  .nav {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    display: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1200;
+  }
+
+  .nav.show {
+    display: flex;
+  }
+
+  .btn-login {
+    display: none;
+  }
+}
+
+/* LOGIN DESKTOP */
+.btn-login {
+  background: #fbbf24;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  color: white;
+}
+
+/* LOGIN DI DALAM HAMBURGER */
+.mobile-login {
+  display: none;
+  background: #fbbf24;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .btn-login {
+    display: none;
+  }
+
+  .mobile-login {
+    display: block;
+    margin-top: 10px;
+  }
+}

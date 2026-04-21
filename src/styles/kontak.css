@@ -1,0 +1,400 @@
+/* ================= ROOT ================= */
+.contact-page {
+  background: #fffaf0;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ================= HERO ================= */
+.contact-hero {
+  max-width: 1280px;
+  margin: 40px auto 0;
+  padding: 40px 42px;
+  display: flex;
+  gap: 34px;
+  align-items: flex-start;
+}
+
+/* LEFT */
+.contact-left {
+  flex: 1;
+}
+
+.contact-left h1 {
+  font-size: 64px;
+  line-height: 1.1;
+  color: #1f2937;
+}
+
+.contact-left h1 span {
+  color: #fbbf24;
+}
+
+.contact-desc {
+  display: flex;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.contact-desc .line {
+  width: 4px;
+  background: #fbbf24;
+}
+
+.contact-desc p {
+  font-size: 18px;
+  line-height: 28px;
+  color: #4b5563;
+}
+
+.contact-tag {
+  margin-top: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contact-tag span {
+  width: 64px;
+  height: 2px;
+  background: #fbbf24;
+}
+
+.contact-tag p {
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+/* ================= CARD ================= */
+.contact-card {
+  width: 420px;
+  background: #fbbf24;
+  padding: 40px;
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.contact-card h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 30px;
+  margin-bottom: 24px;
+}
+
+.phone {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.phone .icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone p {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.card-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 32px 0;
+}
+
+.card-info {
+  display: flex;
+  gap: 32px;
+}
+
+.card-info h4 {
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.card-info p {
+  font-size: 14px;
+  line-height: 22px;
+  opacity: 0.9;
+}
+
+/* ================= MAP ================= */
+.contact-map {
+  margin-top: 80px;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+}
+
+/* ================= MAP ================= */
+.contact-map {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 100%;
+}
+
+/* FLOATING MAP INFO */
+.map-info-card {
+  position: absolute;
+  left: 80px;
+  bottom: 80px;
+  background: #ffffff;
+  padding: 20px 24px;
+  border-left: 4px solid #fbbf24;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  display: flex;
+  gap: 14px;
+  max-width: 300px;
+}
+
+.map-info-card h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.map-info-card p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 4px 0;
+}
+
+.map-info-card a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fbbf24;
+  text-decoration: none;
+}
+
+.map-info-icon {
+  width: 44px;
+  height: 44px;
+  background: #fbbf24;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================= ORNAMEN CONTACT ================= */
+.contact-page {
+  position: relative;
+  overflow: hidden;
+}
+
+/* lingkaran besar */
+.contact-ornament-big {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: 80px;
+  top: 280px;
+  border-radius: 50%;
+  border: 2px solid rgba(251, 191, 36, 0.3);
+  z-index: 0;
+}
+
+/* blur kuning kecil */
+.contact-ornament-small {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  right: 140px;
+  top: 360px;
+  border-radius: 50%;
+  background: rgba(251, 191, 36, 0.15);
+  filter: blur(14px);
+  z-index: 0;
+}
+
+/* pastiin konten di atas ornamen */
+.contact-page > *:not(.contact-ornament) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ================= HAMBURGER ================= */
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 3px;
+  background: #111;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* MOBILE NAV */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+    position: relative;
+    z-index: 1202;
+    cursor: pointer;
+  }
+
+  .nav {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    display: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1200;
+  }
+
+  .nav.show {
+    display: flex;
+  }
+
+  .btn-login {
+    display: none;
+  }
+}
+
+/* LOGIN DESKTOP */
+.btn-login {
+  background: #fbbf24;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  color: white;
+}
+
+/* LOGIN DI DALAM HAMBURGER */
+.mobile-login {
+  display: none;
+  background: #fbbf24;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .btn-login {
+    display: none;
+  }
+
+  .mobile-login {
+    display: block;
+    margin-top: 10px;
+  }
+
+  .contact-hero {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 24px;
+  }
+
+  .contact-left h1 {
+    font-size: 42px;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+
+  .contact-desc {
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .contact-desc p {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .contact-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .card-info {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-map {
+    height: 350px;
+  }
+
+  .map-info-card {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+
+  .contact-ornament-big,
+  .contact-ornament-small {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-page .header {
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+
+  .contact-page .nav.show {
+    z-index: 10001 !important;
+    background: #FFFFFF !important;
+  }
+
+  .contact-page .contact-left h1 {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+}
