@@ -398,3 +398,460 @@
     z-index: 1 !important;
   }
 }
+
+/* =========================================
+   OVERRIDE RESPONSIVE KONTAK
+   samakan pola mobile dengan beranda.css
+   tempel paling bawah kontak.css
+   ========================================= */
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+img,
+iframe {
+  max-width: 100%;
+}
+
+/* helper */
+.contact-page .hamburger,
+.contact-page .mobile-login {
+  display: none;
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 14px 32px !important;
+  }
+
+  .header-inner {
+    padding: 0 24px !important;
+  }
+
+  .contact-hero {
+    max-width: 1150px;
+    margin: 24px auto 0 !important;
+    padding: 32px 24px !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+    align-items: stretch !important;
+  }
+
+  .contact-left {
+    text-align: center;
+  }
+
+  .contact-desc {
+    justify-content: center;
+  }
+
+  .contact-tag {
+    justify-content: center;
+  }
+
+  .contact-card {
+    width: 100% !important;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .map-info-card {
+    left: 32px !important;
+    bottom: 32px !important;
+  }
+
+  .footer-inner,
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    text-align: center !important;
+  }
+
+  .footer-social {
+    justify-content: center !important;
+  }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .contact-page {
+    padding-top: 0 !important;
+  }
+
+  .contact-page .header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 3000 !important;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .contact-page .navbar {
+    padding: 14px 16px !important;
+    background: #fff;
+    position: relative !important;
+    z-index: 3001 !important;
+    overflow: visible !important;
+  }
+
+  .contact-page .header-inner {
+    position: relative !important;
+    max-width: 100% !important;
+    min-height: 56px !important;
+    height: 56px !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    overflow: visible !important;
+    z-index: 3002 !important;
+  }
+
+  .contact-page .logo,
+  .contact-page .nav-left {
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+  }
+
+  .contact-page .nav-left {
+    flex: 1 !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .contact-page .logo-img {
+    width: 105px !important;
+    max-width: 105px !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .contact-page .btn-login {
+    display: none !important;
+  }
+
+  .contact-page .nav-menu {
+    display: none !important;
+  }
+
+  .contact-page .hamburger {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    z-index: 4005 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .contact-page .hamburger * {
+    pointer-events: none !important;
+  }
+
+  .contact-page .hamburger span {
+    width: 22px !important;
+    height: 2.5px !important;
+    background: #111827 !important;
+    border-radius: 3px !important;
+    transition: transform 0.25s ease, opacity 0.2s ease !important;
+    display: block !important;
+  }
+
+  .contact-page .hamburger.active span:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg) !important;
+  }
+
+  .contact-page .hamburger.active span:nth-child(2) {
+    opacity: 0 !important;
+  }
+
+  .contact-page .hamburger.active span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg) !important;
+  }
+
+  .contact-page .nav {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    display: none !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 14px !important;
+    margin-top: 0 !important;
+    padding: 18px 16px !important;
+    background: #fff !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08) !important;
+    z-index: 3990 !important;
+  }
+
+  .contact-page .nav.show {
+    display: flex !important;
+  }
+
+  .contact-page .nav a {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 !important;
+  }
+
+  .contact-page .mobile-login {
+    display: inline-flex !important;
+    width: 100% !important;
+    margin-top: 3px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #fbbf24 !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 12px 16px !important;
+    min-height: 46px !important;
+    border-radius: 10px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    text-decoration: none !important;
+  }
+
+  .contact-hero {
+    margin: 0 auto !important;
+    padding: 32px 16px 48px !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    align-items: stretch !important;
+  }
+
+  .contact-left {
+    width: 100% !important;
+  }
+
+  .contact-left h1 {
+    font-size: 38px !important;
+    line-height: 1.15 !important;
+    word-break: break-word !important;
+  }
+
+  .contact-desc {
+    gap: 16px !important;
+    margin-top: 20px !important;
+  }
+
+  .contact-desc p {
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+  }
+
+  .contact-tag {
+    margin-top: 24px !important;
+    gap: 12px !important;
+  }
+
+  .contact-tag span {
+    width: 48px !important;
+  }
+
+  .contact-tag p {
+    font-size: 13px !important;
+  }
+
+  .contact-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 24px 20px !important;
+    border-radius: 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  .contact-card h3 {
+    font-size: 24px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .phone {
+    gap: 12px !important;
+  }
+
+  .phone .icon {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .phone p {
+    font-size: 20px !important;
+    word-break: break-word !important;
+  }
+
+  .card-divider {
+    margin: 24px 0 !important;
+  }
+
+  .card-info {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .card-info h4 {
+    font-size: 13px !important;
+  }
+
+  .card-info p {
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+  }
+
+  .contact-map {
+    margin-top: 48px !important;
+    height: 360px !important;
+  }
+
+  .contact-map iframe {
+    height: 100% !important;
+  }
+
+  .map-info-card {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    max-width: none !important;
+    padding: 16px 18px !important;
+    gap: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .map-info-card h4 {
+    font-size: 15px !important;
+  }
+
+  .map-info-card p,
+  .map-info-card a {
+    font-size: 13px !important;
+  }
+
+  .map-info-icon {
+    width: 40px !important;
+    height: 40px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .contact-ornament-big,
+  .contact-ornament-small {
+    display: none !important;
+  }
+
+  .footer,
+  .footer-inner {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .footer-inner,
+  .footer-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 32px !important;
+  }
+
+  .footer-social {
+    justify-content: center !important;
+  }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 480px) {
+  .contact-page .navbar {
+    padding: 10px 12px !important;
+  }
+
+  .contact-page .header-inner {
+    min-height: 54px !important;
+    height: 54px !important;
+    padding: 0 10px !important;
+    column-gap: 10px !important;
+  }
+
+  .contact-page .logo-img {
+    width: 92px !important;
+    max-width: 92px !important;
+  }
+
+  .contact-page .hamburger {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .contact-page .hamburger span {
+    width: 20px !important;
+  }
+
+  .contact-page .nav {
+    top: calc(100% + 6px) !important;
+    padding: 16px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .contact-left h1 {
+    font-size: 30px !important;
+  }
+
+  .contact-desc p,
+  .contact-tag p,
+  .map-info-card p,
+  .map-info-card a {
+    font-size: 13px !important;
+  }
+
+  .phone p {
+    font-size: 18px !important;
+  }
+
+  .contact-card h3 {
+    font-size: 22px !important;
+  }
+
+  .contact-map {
+    height: 320px !important;
+  }
+}
+
+/* =========================================
+   FIX POSISI HAMBURGER KONTAK
+   geser sedikit ke kiri seperti beranda
+   ========================================= */
+
+@media (max-width: 768px) {
+  .contact-page .hamburger {
+    margin-left: auto !important;
+    margin-right: 12px !important;
+    transform: translateX(-10px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-page .hamburger {
+    margin-right: 10px !important;
+    transform: translateX(-12px) !important;
+  }
+}
