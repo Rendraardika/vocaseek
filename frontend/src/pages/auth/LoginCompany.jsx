@@ -1,7 +1,6 @@
 import "../../styles/logincompany.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getApiErrorMessage, loginCompany } from "../../services/auth";
 import { resolveUserHomeRoute, saveAuthSession } from "../../utils/authStorage";
 
@@ -63,7 +62,6 @@ function Login() {
 
   return (
     <div className="lc-login-page">
-      {/* LEFT SIDE */}
       <div className="lc-login-left">
         <div className="lc-login-overlay">
           <h1>
@@ -83,7 +81,6 @@ function Login() {
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="lc-login-right">
         <div className="lc-login-logo">
           <img src="/logovocaseek2.png" alt="Vocaseek Logo" />

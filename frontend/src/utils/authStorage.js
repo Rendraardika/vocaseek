@@ -36,7 +36,14 @@ function syncLocaleFromPayload(payload) {
 export function saveAuthSession(payload, meta = {}) {
   syncLocaleFromPayload(payload);
 
-  const sessionUser = payload?.user || payload?.data?.user || null;
+  const payloadUser =
+    payload?.user_data ||
+    payload?.data?.user_data ||
+    payload?.user ||
+    payload?.data?.user ||
+    null;
+  const sessionUser =
+    payloadUser && typeof payloadUser === "object" ? payloadUser : null;
   const rawPayload = payload?.data || payload || null;
 
   const normalized = {
@@ -57,6 +64,7 @@ export function saveAuthSession(payload, meta = {}) {
       payload?.identifier ||
       payload?.data?.identifier ||
       sessionUser?.email ||
+      rawPayload?.user_data?.email ||
       rawPayload?.email ||
       meta.email ||
       "",

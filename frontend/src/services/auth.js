@@ -147,9 +147,14 @@ export function getApiErrorMessage(error, fallbackMessage) {
   const responseData = error?.response?.data;
   const errorCode = responseData?.code;
   const message = responseData?.message || error?.message || "";
+  const apiBaseUrl = api?.defaults?.baseURL || "http://127.0.0.1:8000/api";
 
   if (errorCode === "email_unverified") {
     return "Email belum diverifikasi. Silakan cek inbox Anda lalu klik link verifikasi terlebih dahulu.";
+  }
+
+  if (!error?.response && error?.request) {
+    return `Backend tidak bisa dijangkau. Pastikan API Laravel berjalan di ${apiBaseUrl}.`;
   }
 
   if (typeof message === "string" && message.toLowerCase().includes("csrf token mismatch")) {

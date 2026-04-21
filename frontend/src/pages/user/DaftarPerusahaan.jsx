@@ -119,7 +119,6 @@ export default function DaftarPerusahaan() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Data file:", files);
     navigate("/register-company");
   };
 

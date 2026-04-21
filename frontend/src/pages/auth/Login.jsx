@@ -1,7 +1,6 @@
 import "../../styles/login.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {
   getApiErrorMessage,
@@ -95,7 +94,6 @@ function Login() {
 
   return (
     <div className="login-page">
-      {/* LEFT SIDE */}
       <div className="login-left">
         <div className="login-overlay">
           <h1>
@@ -115,10 +113,8 @@ function Login() {
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="login-right">
         <div className="login-right-inner">
-          {/* LOGO */}
           <div className="login-logo">
             <img src="/logovocaseek2.png" alt="Vocaseek Logo" />
           </div>
@@ -130,7 +126,6 @@ function Login() {
               magangmu.
             </p>
             <form onSubmit={handleLogin}>
-              {/* EMAIL */}
               <div className="form-group">
                 <label>Email</label>
                 <input
@@ -143,7 +138,6 @@ function Login() {
                 />
               </div>
 
-              {/* PASSWORD */}
               <div className="form-group">
                 <div className="password-label">
                   <label>Password</label>
@@ -160,7 +154,6 @@ function Login() {
                 />
               </div>
 
-              {/* REMEMBER */}
               <div className="remember">
                 <label className="remember-label">
                   <input
@@ -184,7 +177,6 @@ function Login() {
               </button>
             </form>
 
-            {/* LOGIN GOOGLE */}
             <button
               className="login-google-btn"
               type="button"
@@ -197,7 +189,6 @@ function Login() {
               </span>
             </button>
 
-            {/* Link register */}
             <div className="login-register">
               <span>Belum punya akun?</span>
               <Link to="/register">Daftar sekarang</Link>
