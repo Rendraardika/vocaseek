@@ -405,6 +405,12 @@ export default function Dokumen() {
         setDocs(backendDocs);
         setSavedDocs(backendDocs);
         setScopedItem(USER_STORAGE_KEYS.dokumen, JSON.stringify(backendDocs));
+
+        // Trigger journey update saat dokumen berhasil dimuat dari backend
+        if (isDokumenComplete(backendDocs)) {
+          window.dispatchEvent(new Event("career-journey-updated"));
+          window.dispatchEvent(new Event("profile-updated"));
+        }
       } catch (error) {
         console.error("Gagal memuat dokumen backend:", error);
       }
@@ -494,8 +500,11 @@ export default function Dokumen() {
       setDocs(backendDocs);
       setSavedDocs(backendDocs);
       setScopedItem(USER_STORAGE_KEYS.dokumen, JSON.stringify(backendDocs));
+
+      // Dispatch events untuk update journey status
       window.dispatchEvent(new Event("career-journey-updated"));
       window.dispatchEvent(new Event("profile-updated"));
+      window.dispatchEvent(new Event("akademik-updated"));
 
       setSaveMessage("Dokumen berhasil disimpan.");
     } catch (error) {
