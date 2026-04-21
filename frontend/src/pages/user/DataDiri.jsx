@@ -298,8 +298,13 @@ export default function DataDiri() {
         foto: normalizedProfile.photo || current?.raw?.foto || "",
       },
     }));
+
+    // Dispatch events untuk update UI
     window.dispatchEvent(new Event("profile-updated"));
     window.dispatchEvent(new Event("career-journey-updated"));
+
+    // Juga trigger akademik-updated karena perubahan profile bisa mempengaruhi step completion
+    window.dispatchEvent(new Event("akademik-updated"));
   };
 
   useEffect(() => {

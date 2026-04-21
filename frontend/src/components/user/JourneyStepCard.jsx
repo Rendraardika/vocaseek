@@ -11,56 +11,12 @@ import {
   getScopedItem,
   USER_STORAGE_KEYS,
 } from "../../utils/userScopedStorage";
-const REQUIRED_DOC_IDS = [
-  "cv",
-  "portfolio",
-  "rekomendasi",
-  "ktp",
-  "transkrip",
-  "ktm",
-];
+import {
+  isDataDiriComplete,
+  isAkademikComplete,
+  isDokumenComplete,
+} from "../../utils/journeyValidation";
 
-const isDataDiriComplete = (data) => {
-  if (!data) return false;
-
-  return Boolean(
-    data.about?.trim() &&
-    data.fullName?.trim() &&
-    data.gender?.trim() &&
-    data.birthDate?.trim() &&
-    data.birthPlaceType?.trim() &&
-    data.birthCity?.trim() &&
-    data.email?.trim() &&
-    data.phone?.trim() &&
-    data.province?.trim() &&
-    data.kabupaten?.trim() &&
-    data.addressDetail?.trim(),
-  );
-};
-
-const isAkademikComplete = (data) => {
-  if (!data) return false;
-
-  const pendidikan = data?.pendidikan || {};
-  const pengalaman = Array.isArray(data?.pengalaman) ? data.pengalaman : [];
-  const sertifikasi = Array.isArray(data?.sertifikasi) ? data.sertifikasi : [];
-
-  return Boolean(
-    pendidikan.institusi?.trim() &&
-    pendidikan.jurusan?.trim() &&
-    pengalaman.length > 0 &&
-    sertifikasi.length > 0,
-  );
-};
-
-const isDokumenComplete = (docs) => {
-  if (!Array.isArray(docs)) return false;
-
-  return REQUIRED_DOC_IDS.every((requiredId) => {
-    const found = docs.find((item) => item.id === requiredId);
-    return found?.status === "uploaded";
-  });
-};
 
 export default function PerjalananKarirmu() {
   const navigate = useNavigate();
@@ -73,20 +29,74 @@ export default function PerjalananKarirmu() {
   useEffect(() => {
     const syncJourneyState = () => {
       try {
-        const dataDiri = JSON.parse(getScopedItem(USER_STORAGE_KEYS.dataDiri) || "null");
-        const akademik = JSON.parse(getScopedItem(USER_STORAGE_KEYS.akademik) || "null");
-        const dokumen = JSON.parse(getScopedItem(USER_STORAGE_KEYS.dokumen) || "null");
+        const dataDiriRaw = getScopedItem(USER_STORAGE_KEYS.dataDiri);
+        const akademikRaw = getScopedItem(USER_STORAGE_KEYS.akademik);
+        const dokumenRaw = getScopedItem(USER_STORAGE_KEYS.dokumen);
+
+        let dataDiri = null;
+        let akademik = null;
+        let dokumen = null;
+
+        try {
+          dataDiri = dataDiriRaw ? JSON.parse(dataDiriRaw) : null;
+        } catch (e) {
+          console.error("Error parsing dataDiri:", e);
+        }
+
+        try {
+          akademik = akademikRaw ? JSON.parse(akademikRaw) : null;
+        } catch (e) {
+          console.error("Error parsing akademik:", e);
+        }
+
+        try {
+          dokumen = dokumenRaw ? JSON.parse(dokumenRaw) : null;
+        } catch (e) {
+          console.error("Error parsing dokumen:", e);
+        }
+
+        const step1Completed =
+          isDataDiriComplete(dataDiri) &&
+          isAkademikComplete(akademik) &&
+          isDokumenComplete(dokumen);
+
         const step2Completed =
           getScopedItem(USER_STORAGE_KEYS.pretestCompleted) === "true";
-        const step3Completed = Boolean(getScopedItem(USER_STORAGE_KEYS.appliedJob));
 
-        setJourneyState({
-          step1Completed:
-            isDataDiriComplete(dataDiri) &&
-            isAkademikComplete(akademik) &&
-            isDokumenComplete(dokumen),
+        const step3Completed = Boolean(
+          getScopedItem(USER_STORAGE_KEYS.appliedJob)
+        );
+
+        // Debug logging
+        console.log("🔍 Journey State Check:", {
+          dataDiriComplete: isDataDiriComplete(dataDiri),
+          akademikComplete: isAkademikComplete(akademik),
+          dokumenComplete: isDokumenComplete(dokumen),
+          step1Completed,
           step2Completed,
           step3Completed,
+        });
+
+        setJourneyState((prevState) => {
+          if (
+            prevState.step1Completed === step1Completed &&
+            prevState.step2Completed === step2Completed &&
+            prevState.step3Completed === step3Completed
+          ) {
+            return prevState;
+          }
+
+          console.log("✅ Journey State Updated:", {
+            step1Completed,
+            step2Completed,
+            step3Completed,
+          });
+
+          return {
+            step1Completed,
+            step2Completed,
+            step3Completed,
+          };
         });
       } catch (error) {
         console.error("Gagal membaca status perjalanan karir:", error);
@@ -98,16 +108,22 @@ export default function PerjalananKarirmu() {
       }
     };
 
+    // Sync on mount
+    console.log("📌 JourneyStepCard mounted, syncing journey state...");
     syncJourneyState();
 
+    // Listen to all relevant events
     window.addEventListener("storage", syncJourneyState);
     window.addEventListener("profile-updated", syncJourneyState);
     window.addEventListener("career-journey-updated", syncJourneyState);
+    window.addEventListener("akademik-updated", syncJourneyState);
 
+    // Cleanup
     return () => {
       window.removeEventListener("storage", syncJourneyState);
       window.removeEventListener("profile-updated", syncJourneyState);
       window.removeEventListener("career-journey-updated", syncJourneyState);
+      window.removeEventListener("akademik-updated", syncJourneyState);
     };
   }, []);
 
@@ -123,11 +139,12 @@ export default function PerjalananKarirmu() {
   ]);
 
   const getStepCardClass = (stepNumber) => {
-    if (
+    const isCompleted =
       (stepNumber === 1 && journeyState.step1Completed) ||
       (stepNumber === 2 && journeyState.step2Completed) ||
-      (stepNumber === 3 && journeyState.step3Completed)
-    ) {
+      (stepNumber === 3 && journeyState.step3Completed);
+
+    if (isCompleted) {
       return "journey-card journey-card--completed";
     }
 
@@ -151,6 +168,7 @@ export default function PerjalananKarirmu() {
             ? "Data pribadi, akademik, dan dokumen sudah lengkap."
             : "Lengkapi data pribadi, akademik, dan dokumenmu."}
         </p>
+
         {!journeyState.step1Completed && (
           <button
             type="button"
@@ -171,8 +189,11 @@ export default function PerjalananKarirmu() {
         <p>
           {journeyState.step2Completed
             ? "Pre-test selesai. Kamu siap lanjut ke tahap berikutnya."
-            : "Kemampuan teknis teruji."}
+            : journeyState.step1Completed
+            ? "Profil sudah lengkap. Sekarang lanjut kerjakan pre-test."
+            : "Selesaikan profilmu dulu untuk membuka pre-test."}
         </p>
+
         {journeyState.step1Completed && !journeyState.step2Completed && (
           <button
             type="button"
@@ -193,8 +214,11 @@ export default function PerjalananKarirmu() {
         <p>
           {journeyState.step3Completed
             ? "Lamaran sudah dibuat. Kamu bisa lanjut memantau statusnya."
-            : "Temukan pekerjaan impian dan mulai daftar lowongan."}
+            : journeyState.step2Completed
+            ? "Pre-test selesai. Sekarang cari dan apply lowongan."
+            : "Selesaikan pre-test terlebih dahulu."}
         </p>
+
         {journeyState.step2Completed && !journeyState.step3Completed && (
           <button
             type="button"
@@ -212,7 +236,12 @@ export default function PerjalananKarirmu() {
         </div>
         <div className="journey-step-label">LANGKAH 4</div>
         <h3>Pantau Status</h3>
-        <p>Lacak proses lamaran.</p>
+        <p>
+          {journeyState.step3Completed
+            ? "Lacak proses lamaranmu di sini."
+            : "Pantau status setelah kamu berhasil apply lowongan."}
+        </p>
+
         {journeyState.step3Completed && (
           <button
             type="button"
