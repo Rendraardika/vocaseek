@@ -1,7 +1,6 @@
 import "../../styles/registercompany.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getApiErrorMessage, registerCompany } from "../../services/auth";
 import { saveLanguagePreference } from "../../utils/languagePreference";
 
@@ -128,7 +127,6 @@ export default function RegisterCompany() {
 
   return (
     <div className="rc-page">
-      {/* LEFT */}
       <div className="rc-left">
         <div className="rc-overlay">
           <h1>
@@ -146,22 +144,18 @@ export default function RegisterCompany() {
         </div>
       </div>
 
-      {/* RIGHT */}
       <div className="rc-right">
         <div className="rc-container">
-          {/* LOGO */}
           <div className="rc-logo">
             <img src="/logovocaseek2.png" alt="Vocaseek" />
           </div>
 
-          {/* TITLE */}
           <h2 className="rc-title">Partner With Us</h2>
 
           <p className="rc-desc">
             Complete legal registration to start a professional partnership.
           </p>
 
-          {/* ROLE SWITCH */}
           <div className="rc-role-switch">
             <Link to="/register" className="rc-role">
               Pelamar
@@ -170,7 +164,6 @@ export default function RegisterCompany() {
             <div className="rc-role active">Company</div>
           </div>
 
-          {/* FORM */}
           <form className="rc-form" onSubmit={handleSubmit}>
             <div className="rc-group">
               <label>Company Name</label>
@@ -242,7 +235,6 @@ export default function RegisterCompany() {
               />
             </div>
 
-            {/* Upload LoA */}
             <div className="rc-upload-group">
               <label>Letter of Acceptance (LoA)</label>
 
@@ -263,7 +255,6 @@ export default function RegisterCompany() {
               </label>
             </div>
 
-            {/* Upload SK */}
             <div className="rc-upload-group">
               <label>Akta Pendirian (SK)</label>
 
@@ -284,7 +275,6 @@ export default function RegisterCompany() {
               </label>
             </div>
 
-            {/* TERMS */}
             <div className="rc-terms">
               <input
                 type="checkbox"

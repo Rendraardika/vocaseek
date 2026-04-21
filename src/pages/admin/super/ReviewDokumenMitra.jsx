@@ -196,13 +196,11 @@ export default function ReviewDokumenMitra() {
   };
 
   const handleSaveVerification = () => {
-    const payload = {
+    void ({
       documentId: documentData?.id || null,
       validationStatus,
       verifierNote,
-    };
-
-    console.log("Simpan verifikasi:", payload);
+    });
   };
 
   return (

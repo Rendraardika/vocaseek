@@ -301,7 +301,6 @@ function createUploadedDoc(defaultDoc, url) {
 function mapDocsFromBackend(payload = {}) {
   const normalizedProfile = mapTalentDetailPayload(payload);
   const documents = normalizedProfile?.documents || {};
-  const educationDocument = normalizedProfile?.educationDocument;
 
   return initialDocs.map((defaultDoc) => {
     if (defaultDoc.id === "cv") {

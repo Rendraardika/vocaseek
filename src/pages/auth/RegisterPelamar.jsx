@@ -1,7 +1,6 @@
 import "../../styles/registerpelamar.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getApiErrorMessage,
   loginWithGoogleAccessToken,
@@ -100,7 +99,6 @@ function RegisterPelamar() {
 
   return (
     <div className="register-page">
-      {/* LEFT SIDE */}
       <div className="register-left">
         <div className="register-overlay">
           <h1>
@@ -120,21 +118,17 @@ function RegisterPelamar() {
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="register-right">
         <div className="register-container">
-          {/* LOGO */}
           <div className="register-logo">
             <img src="/logovocaseek2.png" alt="Vocaseek Logo" />
           </div>
 
-          {/* TITLE */}
           <h2 className="register-title">Get Started</h2>
           <p className="register-desc">
             Silakan isi Role Anda dan berikan detail Anda.
           </p>
 
-          {/* ROLE SWITCH */}
           <div className="register-role-switch">
             <div className="register-role active">Pelamar</div>
 
@@ -143,7 +137,6 @@ function RegisterPelamar() {
             </Link>
           </div>
           <form onSubmit={handleSubmit}>
-            {/* FULL NAME */}
             <div className="register-form-group">
               <label>Full Name</label>
               <input
@@ -156,7 +149,6 @@ function RegisterPelamar() {
               />
             </div>
 
-            {/* EMAIL */}
             <div className="register-form-group">
               <label>Email Address</label>
               <input
@@ -169,7 +161,6 @@ function RegisterPelamar() {
               />
             </div>
 
-            {/* PHONE */}
             <div className="register-form-group">
               <label>Phone Number</label>
               <input
@@ -182,7 +173,6 @@ function RegisterPelamar() {
               />
             </div>
 
-            {/* PASSWORD */}
             <div className="register-form-group">
               <div className="register-password-label">
                 <label>Create Password</label>
@@ -196,7 +186,6 @@ function RegisterPelamar() {
               />
             </div>
 
-            {/* REMEMBER */}
             <div className="register-remember">
               <input
                 type="checkbox"
@@ -213,35 +202,30 @@ function RegisterPelamar() {
               </p>
             ) : null}
 
-            {/* BUTTON */}
             <button className="register-btn" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Memproses..." : "Daftar Sebagai Pelamar"}
             </button>
           </form>
 
-          {/* DIVIDER */}
           <div className="register-divider">
             <span>OR CONTINUE WITH</span>
           </div>
 
-          {/* GOOGLE */}
           <button
             className="register-google"
             type="button"
             onClick={handleGoogleRegister}
             disabled={isGoogleSubmitting}
           >
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" />
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
             {isGoogleSubmitting ? "Memproses Google..." : "Google"}
           </button>
 
-          {/* LOGIN LINK */}
           <div className="register-login">
             <span>Do you have an account?</span>
             <Link to="/login">Login</Link>
           </div>
 
-          {/* COPYRIGHT */}
           <div className="register-copyright">
             © 2026 VOKASIK INC. ALL RIGHTS RESERVED.
           </div>
