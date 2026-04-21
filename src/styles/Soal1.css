@@ -746,3 +746,18 @@ textarea {
     letter-spacing: 0.12em;
   }
 }
+
+.assessNumBtn.isAnswered {
+  background: #22c55e;
+  color: #fff;
+  border-color: #22c55e;
+  opacity: 1;
+}
+
+.assessNumBtn.isAnswered:disabled {
+  background: #22c55e;
+  color: #fff;
+  border-color: #22c55e;
+  opacity: 1;
+  cursor: not-allowed;
+}

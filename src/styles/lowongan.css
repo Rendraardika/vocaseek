@@ -635,6 +635,15 @@ body {
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
 }
 
+.mulai-btn {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* hover */
 .mulai-btn:hover {
   background: #1e4ed8;
@@ -728,6 +737,12 @@ body {
 
 /* ================= RESPONSIVE ================= */
 
+/* helper default */
+.page .hamburger,
+.page .mobile-login {
+  display: none;
+}
+
 /* ===== TABLET ===== */
 @media (max-width: 1024px) {
   .header-inner {
@@ -735,7 +750,7 @@ body {
   }
 
   .navbar {
-    padding: 16px 40px;
+    padding: 14px 32px;
   }
 
   .hero {
@@ -838,33 +853,36 @@ body {
 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
-  .page.user-nav-shell {
+  .page {
     padding-top: 0 !important;
   }
 
-  .page.user-nav-shell .header {
-    position: fixed !important;
-    top: 0 !important;
-  }
-
   .header {
-    position: fixed;
-    top: 0;
+    position: sticky !important;
+    top: 0 !important;
     left: 0;
     width: 100%;
+    z-index: 1300;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .navbar {
+    padding: 14px 16px;
+    background: #fff;
+    position: relative;
   }
 
   .header-inner {
     position: relative;
-    padding: 0 20px;
-    height: 60px;
+    max-width: 100%;
+    min-height: 56px;
+    height: 56px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
-  }
-
-  .navbar {
-    padding: 14px 20px;
-    position: relative;
+    justify-content: space-between;
+    gap: 10px;
   }
 
   .logo,
@@ -874,10 +892,37 @@ body {
     min-width: 0;
   }
 
+  .nav-left {
+    flex: 1;
+    width: 100%;
+  }
+
   .logo-img {
-    width: 145px !important;
-    max-width: 100%;
+    width: 105px !important;
+    max-width: 105px;
     height: auto !important;
+  }
+
+  .btn-login {
+    display: none !important;
+  }
+
+  .mobile-login {
+    display: inline-flex !important;
+    width: 100%;
+    margin-top: 4px;
+    align-items: center;
+    justify-content: center;
+    background: #fbbf24;
+    color: #fff !important;
+    border: none;
+    padding: 12px 16px;
+    min-height: 46px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
   }
 
   .nav-menu {
@@ -885,35 +930,61 @@ body {
   }
 
   .hamburger {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    left: auto;
-    transform: translateY(-50%);
-    margin: 0;
-    flex-shrink: 0;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 5px;
     align-items: center;
     justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    position: relative;
+    margin-left: auto;
+    transform: none;
+    flex-shrink: 0;
     z-index: 1202;
     cursor: pointer;
+  }
+
+  .hamburger span {
+    width: 22px;
+    height: 2.5px;
+    background: #111827;
+    border-radius: 3px;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+  }
+
+  .hamburger.active span:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg);
+  }
+
+  .hamburger.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.active span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
   }
 
   .nav {
     position: absolute;
     top: calc(100% + 8px);
-    left: 16px;
-    right: 16px;
+    left: 0;
+    right: 0;
     width: auto;
-    background: #fff;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 18px 16px;
     gap: 14px;
-    display: none;
-    border-radius: 16px;
+    margin-top: 0;
+    padding: 18px 16px;
+    background: #fff;
+    border-radius: 18px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
     z-index: 1200;
   }
@@ -967,6 +1038,12 @@ body {
     line-height: 1.7;
   }
 
+  .hero-btn {
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+  }
+
   .hero-image {
     width: 100%;
     max-width: 320px;
@@ -992,6 +1069,7 @@ body {
     bottom: -14px;
     left: 50%;
     transform: translateX(-50%);
+    white-space: nowrap;
   }
 
   .partner {
@@ -1132,27 +1210,35 @@ body {
 
 /* ===== SMALL MOBILE ===== */
 @media (max-width: 480px) {
-  .header-inner {
-    padding: 0 16px;
+  .navbar {
+    padding: 10px 12px;
   }
 
-  .navbar {
-    padding: 12px 16px;
+  .header-inner {
+    min-height: 54px;
+    height: 54px;
+    padding: 0 10px;
+    column-gap: 10px;
   }
 
   .logo-img {
-    width: 130px !important;
+    width: 92px !important;
+    max-width: 92px;
   }
 
   .hamburger {
-    right: 16px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .hamburger span {
+    width: 20px;
   }
 
   .nav {
-    left: 12px;
-    right: 12px;
     top: calc(100% + 6px);
     padding: 16px 14px;
+    border-radius: 16px;
   }
 
   .hero {
@@ -1199,7 +1285,365 @@ body {
   }
 }
 
+/* cegah overflow horizontal */
+html,
+body {
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 /* cegah konten ketutup header fixed (khusus halaman lowongan) */
 .page {
   padding-top: 56px;
+}
+
+/* =========================================
+   MOBILE HEADER FIX LOWONGAN
+   tempel PALING BAWAH lowongan.css
+   ========================================= */
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 0 !important;
+  }
+
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0;
+    width: 100%;
+    z-index: 1300 !important;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: none;
+  }
+
+  .navbar {
+    padding: 14px 16px !important;
+    background: #fff;
+    position: relative;
+    z-index: 1301;
+  }
+
+  .header-inner {
+    position: relative !important;
+    max-width: 100% !important;
+    min-height: 56px;
+    height: 56px;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px;
+    overflow: visible !important;
+  }
+
+  .logo,
+  .nav-left {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .nav-left {
+    flex: 1;
+    width: 100%;
+  }
+
+  .logo-img {
+    width: 105px !important;
+    max-width: 105px;
+    height: auto !important;
+    display: block;
+  }
+
+  .btn-login {
+    display: none !important;
+  }
+
+  .nav-menu {
+    display: none !important;
+  }
+
+  /* tombol hamburger / titik tiga */
+  .hamburger {
+    display: inline-flex !important;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin: 0 !important;
+    margin-left: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    transform: none !important;
+    flex-shrink: 0;
+    z-index: 1405 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hamburger span {
+    width: 22px;
+    height: 2.5px;
+    background: #111827;
+    border-radius: 3px;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+    display: block;
+    pointer-events: none;
+  }
+
+  .hamburger.active span:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg);
+  }
+
+  .hamburger.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.active span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg);
+  }
+
+  /* dropdown option seperti beranda */
+  .nav {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    margin-top: 0 !important;
+    padding: 18px 16px !important;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    z-index: 1400 !important;
+  }
+
+  .nav.show {
+    display: flex !important;
+  }
+
+  .nav a {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 0 !important;
+  }
+
+  .mobile-login {
+    display: inline-flex !important;
+    width: 100%;
+    margin-top: 3px;
+    align-items: center;
+    justify-content: center;
+    background: #fbbf24;
+    color: #fff !important;
+    border: none;
+    padding: 12px 16px;
+    min-height: 46px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  /* biar konten tidak naik menimpa header */
+  .hero {
+    margin-top: 0 !important;
+    padding-top: 32px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 12px !important;
+  }
+
+  .header-inner {
+    min-height: 54px;
+    height: 54px;
+    padding: 0 10px !important;
+    column-gap: 10px;
+  }
+
+  .logo-img {
+    width: 92px !important;
+    max-width: 92px;
+  }
+
+  .hamburger {
+    width: 34px;
+    height: 34px;
+  }
+
+  .hamburger span {
+    width: 20px;
+  }
+
+  .nav {
+    top: calc(100% + 6px) !important;
+    padding: 16px 14px !important;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header,
+  .navbar,
+  .header-inner,
+  .hamburger {
+    pointer-events: auto !important;
+  }
+
+  .nav.show {
+    pointer-events: auto !important;
+  }
+
+  .hero,
+  .hero-container,
+  .hero-right,
+  .hero-image {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* =========================
+   FIX HAMBURGER BISA DIKLIK
+   SAAT MENU SHOW
+   ========================= */
+
+@media (max-width: 768px) {
+  .header {
+    position: sticky !important;
+    top: 0;
+    z-index: 3000 !important;
+    overflow: visible !important;
+  }
+
+  .navbar {
+    position: relative;
+    z-index: 3001 !important;
+    overflow: visible !important;
+  }
+
+  .header-inner {
+    position: relative !important;
+    z-index: 3002 !important;
+    overflow: visible !important;
+  }
+
+  .nav-left,
+  .logo {
+    position: relative;
+    z-index: 3003;
+  }
+
+  .hamburger {
+    position: relative !important;
+    z-index: 4005 !important;
+    pointer-events: auto !important;
+  }
+
+  .hamburger * {
+    pointer-events: none;
+  }
+
+  .nav {
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 3990 !important;
+  }
+
+  .nav.show {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hamburger {
+    z-index: 4005 !important;
+  }
+
+  .nav {
+    top: calc(100% + 6px) !important;
+  }
+}
+
+/* =========================================
+   FIX POSISI HAMBURGER AGAR TIDAK NEMPEL KANAN
+   (VERSI LEBIH GESER KE KIRI)
+   ========================================= */
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 14px 16px !important;
+  }
+
+  .header-inner {
+    padding: 0 !important;
+  }
+
+  .nav-left {
+    padding-right: 0 !important;
+  }
+
+  .hamburger {
+    margin-left: auto !important;
+    margin-right: 12px !important; /* tambah jarak dari kanan */
+    transform: translateX(-10px) !important; /* geser ke kiri lagi */
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 12px !important;
+  }
+
+  .hamburger {
+    margin-right: 10px !important;
+    transform: translateX(-12px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .header:has(.nav.show) .hamburger span:nth-child(1),
+  .navbar:has(.nav.show) .hamburger span:nth-child(1),
+  .page:has(.nav.show) .hamburger span:nth-child(1) {
+    transform: translateY(7.5px) rotate(45deg) !important;
+  }
+
+  .header:has(.nav.show) .hamburger span:nth-child(2),
+  .navbar:has(.nav.show) .hamburger span:nth-child(2),
+  .page:has(.nav.show) .hamburger span:nth-child(2) {
+    opacity: 0 !important;
+  }
+
+  .header:has(.nav.show) .hamburger span:nth-child(3),
+  .navbar:has(.nav.show) .hamburger span:nth-child(3),
+  .page:has(.nav.show) .hamburger span:nth-child(3) {
+    transform: translateY(-7.5px) rotate(-45deg) !important;
+  }
 }

@@ -50,23 +50,31 @@ function App() {
           </div>
 
           <nav className={`nav ${menuOpen ? "show" : ""}`}>
-          <NavLink to="/" onClick={() => setMenuOpen(false)}>Beranda</NavLink>
-          <NavLink to="/lowongan" onClick={() => setMenuOpen(false)}>Lowongan</NavLink>
-          <NavLink to="/mitra" onClick={() => setMenuOpen(false)}>Mitra</NavLink>
-          <NavLink to="/kontak" onClick={() => setMenuOpen(false)}>Kontak</NavLink>
+            <NavLink to="/" onClick={() => setMenuOpen(false)}>
+              Beranda
+            </NavLink>
+            <NavLink to="/lowongan" onClick={() => setMenuOpen(false)}>
+              Lowongan
+            </NavLink>
+            <NavLink to="/mitra" onClick={() => setMenuOpen(false)}>
+              Mitra
+            </NavLink>
+            <NavLink to="/kontak" onClick={() => setMenuOpen(false)}>
+              Kontak
+            </NavLink>
 
-          <Link
-            to="/login"
-            className="mobile-login"
-            onClick={() => setMenuOpen(false)}
-          >
+            <Link
+              to="/login"
+              className="mobile-login"
+              onClick={() => setMenuOpen(false)}
+            >
+              Masuk
+            </Link>
+          </nav>
+
+          <Link to="/login" className="btn-login">
             Masuk
           </Link>
-        </nav>
-
-        <Link to="/login" className="btn-login">
-          Masuk
-        </Link>
         </div>
       </header>
 
@@ -319,7 +327,9 @@ function App() {
       <section className="featured-section">
         <div className="featured-header">
           <h2>Featured Job</h2>
-          <button className="view-all">View All →</button>
+          <Link to="/login" className="view-all">
+            View All →
+          </Link>
         </div>
 
         <div className="job-list">
