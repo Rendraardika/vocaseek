@@ -1,0 +1,179 @@
+/* =========================
+   JOURNEY / STEP SECTION
+   ========================= */
+
+.journey-wrap {
+  width: 100%;
+  max-width: 1200px !important;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* CARD BASE */
+.journey-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  padding: 30px 24px;
+  border-radius: 22px;
+
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  /* SHADOW NETRAL (no blue) */
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.04),
+    0 12px 30px rgba(0, 0, 0, 0.06);
+
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transition: all 0.25s ease;
+}
+
+/* TOP LINE (lebih subtle) */
+.journey-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #e5e7eb;
+}
+
+/* REMOVE GLOW BIRU */
+.journey-card::after {
+  display: none;
+}
+
+/* HOVER */
+.journey-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ACTIVE */
+.journey-card--active {
+  border-color: #dbeafe;
+  background: #ffffff;
+}
+
+.journey-card--active::before {
+  background: #2563eb; /* biru tapi tipis */
+}
+
+/* COMPLETED */
+.journey-card--completed {
+  border-color: #d1fae5;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 58%);
+}
+
+.journey-card--completed::before {
+  background: #16a34a;
+}
+
+/* ICON */
+.journey-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  margin: 12px auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #9ca3af;
+
+  font-size: 28px;
+}
+
+.journey-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 2.1;
+}
+
+/* ACTIVE ICON */
+.journey-card--active .journey-icon {
+  background: #eff6ff;
+  border-color: #dbeafe;
+  color: #6b7280;
+}
+
+/* COMPLETED ICON */
+.journey-card--completed .journey-icon {
+  background: #f0fdf4;
+  border-color: #d1fae5;
+  color: #16a34a;
+}
+
+.journey-card--completed .journey-step-label {
+  color: #16a34a;
+}
+
+.journey-card--completed h3 {
+  color: #166534;
+}
+
+/* STEP LABEL */
+.journey-step-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+/* TITLE */
+.journey-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+/* DESC */
+.journey-card p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #6b7280;
+  max-width: 240px;
+}
+
+/* BUTTON */
+.journey-btn {
+  margin-top: auto;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+
+  background: #111827;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+
+  transition: all 0.2s ease;
+}
+
+.journey-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+.journey-card--completed .journey-btn {
+  display: none;
+}

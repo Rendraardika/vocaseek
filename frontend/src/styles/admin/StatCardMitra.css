@@ -1,0 +1,122 @@
+.stat-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.stat-card__title {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.stat-card__value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #1e293b;
+}
+
+.stat-card__subtitle {
+  font-size: 14px;
+  color: #22c55e;
+  margin: 0;
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.pending {
+  background: #f8e9a9;
+  color: #9e7500;
+}
+
+.status-badge.shortlisted {
+  background: #dce9ff;
+  color: #4c6fff;
+}
+
+.status-badge.rejected {
+  background: #f8d3d3;
+  color: #c34747;
+}
+
+.status-badge.interviewing {
+  background: #f3e5ff;
+  color: #a855f7;
+}
+
+.status-badge.offered {
+  background: #ffe7c7;
+  color: #c97a10;
+}
+
+.status-badge.hired {
+  background: #ddf6e7;
+  color: #2f8b4b;
+}
+
+.status-badge.default {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .stat-card {
+    padding: 1.25rem;
+  }
+
+  .stat-card__value {
+    font-size: 24px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .stat-card {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .stat-card__title {
+    font-size: 13px;
+  }
+
+  .stat-card__value {
+    font-size: 22px;
+  }
+
+  .stat-card__subtitle {
+    font-size: 13px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .stat-card {
+    padding: 0.9rem;
+  }
+
+  .stat-card__value {
+    font-size: 20px;
+  }
+}

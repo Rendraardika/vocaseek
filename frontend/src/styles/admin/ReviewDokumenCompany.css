@@ -1,0 +1,794 @@
+.review-dokumen {
+  min-height: 100vh;
+  background: #f5f6fa;
+  display: flex;
+}
+
+.review-dokumen__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.review-dokumen__section {
+  padding: 2rem;
+}
+
+.review-dokumen__breadcrumb {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.review-dokumen__breadcrumb-muted {
+  color: #94a3b8;
+}
+
+.review-dokumen__breadcrumb-active {
+  color: #f0b617;
+  font-weight: 500;
+}
+
+.review-dokumen__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.review-dokumen__candidate {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.review-dokumen__avatar-box {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background: #f4c89d;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.review-dokumen__avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-dokumen__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  color: #1c2434;
+}
+
+.review-dokumen__role-row {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.review-dokumen__back-btn {
+  height: 52px;
+  padding: 0 2rem;
+  border-radius: 12px;
+  border: 1px solid #d9dfe8;
+  background: #ffffff;
+  color: #374151;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.review-dokumen__grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+}
+
+.review-dokumen__menu-label {
+  margin-bottom: 1rem;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.review-dokumen__menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.review-dokumen__doc-menu-item {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  transition: 0.2s ease;
+  cursor: pointer;
+}
+
+.review-dokumen__doc-menu-item--active {
+  background: #2482e8;
+  border-color: #2482e8;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.review-dokumen__doc-menu-item--default {
+  background: #ffffff;
+  border-color: #e8ecf2;
+  color: #1c2434;
+}
+
+.review-dokumen__doc-menu-item--default:hover {
+  background: #fafbff;
+}
+
+.review-dokumen__doc-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.review-dokumen__doc-icon-box--active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.review-dokumen__doc-icon-box--default {
+  background: #f4f6fa;
+  color: #94a3b8;
+}
+
+.review-dokumen__doc-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.review-dokumen__doc-title--active {
+  color: #ffffff;
+}
+
+.review-dokumen__doc-title--default {
+  color: #1c2434;
+}
+
+.review-dokumen__doc-subtitle {
+  margin-top: 0.25rem;
+  font-size: 13px;
+}
+
+.review-dokumen__doc-subtitle--active {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.review-dokumen__doc-subtitle--default {
+  color: #94a3b8;
+}
+
+.review-dokumen__verified-box {
+  margin-top: 2.5rem;
+  border-radius: 24px;
+  border: 1px solid #f4d39b;
+  background: #fff8ec;
+  padding: 1.25rem;
+}
+
+.review-dokumen__verified-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.review-dokumen__verified-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #fff1d6;
+  color: #f0a61a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.review-dokumen__verified-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0a61a;
+}
+
+.review-dokumen__verified-text {
+  margin: 0.5rem 0 0;
+  font-size: 14px;
+  line-height: 1.75rem;
+  color: #64748b;
+}
+
+.review-dokumen__toolbar {
+  background: #ffffff;
+  border: 1px solid #e8ecf2;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.review-dokumen__toolbar-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.review-dokumen__toolbar-file-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #eaf2ff;
+  color: #2482e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.review-dokumen__toolbar-file-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1c2434;
+  word-break: break-word;
+}
+
+.review-dokumen__toolbar-file-meta {
+  margin-top: 0.25rem;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.review-dokumen__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.review-dokumen__zoom-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f6f8fb;
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+}
+
+.review-dokumen__icon-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-dokumen__zoom-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.review-dokumen__secondary-btn,
+.review-dokumen__primary-btn {
+  height: 46px;
+  padding: 0 1.25rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.review-dokumen__secondary-btn {
+  border: 1px solid #d9dfe8;
+  background: #ffffff;
+  color: #374151;
+}
+
+.review-dokumen__primary-btn {
+  border: none;
+  background: #2482e8;
+  color: #ffffff;
+}
+
+.review-dokumen__preview-shell {
+  background: #e9eef5;
+  border: 1px solid #dde4ee;
+  border-radius: 16px;
+  padding: 1.5rem;
+  overflow: auto;
+}
+
+.review-dokumen__preview-page {
+  background: #ffffff;
+  border-radius: 2px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  width: 100%;
+  min-height: 1280px;
+  max-width: 930px;
+  margin: 0 auto;
+  padding: 3.5rem 3.5rem 2.5rem;
+  box-sizing: border-box;
+}
+
+.review-dokumen__resume-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.review-dokumen__resume-name {
+  margin: 0;
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 600;
+  color: #111827;
+}
+
+.review-dokumen__resume-role {
+  margin-top: 1rem;
+  font-size: 28px;
+  font-weight: 600;
+  color: #2482e8;
+}
+
+.review-dokumen__resume-contact {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 16px;
+  color: #64748b;
+}
+
+.review-dokumen__resume-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 999px;
+  background: #eef2f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2482e8;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.review-dokumen__resume-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-dokumen__resume-bar {
+  margin-top: 2rem;
+  height: 5px;
+  width: 100%;
+  background: #2482e8;
+}
+
+.review-dokumen__resume-grid {
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 2.5rem;
+}
+
+.review-dokumen__resume-section {
+  margin-bottom: 2.5rem;
+}
+
+.review-dokumen__resume-section-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-dokumen__resume-section-head--mb {
+  margin-bottom: 1.25rem;
+}
+
+.review-dokumen__resume-section-bar {
+  width: 4px;
+  height: 40px;
+  background: #f0a61a;
+}
+
+.review-dokumen__resume-section-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #111827;
+  text-transform: uppercase;
+}
+
+.review-dokumen__resume-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 2rem;
+  color: #64748b;
+}
+
+.review-dokumen__timeline {
+  position: relative;
+  padding-left: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.review-dokumen__timeline::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  height: 280px;
+  width: 1px;
+  background: #d6dde7;
+}
+
+.review-dokumen__timeline-item {
+  position: relative;
+}
+
+.review-dokumen__timeline-dot {
+  position: absolute;
+  left: -34px;
+  top: 0.5rem;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+}
+
+.review-dokumen__timeline-dot--active {
+  background: #2482e8;
+}
+
+.review-dokumen__timeline-dot--inactive {
+  background: #c8d0da;
+}
+
+.review-dokumen__timeline-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1c2434;
+}
+
+.review-dokumen__timeline-company {
+  margin-top: 0.25rem;
+  font-size: 15px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.review-dokumen__timeline-company--active {
+  color: #2482e8;
+}
+
+.review-dokumen__timeline-text {
+  margin: 1rem 0 0;
+  font-size: 16px;
+  line-height: 2rem;
+  color: #64748b;
+}
+
+.review-dokumen__timeline-text--mt {
+  margin-top: 0.5rem;
+}
+
+.review-dokumen__resume-side {
+  background: #f7f9fc;
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.review-dokumen__resume-side-title {
+  margin-bottom: 1.25rem;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #111827;
+  text-transform: uppercase;
+}
+
+.review-dokumen__skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.review-dokumen__skill-chip {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #e6ebf2;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.review-dokumen__resume-side-block {
+  margin-top: 3rem;
+}
+
+.review-dokumen__tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.review-dokumen__tool-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.review-dokumen__tool-bar-bg {
+  height: 12px;
+  border-radius: 999px;
+  background: #dde4ee;
+  overflow: hidden;
+}
+
+.review-dokumen__tool-bar {
+  height: 100%;
+  background: #2482e8;
+}
+
+.review-dokumen__tool-bar--figma {
+  width: 85%;
+}
+
+.review-dokumen__tool-bar--adobe {
+  width: 72%;
+}
+
+.review-dokumen__tool-bar--frammer {
+  width: 55%;
+}
+
+.review-dokumen__education-degree {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c2434;
+}
+
+.review-dokumen__education-meta {
+  margin-top: 0.25rem;
+  font-size: 14px;
+  line-height: 1.5rem;
+  color: #64748b;
+}
+
+.review-dokumen__resume-footer {
+  margin-top: 6rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+/* laptop kecil */
+@media (max-width: 1280px) {
+  .review-dokumen__grid {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .review-dokumen__resume-name {
+    font-size: 48px;
+  }
+
+  .review-dokumen__preview-page {
+    padding: 2.5rem 2.5rem 2rem;
+  }
+}
+
+/* tablet */
+@media (max-width: 1024px) {
+  .review-dokumen__section {
+    padding: 1.5rem;
+  }
+
+  .review-dokumen__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .review-dokumen__back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .review-dokumen__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-dokumen__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .review-dokumen__toolbar-actions {
+    justify-content: flex-start;
+  }
+
+  .review-dokumen__resume-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-dokumen__resume-side {
+    order: 2;
+  }
+}
+
+/* mobile */
+@media (max-width: 768px) {
+  .review-dokumen__section {
+    padding: 1rem;
+  }
+
+  .review-dokumen__candidate {
+    flex-direction: column;
+  }
+
+  .review-dokumen__title {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  .review-dokumen__toolbar-file-name {
+    font-size: 16px;
+  }
+
+  .review-dokumen__toolbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .review-dokumen__zoom-box,
+  .review-dokumen__secondary-btn,
+  .review-dokumen__primary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .review-dokumen__preview-shell {
+    padding: 1rem;
+  }
+
+  .review-dokumen__preview-page {
+    min-height: auto;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .review-dokumen__resume-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .review-dokumen__resume-name {
+    font-size: 32px;
+  }
+
+  .review-dokumen__resume-role {
+    font-size: 22px;
+  }
+
+  .review-dokumen__resume-contact,
+  .review-dokumen__resume-text,
+  .review-dokumen__timeline-text {
+    font-size: 14px;
+    line-height: 1.75rem;
+  }
+
+  .review-dokumen__resume-section-title,
+  .review-dokumen__resume-side-title {
+    font-size: 18px;
+  }
+
+  .review-dokumen__resume-footer {
+    margin-top: 3rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* small mobile */
+@media (max-width: 480px) {
+  .review-dokumen__breadcrumb {
+    gap: 0.5rem;
+    font-size: 13px;
+  }
+
+  .review-dokumen__doc-menu-item,
+  .review-dokumen__verified-box {
+    padding: 1rem;
+  }
+
+  .review-dokumen__toolbar {
+    padding: 1rem;
+  }
+
+  .review-dokumen__toolbar-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .review-dokumen__resume-name {
+    font-size: 28px;
+  }
+
+  .review-dokumen__resume-role {
+    font-size: 18px;
+  }
+
+  .review-dokumen__resume-section-head {
+    gap: 0.75rem;
+  }
+
+  .review-dokumen__resume-section-bar {
+    height: 32px;
+  }
+
+  .review-dokumen__timeline {
+    padding-left: 2rem;
+  }
+
+  .review-dokumen__timeline-dot {
+    left: -28px;
+  }
+
+  .review-dokumen__timeline::before {
+    left: 7px;
+  }
+}

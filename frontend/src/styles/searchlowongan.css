@@ -1,0 +1,1193 @@
+/* ================= MAIN CONTAINER ================= */
+.searchlowongan-page {
+  color: #1f2937;
+}
+
+.searchlowongan-container {
+  width: 1280px;
+  margin: 80px auto;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+
+/* ================= SEARCH BOX ================= */
+
+.searchlowongan-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+}
+
+.searchlowongan-box {
+  width: 100%;
+  max-width: 1300px;
+  background: #f5f4f1;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 24px 32px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+}
+
+.searchlowongan-top {
+  display: flex;
+  align-items: center;
+}
+
+.searchlowongan-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: #d4a017;
+  color: white;
+  cursor: pointer;
+}
+
+.searchlowongan-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 18px 0;
+}
+
+.searchlowongan-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* FIELD */
+.searchlowongan-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f1ede4;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  height: 48px;
+  padding: 0 16px;
+  color: #6b7280;
+}
+
+.searchlowongan-input {
+  flex: 2;
+  min-width: 280px;
+}
+
+.searchlowongan-input input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #111827;
+}
+
+.searchlowongan-select {
+  flex: 1;
+  min-width: 180px;
+}
+
+.searchlowongan-select select {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #111827;
+  appearance: none;
+}
+
+.searchlowongan-btn {
+  width: 64px;
+  height: 56px;
+  border-radius: 16px;
+  border: none;
+  background: #d4a017;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ================= LAYOUT ================= */
+
+.searchlowongan-layout {
+  display: flex;
+  gap: 32px;
+  margin-top: 40px;
+}
+
+/* ================= SIDEBAR ================= */
+
+.searchlowongan-sidebar {
+  width: 380px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.searchlowongan-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+/* ================= CARD ================= */
+
+.searchlowongan-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  min-height: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.searchlowongan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+.searchlowongan-card.active {
+  border: 2px solid #d4a017;
+  background: #fffdf7;
+}
+
+.searchlowongan-empty-card {
+  background: #ffffff;
+  border: 1px dashed #d7deea;
+  border-radius: 22px;
+  padding: 26px 22px;
+  color: #5b667a;
+}
+
+.searchlowongan-empty-card h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.searchlowongan-empty-card p {
+  margin: 0;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.searchlowongan-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.searchlowongan-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.searchlowongan-title {
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+
+.searchlowongan-company {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.searchlowongan-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.searchlowongan-badges span {
+  background: #f3e7c7;
+  color: #b88907;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.searchlowongan-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+/* ================= DETAIL ================= */
+
+.searchlowongan-detail {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 36px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+}
+
+.searchlowongan-empty-detail {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+}
+
+.searchlowongan-empty-detail h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
+  color: #1f2937;
+}
+
+.searchlowongan-empty-detail p {
+  max-width: 560px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #667085;
+}
+
+.searchlowongan-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.searchlowongan-detail-header h2 {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.searchlowongan-detail-header p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.searchlowongan-apply-btn {
+  background: #d4a017;
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.searchlowongan-section {
+  margin-top: 32px;
+}
+
+.searchlowongan-section h3 {
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.searchlowongan-section ul {
+  padding-left: 18px;
+  line-height: 1.8;
+  color: #4b5563;
+  font-size: 15px;
+}
+
+.searchlowongan-section p {
+  color: #4b5563;
+  line-height: 1.85;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+/* BENEFITS */
+
+.searchlowongan-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.searchlowongan-benefit {
+  background: #f8f3e3;
+  padding: 14px;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.job-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.job-company {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.job-logo {
+  width: 50px;
+  height: 50px;
+  background: #f3f4f6;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #6b7280;
+}
+
+.job-logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.job-info h2 {
+  font-size: 30px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.job-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #6b7280;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.job-status {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.job-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.apply-btn {
+  background: #d4a017;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.apply-btn:hover {
+  background: #b88b12;
+}
+
+.job-icon {
+  font-size: 20px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.job-icon:hover {
+  color: #d4a017;
+}
+
+.job-tabs {
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+
+.job-tabs button {
+  background: none;
+  border: none;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  cursor: pointer;
+  color: #6b7280;
+  position: relative;
+}
+
+.job-tabs button.active {
+  color: #d4a017;
+  font-weight: 600;
+}
+
+.job-tabs button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #d4a017;
+}
+
+.job-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.job-info-card {
+  background: #faf8f3;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid #eee;
+}
+
+.job-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.job-info-card ul {
+  padding-left: 18px;
+  line-height: 1.8;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.doc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.doc-tags span {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.searchlowongan-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.searchlowongan-benefit {
+  background: #f8f3e3;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ================= RESPONSIVE SEARCH LOWONGAN ================= */
+
+/* ===== GLOBAL WIDTH FIX ===== */
+@media (max-width: 1400px) {
+  .searchlowongan-container {
+    width: 95%;
+  }
+}
+
+/* ===== TABLET ===== */
+@media (max-width: 1024px) {
+  /* Layout */
+  .searchlowongan-layout {
+    flex-direction: column;
+  }
+
+  .searchlowongan-sidebar {
+    width: 100%;
+    max-height: none;
+  }
+
+  .searchlowongan-detail {
+    width: 100%;
+    padding: 28px;
+  }
+
+  .searchlowongan-benefits {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Header */
+  .header-inner {
+    padding: 20px 40px;
+  }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  /* Container */
+  .searchlowongan-container {
+    width: 95%;
+    margin: 8px auto 0;
+  }
+
+  .searchlowongan-wrapper {
+    margin-top: 0;
+  }
+
+  /* Search Box */
+  .searchlowongan-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchlowongan-input,
+  .searchlowongan-select {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .searchlowongan-btn {
+    width: 100%;
+    height: 50px;
+  }
+
+  /* Card */
+  .searchlowongan-card {
+    grid-template-columns: 1fr;
+  }
+
+  .searchlowongan-right {
+    align-items: flex-start;
+  }
+
+  .searchlowongan-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  min-height: 120px;
+
+  /* ✨ TAMBAHAN */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.searchlowongan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+  /* Detail */
+  .searchlowongan-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .searchlowongan-apply-btn {
+    width: 100%;
+  }
+
+  .searchlowongan-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  /* Header */
+  .header-inner {
+    padding: 15px 20px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-img {
+    height: 55px;
+    object-fit: contain;
+  }
+}
+
+/* ===== SMALL MOBILE ===== */
+@media (max-width: 480px) {
+  .searchlowongan-detail {
+    padding: 20px;
+  }
+
+  .searchlowongan-detail-header h2 {
+    font-size: 22px;
+  }
+}
+
+/* ================= HAMBURGER ================= */
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 3px;
+  background: #1f2937;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+    position: relative;
+    z-index: 1202;
+    cursor: pointer;
+  }
+
+  .nav {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: white;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    display: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1200;
+  }
+
+  .nav.show {
+    display: flex;
+  }
+}
+
+/* ================= TYPOGRAPHY TUNE-UP ================= */
+.searchlowongan-page {
+  color: #1f2937;
+}
+
+.searchlowongan-box {
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+}
+
+.searchlowongan-tab {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.searchlowongan-field {
+  color: #6b7280;
+}
+
+.searchlowongan-input input,
+.searchlowongan-select select {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #111827;
+}
+
+.searchlowongan-sidebar-header {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.searchlowongan-card {
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.searchlowongan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+}
+
+.searchlowongan-title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+
+.searchlowongan-company {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.searchlowongan-badges span,
+.doc-tags span,
+.searchlowongan-benefit {
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.searchlowongan-meta {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  flex-wrap: wrap;
+}
+
+.searchlowongan-detail {
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.05);
+}
+
+.job-info h2 {
+  font-size: 30px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.job-meta {
+  font-weight: 500;
+  line-height: 1.6;
+  flex-wrap: wrap;
+}
+
+.job-status {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.apply-btn {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.job-tabs button {
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.searchlowongan-section h3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.searchlowongan-section h3 svg,
+.job-card-title svg {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.searchlowongan-section ul,
+.searchlowongan-section p {
+  font-size: 15px;
+  color: #4b5563;
+}
+
+.searchlowongan-section p {
+  line-height: 1.85;
+}
+
+.job-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.job-info-card ul {
+  color: #4b5563;
+}
+
+@media (max-width: 768px) {
+  .job-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .job-info h2 {
+    font-size: 24px;
+  }
+
+  .apply-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-info h2 {
+    font-size: 22px;
+  }
+
+  .job-tabs {
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+}
+
+/* ================= BACKEND DATA CLEANUP ================= */
+.searchlowongan-layout {
+  display: grid;
+  grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+  align-items: start;
+  gap: 30px;
+}
+
+.searchlowongan-sidebar {
+  width: 100%;
+  max-height: 76vh;
+  padding-right: 10px;
+}
+
+.searchlowongan-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.searchlowongan-sidebar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #d5dbe6;
+}
+
+.searchlowongan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: auto;
+  padding: 22px 24px;
+  overflow: hidden;
+}
+
+.searchlowongan-card.active {
+  border-width: 1.5px;
+  box-shadow: 0 14px 30px rgba(212, 160, 23, 0.14);
+}
+
+.searchlowongan-left,
+.searchlowongan-right {
+  width: 100%;
+  min-width: 0;
+}
+
+.searchlowongan-right {
+  align-items: flex-start;
+}
+
+.searchlowongan-title {
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.searchlowongan-company {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-transform: none;
+}
+
+.searchlowongan-badges {
+  width: 100%;
+  align-items: flex-start;
+}
+
+.searchlowongan-badges span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.searchlowongan-meta {
+  width: 100%;
+  gap: 10px;
+}
+
+.searchlowongan-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.searchlowongan-detail {
+  min-width: 0;
+}
+
+.job-detail-header {
+  align-items: flex-start;
+}
+
+.job-company {
+  min-width: 0;
+}
+
+.job-info {
+  min-width: 0;
+}
+
+.job-info h2 {
+  overflow-wrap: anywhere;
+}
+
+.job-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  overflow-wrap: anywhere;
+}
+
+.job-actions {
+  flex-shrink: 0;
+}
+
+.apply-btn {
+  white-space: nowrap;
+}
+
+.searchlowongan-benefits {
+  grid-template-columns: repeat(auto-fit, minmax(170px, max-content));
+}
+
+.searchlowongan-benefit {
+  min-width: 170px;
+  max-width: 240px;
+  overflow-wrap: anywhere;
+}
+
+.searchlowongan-company-panel,
+.searchlowongan-location-panel {
+  margin-top: 28px;
+  border: 1px solid #edf0f5;
+  border-radius: 22px;
+  background: #fffdf8;
+  padding: 26px;
+}
+
+.searchlowongan-company-hero {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.searchlowongan-company-avatar,
+.searchlowongan-location-icon {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 18px;
+  background: #f6e8be;
+  color: #b88907;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.searchlowongan-company-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.searchlowongan-company-hero h3,
+.searchlowongan-location-panel h3 {
+  margin: 0 0 10px;
+  color: #1f2937;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.searchlowongan-company-hero p,
+.searchlowongan-location-panel p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.searchlowongan-company-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.searchlowongan-company-facts div {
+  border: 1px solid #edf0f5;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 16px;
+  min-width: 0;
+}
+
+.searchlowongan-company-facts span {
+  display: block;
+  margin-bottom: 7px;
+  color: #8a94a6;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.searchlowongan-company-facts strong,
+.searchlowongan-company-facts a {
+  color: #1f2937;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.searchlowongan-location-panel {
+  display: flex;
+  gap: 18px;
+}
+
+.searchlowongan-location-panel h4 {
+  margin: 22px 0 8px;
+  color: #1f2937;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
+  .searchlowongan-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .searchlowongan-sidebar {
+    max-height: none;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .searchlowongan-card {
+    display: flex;
+    grid-template-columns: none;
+  }
+
+  .searchlowongan-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .searchlowongan-benefit {
+    max-width: none;
+  }
+
+  .searchlowongan-company-hero,
+  .searchlowongan-location-panel {
+    flex-direction: column;
+  }
+
+  .searchlowongan-company-facts {
+    grid-template-columns: 1fr;
+  }
+}

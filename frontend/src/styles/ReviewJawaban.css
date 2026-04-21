@@ -1,0 +1,316 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+.reviewMainCard,
+.reviewMainCard *,
+.reviewMainCard button {
+  font-family: "Poppins", sans-serif;
+}
+
+/* pakai container yang sama persis feel-nya dengan StatusLamaran */
+.reviewJawabanPage .pageContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.reviewJawabanPage .aside {
+  align-self: start;
+}
+
+.reviewJawabanPage .asideInner {
+  position: sticky;
+  top: 90px;
+}
+
+.reviewJawabanPage .mainCard {
+  border-radius: 24px;
+}
+
+.reviewMainCard {
+  min-height: 640px;
+  padding: 20px 22px 28px;
+}
+
+.reviewBackBtn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  color: #101828;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 14px;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.reviewHeaderIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reviewHeaderClipboard {
+  width: 22px;
+  height: 26px;
+  border: 2px solid #1f2937;
+  border-radius: 4px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.reviewHeaderClipboard::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 8px;
+  border: 2px solid #1f2937;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: #f3f4f6;
+}
+
+.reviewHeaderClipboard::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 8px;
+  height: 2px;
+  background: #1f2937;
+  border-radius: 999px;
+  box-shadow: 0 6px 0 #1f2937;
+}
+
+.reviewHeaderText {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.reviewSubtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #718096;
+}
+
+.reviewDivider {
+  width: 100%;
+  height: 1px;
+  background: #edf0f4;
+  margin: 18px 0 28px;
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.reviewQuestionCard {
+  border: 1px solid #edf0f4;
+  border-radius: 18px;
+  background: #fbfcfd;
+  padding: 20px 22px 18px;
+}
+
+.reviewQuestionTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.reviewQuestionNumber {
+  min-width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #1f2d44;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.reviewQuestionText {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 600;
+  color: #27303f;
+}
+
+.reviewAnswerRow {
+  margin-top: 18px;
+  margin-left: 52px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.reviewAnswerBox {
+  position: relative;
+  min-height: 74px;
+  border: 1px solid #eaedf2;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reviewAnswerBox.selected {
+  border: 2px solid #f0b51b;
+  background: #f7f5ed;
+}
+
+.reviewAnswerLabel {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #98a2b3;
+  letter-spacing: 0.02em;
+}
+
+.reviewAnswerLabel.muted {
+  color: #c3cad5;
+}
+
+.reviewAnswerValue {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #253046;
+}
+
+.reviewAnswerValue.mutedText {
+  color: #98a2b3;
+}
+
+.reviewCheckMark {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #f0b51b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 8px 16px rgba(240, 181, 27, 0.28);
+}
+
+.reviewQuestionBottomLine {
+  margin-top: 16px;
+  margin-left: 52px;
+  height: 1px;
+  background: #edf0f4;
+}
+
+.reviewLoadMoreWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+.reviewLoadMoreBtn {
+  height: 54px;
+  min-width: 310px;
+  border-radius: 14px;
+  border: 1px solid #d7dee8;
+  background: #ffffff;
+  color: #60708a;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.03);
+}
+
+.reviewLoadMoreIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+@media (max-width: 980px) {
+  .reviewJawabanPage .pageContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .reviewJawabanPage .asideInner {
+    position: static;
+  }
+
+  .reviewAnswerRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .reviewMainCard {
+    padding: 18px 14px 22px;
+  }
+
+  .reviewQuestionCard {
+    padding: 16px;
+  }
+
+  .reviewQuestionTop {
+    gap: 12px;
+  }
+
+  .reviewQuestionText {
+    font-size: 15px;
+  }
+
+  .reviewAnswerRow {
+    margin-left: 0;
+  }
+
+  .reviewQuestionBottomLine {
+    margin-left: 0;
+  }
+
+  .reviewLoadMoreBtn {
+    width: 100%;
+    min-width: unset;
+  }
+}

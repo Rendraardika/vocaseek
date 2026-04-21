@@ -1,0 +1,328 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+
+.tpWrap,
+.tpWrap *,
+.tpWrap *::before,
+.tpWrap *::after,
+.tpWrap button,
+.tpWrap input,
+.tpWrap select,
+.tpWrap textarea {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.tpWrap {
+  width: 100%;
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 30px 0 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  color: #2f3d52;
+}
+
+.tpWrap h1,
+.tpWrap h2,
+.tpWrap h3,
+.tpWrap h4,
+.tpWrap h5,
+.tpWrap h6,
+.tpWrap p,
+.tpWrap div {
+  margin: 0;
+}
+
+/* =========================
+   HEADER
+========================= */
+.tpWrap .tpHeader {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 20px !important;
+  padding: 0 32px !important;
+  margin: 0 0 22px !important;
+}
+
+.tpWrap .tpHeader > div:first-child {
+  min-width: 0;
+}
+
+.tpWrap .tpTitle {
+  font-size: 17px !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  color: #2f3b52 !important;
+  margin: 0 0 4px !important;
+}
+
+.tpWrap .tpSubtitle {
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.45 !important;
+  font-weight: 400 !important;
+  color: #9aa7bb !important;
+  max-width: 440px !important;
+}
+
+.tpWrap .tpEditBtn {
+  width: 24px !important;
+  height: 24px !important;
+  border: none !important;
+  background: transparent !important;
+  color: #a7b3c4 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 6px !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.tpWrap .tpEditBtn:hover {
+  background: #f6f8fb !important;
+  color: #73849a !important;
+}
+
+/* =========================
+   SECTION
+========================= */
+.tpWrap .tpSection {
+  width: 100% !important;
+  padding: 0 32px 30px !important;
+}
+
+.tpWrap .tpSectionLabel {
+  margin: 0 0 5px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.16em !important;
+  font-weight: 700 !important;
+  color: #a2aec0 !important;
+  text-transform: uppercase !important;
+}
+
+.tpWrap .tpSectionLabelBottom {
+  margin-bottom: 12px !important;
+}
+
+/* =========================
+   BLOCK
+========================= */
+.tpWrap .tpBlock {
+  width: 100% !important;
+}
+
+.tpWrap .tpBlockTitle {
+  margin: 0 0 10px !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+  color: #556882 !important;
+}
+
+/* =========================
+   ABOUT CARD
+========================= */
+.tpWrap .tpAboutCard {
+  width: 100% !important;
+  background: #f4f6fa !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 13px 14px !important;
+  margin: 0 0 18px !important;
+  box-shadow: none !important;
+}
+
+.tpWrap .tpAboutText {
+  font-size: 10px !important;
+  line-height: 2 !important;
+  font-weight: 400 !important;
+  color: #4b5d77 !important;
+}
+
+/* =========================
+   GRID BIODATA
+========================= */
+.tpWrap .tpGrid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  column-gap: 92px !important;
+  row-gap: 18px !important;
+}
+
+.tpWrap .tpField {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+}
+
+.tpWrap .tpFieldFull {
+  grid-column: 1 / -1 !important;
+}
+
+.tpWrap .tpFieldLabel {
+  margin: 0 !important;
+  font-size: 9px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.08em !important;
+  font-weight: 700 !important;
+  color: #9eacbe !important;
+  text-transform: uppercase !important;
+}
+
+.tpWrap .tpFieldValue {
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.45 !important;
+  font-weight: 500 !important;
+  color: #2f3d52 !important;
+  word-break: break-word !important;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+.tpWrap .tpDivider {
+  width: 100% !important;
+  height: 1px !important;
+  background: #edf1f5 !important;
+  margin: 16px 0 10px !important;
+}
+
+/* =========================
+   SOCIAL
+========================= */
+.tpWrap .tpSocialRow {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.tpWrap .tpSocialBtn {
+  height: 30px !important;
+  min-width: 86px !important;
+  padding: 0 12px 0 10px !important;
+  border: 1px solid #d9e2ec !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.tpWrap .tpSocialBtn:hover {
+  background: #f8fafc !important;
+  border-color: #cfd8e3 !important;
+}
+
+.tpWrap .tpSocialIcon {
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 8px !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 7px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  text-transform: lowercase !important;
+  flex-shrink: 0 !important;
+}
+
+.tpWrap .tpSocialIcon.ig {
+  font-size: 8px !important;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 1024px) {
+  .tpWrap .tpHeader {
+    padding: 0 24px !important;
+  }
+
+  .tpWrap .tpSection {
+    padding: 0 24px 24px !important;
+  }
+
+  .tpWrap .tpGrid {
+    column-gap: 44px !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .tpWrap {
+    padding-top: 22px !important;
+  }
+
+  .tpWrap .tpHeader {
+    padding: 0 20px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .tpWrap .tpSection {
+    padding: 0 20px 22px !important;
+  }
+
+  .tpWrap .tpGrid {
+    grid-template-columns: 1fr !important;
+    column-gap: 0 !important;
+    row-gap: 16px !important;
+  }
+
+  .tpWrap .tpFieldFull {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .tpWrap {
+    padding-top: 18px !important;
+  }
+
+  .tpWrap .tpHeader {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 0 16px !important;
+  }
+
+  .tpWrap .tpSection {
+    padding: 0 16px 20px !important;
+  }
+
+  .tpWrap .tpEditBtn {
+    align-self: flex-end !important;
+  }
+
+  .tpWrap .tpTitle {
+    font-size: 16px !important;
+  }
+
+  .tpWrap .tpSubtitle {
+    max-width: 100% !important;
+  }
+
+  .tpWrap .tpSocialBtn {
+    min-width: 84px !important;
+  }
+}

@@ -1,0 +1,151 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
+.sa-wrap,
+.sa-wrap *,
+.sa-wrap button {
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+.sa-wrap {
+  width: 100%;
+}
+
+.sa-card {
+  width: 100%;
+  max-width: 900px;
+  margin: 0;              /* HAPUS center */
+  padding: 6px 0 4px;    /* hilangkan padding kiri kanan */
+}
+
+.sa-wrap {
+  width: 100%;
+  padding: 0 24px; /* samakan dengan layout atas */
+}
+
+.sa-headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  text-align: left; /* penting */
+}
+
+.sa-title {
+  text-align: left;
+}
+
+.sa-desc {
+  text-align: left;
+}
+
+.sa-card {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 6px 4px 4px;
+}
+
+.sa-headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.sa-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #2b2b2b;
+  letter-spacing: -0.2px;
+  font-family: "Poppins", sans-serif;
+}
+
+.sa-desc {
+  margin: 22px 0 0;
+  max-width: 720px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.sa-editBtn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border: none;
+  background: transparent;
+  color: #98a2b3;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.sa-editBtn:hover {
+  background: rgba(15, 23, 42, 0.04);
+  color: #667085;
+}
+
+.sa-editIcon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.sa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px 40px;
+  padding-top: 22px;
+}
+
+.sa-item {
+  padding: 0 0 10px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.sa-label {
+  margin-bottom: 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #b0b7c3;
+  font-weight: 700;
+}
+
+.sa-value {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .sa-headerRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sa-editBtn {
+    align-self: flex-end;
+  }
+
+  .sa-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .sa-title {
+    font-size: 24px;
+  }
+}

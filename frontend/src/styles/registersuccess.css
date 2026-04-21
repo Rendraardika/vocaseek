@@ -1,0 +1,190 @@
+.rs-page{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:#f5f6fa;
+font-family:"Poppins",sans-serif;
+}
+
+/* LOGO */
+
+.rs-logo{
+margin-bottom:-60px;
+}
+
+.rs-logo img{
+height:180px;
+}
+
+
+/* CARD */
+
+.rs-card{
+background:white;
+width:420px;
+padding:40px;
+border-radius:16px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+
+/* ICON */
+
+.rs-icon{
+width:80px;
+height:80px;
+background:#d1fae5;
+color:#16a34a;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:32px;
+border-radius:50%;
+margin:0 auto 20px auto;
+}
+
+
+/* TITLE */
+
+.rs-card h2{
+font-size:28px;
+margin-bottom:10px;
+color:#1f2937;
+}
+
+/* DESC */
+
+.rs-card p{
+font-size:14px;
+color:#6b7280;
+line-height:1.6;
+margin-bottom:25px;
+}
+
+
+/* BUTTON */
+
+.rs-btn{
+display:block;
+width:100%;
+padding:14px;
+
+background:#f2b90d;
+color:white;
+
+border-radius:10px;
+font-weight:600;
+text-decoration:none;
+
+margin-bottom:15px;
+}
+
+
+/* BACK */
+
+.rs-back{
+font-size:14px;
+color:#6b7280;
+text-decoration:none;
+}
+
+
+/* FOOTER */
+
+.rs-footer{
+margin-top:40px;
+font-size:12px;
+color:#9ca3af;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+.rs-page{
+padding:20px;
+justify-content:center;
+align-items:center;
+}
+
+.rs-card{
+width:100%;
+max-width:380px;
+padding:34px 26px;
+}
+
+.rs-logo img{
+height:48px;
+}
+
+.rs-icon{
+width:70px;
+height:70px;
+font-size:28px;
+}
+
+.rs-card h2{
+font-size:24px;
+}
+
+.rs-card p{
+font-size:13px;
+}
+
+.rs-btn{
+padding:12px;
+font-size:14px;
+}
+
+}
+
+@media (max-width:480px){
+
+.rs-page{
+padding:16px;
+justify-content:center;
+align-items:center;
+}
+
+.rs-card{
+width:100%;
+max-width:340px;
+padding:28px 22px;
+border-radius:14px;
+}
+
+.rs-logo img{
+height:42px;
+}
+
+.rs-icon{
+width:64px;
+height:64px;
+font-size:26px;
+margin-bottom:16px;
+}
+
+.rs-card h2{
+font-size:22px;
+}
+
+.rs-card p{
+font-size:12px;
+}
+
+.rs-btn{
+padding:11px;
+font-size:14px;
+}
+
+.rs-footer{
+margin-top:30px;
+font-size:11px;
+}
+
+}
