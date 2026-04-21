@@ -36,12 +36,10 @@ function formatRemainingTime(milliseconds) {
 
 export default function Soal1() {
   const navigate = useNavigate();
-  const total = 20;
   const [startedAt] = useState(() => getPretestStartedAt());
   const [remainingMs, setRemainingMs] = useState(() =>
     getRemainingTime(getPretestStartedAt()),
   );
-  const [activeNo, setActiveNo] = useState(1);
   const [answers, setAnswers] = useState(() => {
     const saved = PRETEST_STORAGE_KEYS.readAnswers();
     return saved ? JSON.parse(saved) : {};
@@ -50,12 +48,35 @@ export default function Soal1() {
 
   const questions = useMemo(() => PRETEST_QUESTION_BANK, []);
 
+  const questionIds = useMemo(() => {
+    return Object.keys(questions)
+      .map(Number)
+      .filter((id) => Number.isFinite(id) && questions[id])
+      .sort((a, b) => a - b);
+  }, [questions]);
+
+  const total = questionIds.length;
+
+  const [activeNo, setActiveNo] = useState(() => {
+    const firstQuestionId =
+      Object.keys(PRETEST_QUESTION_BANK)
+        .map(Number)
+        .filter((id) => Number.isFinite(id) && PRETEST_QUESTION_BANK[id])
+        .sort((a, b) => a - b)[0] || 1;
+
+    return firstQuestionId;
+  });
+
+  const activeIndex = useMemo(() => {
+    return questionIds.indexOf(activeNo);
+  }, [questionIds, activeNo]);
+
+  const currentQuestion = questions[activeNo];
+  const currentAnswer = answers[activeNo] || "";
+
   const finishTest = useCallback(async () => {
     if (isSubmitting) return;
 
-    const questionIds = Object.keys(questions)
-      .map(Number)
-      .sort((first, second) => first - second);
     const unansweredQuestions = questionIds.filter(
       (questionId) => !["Ya", "Tidak"].includes(answers[questionId]),
     );
@@ -86,7 +107,7 @@ export default function Soal1() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [answers, isSubmitting, navigate, questions]);
+  }, [answers, isSubmitting, navigate, questionIds, questions]);
 
   const timeText = formatRemainingTime(remainingMs);
 
@@ -97,6 +118,14 @@ export default function Soal1() {
   useEffect(() => {
     setScopedItem(PRETEST_STORAGE_KEYS.questions, JSON.stringify(questions));
   }, [questions]);
+
+  useEffect(() => {
+    if (questionIds.length === 0) return;
+
+    if (!questionIds.includes(activeNo)) {
+      setActiveNo(questionIds[0]);
+    }
+  }, [questionIds, activeNo]);
 
   useEffect(() => {
     const tick = () => {
@@ -116,13 +145,36 @@ export default function Soal1() {
     };
   }, [finishTest, startedAt]);
 
-  const currentQuestion = questions[activeNo];
+  const getNextUnansweredQuestionId = (fromIndex) => {
+    for (let i = fromIndex + 1; i < questionIds.length; i += 1) {
+      const questionId = questionIds[i];
+      if (!["Ya", "Tidak"].includes(answers[questionId])) {
+        return questionId;
+      }
+    }
+    return null;
+  };
 
-  const handlePickNumber = (n) => {
-    setActiveNo(n);
+  const getPrevUnansweredQuestionId = (fromIndex) => {
+    for (let i = fromIndex - 1; i >= 0; i -= 1) {
+      const questionId = questionIds[i];
+      if (!["Ya", "Tidak"].includes(answers[questionId])) {
+        return questionId;
+      }
+    }
+    return null;
+  };
+
+  const handlePickNumber = (questionId) => {
+    const isAnswered = ["Ya", "Tidak"].includes(answers[questionId]);
+    if (isAnswered) return;
+
+    setActiveNo(questionId);
   };
 
   const handleAnswer = (value) => {
+    if (["Ya", "Tidak"].includes(currentAnswer)) return;
+
     setAnswers((prev) => ({
       ...prev,
       [activeNo]: value,
@@ -130,19 +182,30 @@ export default function Soal1() {
   };
 
   const handlePrev = () => {
-    setActiveNo((prev) => Math.max(1, prev - 1));
-  };
-
-  const handleNext = () => {
-    if (activeNo < total) {
-      setActiveNo((prev) => prev + 1);
-    } else {
-      finishTest();
+    const prevQuestionId = getPrevUnansweredQuestionId(activeIndex);
+    if (prevQuestionId !== null) {
+      setActiveNo(prevQuestionId);
     }
   };
 
-  const isLast = activeNo === total;
-  const currentAnswer = answers[activeNo] || "";
+  const handleNext = () => {
+    const nextQuestionId = getNextUnansweredQuestionId(activeIndex);
+
+    if (nextQuestionId !== null) {
+      setActiveNo(nextQuestionId);
+      return;
+    }
+
+    finishTest();
+  };
+
+  const hasPrevUnanswered = getPrevUnansweredQuestionId(activeIndex) !== null;
+  const hasNextUnanswered = getNextUnansweredQuestionId(activeIndex) !== null;
+  const isAnsweredCurrent = ["Ya", "Tidak"].includes(currentAnswer);
+
+  if (!currentQuestion) {
+    return null;
+  }
 
   return (
     <div className="assessPage">
@@ -150,7 +213,7 @@ export default function Soal1() {
         <div className="assessHeaderInner">
           <div className="assessLogo">
             <img
-              src="/logovocaseek.png"
+              src="/vocaseeklogo.png"
               alt="Vocaseek"
               className="assessLogoImg"
             />
@@ -174,20 +237,19 @@ export default function Soal1() {
             <div className="assessAsideDivider" />
 
             <div className="assessNumGrid">
-              {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
-                const isActiveBtn = n === activeNo;
-                const isAnswered = !!answers[n];
+              {questionIds.map((questionId, index) => {
+                const isActiveBtn = questionId === activeNo;
+                const isAnswered = ["Ya", "Tidak"].includes(answers[questionId]);
 
                 return (
                   <button
-                    key={n}
+                    key={questionId}
                     type="button"
-                    className={`assessNumBtn ${isActiveBtn ? "isActive" : ""} ${
-                      isAnswered ? "isAnswered" : ""
-                    }`}
-                    onClick={() => handlePickNumber(n)}
+                    className={`assessNumBtn ${isAnswered ? "isAnswered" : ""} ${isActiveBtn ? "isActive" : ""}`}
+                    onClick={() => handlePickNumber(questionId)}
+                    disabled={isAnswered}
                   >
-                    {n}
+                    {index + 1}
                   </button>
                 );
               })}
@@ -210,6 +272,7 @@ export default function Soal1() {
                 type="button"
                 className={`answerCard ${currentAnswer === "Ya" ? "selected" : ""}`}
                 onClick={() => handleAnswer("Ya")}
+                disabled={isAnsweredCurrent}
               >
                 <div className="answerIcon yesIcon" aria-hidden="true">
                   ✓
@@ -222,6 +285,7 @@ export default function Soal1() {
                 type="button"
                 className={`answerCard ${currentAnswer === "Tidak" ? "selected" : ""}`}
                 onClick={() => handleAnswer("Tidak")}
+                disabled={isAnsweredCurrent}
               >
                 <div className="answerIcon noIcon" aria-hidden="true">
                   ✕
@@ -236,7 +300,7 @@ export default function Soal1() {
                 className="backLink"
                 type="button"
                 onClick={handlePrev}
-                disabled={activeNo === 1}
+                disabled={!hasPrevUnanswered}
               >
                 ‹ Sebelumnya
               </button>
@@ -245,9 +309,9 @@ export default function Soal1() {
                 className="assessNextBtn"
                 type="button"
                 onClick={handleNext}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isAnsweredCurrent}
               >
-                {isLast ? "Selesai" : "Selanjutnya"} <span>›</span>
+                {hasNextUnanswered ? "Selanjutnya" : "Selesai"} <span>›</span>
               </button>
             </div>
           </div>
