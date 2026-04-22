@@ -3,8 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import "../../styles/ProfilLayout.css";
 import { logoutUser } from "../../services/auth";
 import { clearAuthSession } from "../../utils/authStorage";
+import { normalizeAssetUrl } from "../../utils/media";
 import {
   getScopedItem,
+  setScopedItem,
   USER_STORAGE_KEYS,
 } from "../../utils/userScopedStorage";
 
@@ -79,6 +81,8 @@ export default function ProfilLayout() {
 
   const [savedProfile, setSavedProfile] = useState(() => readSavedProfile());
   const [savedAkademik, setSavedAkademik] = useState(() => readSavedAkademik());
+  const [isHeaderPhotoBroken, setIsHeaderPhotoBroken] = useState(false);
+  const [isAsidePhotoBroken, setIsAsidePhotoBroken] = useState(false);
 
   useEffect(() => {
     const handleProfileUpdated = () => {
@@ -98,6 +102,11 @@ export default function ProfilLayout() {
       window.removeEventListener("storage", handleProfileUpdated);
     };
   }, []);
+
+  useEffect(() => {
+    setIsHeaderPhotoBroken(false);
+    setIsAsidePhotoBroken(false);
+  }, [savedProfile.photo]);
 
   const handleLogout = async () => {
     try {
@@ -125,6 +134,10 @@ export default function ProfilLayout() {
       : displayEmail;
   }, [displayEmail]);
 
+  const normalizedPhoto = useMemo(() => {
+    return normalizeAssetUrl(savedProfile.photo);
+  }, [savedProfile.photo]);
+
   const hasSavedProfile = useMemo(() => {
     return Boolean(
       savedProfile.fullName?.trim() ||
@@ -144,6 +157,18 @@ export default function ProfilLayout() {
       ? "data-akademik/simpan"
       : "data-akademik";
 
+  const clearBrokenPhoto = () => {
+    setSavedProfile((prev) => {
+      const nextProfile = {
+        ...prev,
+        photo: "",
+      };
+
+      setScopedItem(USER_STORAGE_KEYS.dataDiri, JSON.stringify(nextProfile));
+      return nextProfile;
+    });
+  };
+
   return (
     <div className="profilePage">
       <header className="profileHeader">
@@ -160,11 +185,15 @@ export default function ProfilLayout() {
 
           <div className="headerRight">
             <button className="userPill" type="button">
-              {savedProfile.photo ? (
+              {normalizedPhoto && !isHeaderPhotoBroken ? (
                 <img
-                  src={savedProfile.photo}
+                  src={normalizedPhoto}
                   alt="Foto Profil"
                   className="userAvatarImage"
+                  onError={() => {
+                    setIsHeaderPhotoBroken(true);
+                    clearBrokenPhoto();
+                  }}
                 />
               ) : (
                 <span className="userAvatar" aria-hidden="true" />
@@ -183,11 +212,15 @@ export default function ProfilLayout() {
               <div className="asideOverlay" aria-hidden="true" />
               <div className="asideCardRow">
                 <div className="asideAvatarWrap">
-                  {savedProfile.photo ? (
+                  {normalizedPhoto && !isAsidePhotoBroken ? (
                     <img
-                      src={savedProfile.photo}
+                      src={normalizedPhoto}
                       alt="Foto Profil"
                       className="asideAvatarImage"
+                      onError={() => {
+                        setIsAsidePhotoBroken(true);
+                        clearBrokenPhoto();
+                      }}
                     />
                   ) : (
                     <div className="asideAvatar" aria-hidden="true" />
