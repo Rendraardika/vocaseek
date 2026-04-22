@@ -17,6 +17,7 @@ import {
   INDONESIA_PROVINCES,
   INDONESIA_REGIONS,
 } from "../../data/indonesiaRegions";
+import { normalizeAssetUrl } from "../../utils/media";
 
 const defaultForm = {
   about: "",
@@ -44,6 +45,27 @@ const pickMeaningfulValue = (...values) => {
   }
 
   return "";
+};
+
+const resolveProfilePhotoFromPayload = (payload, fallbackPhoto = "") => {
+  const candidateSources = [
+    payload?.foto,
+    payload?.photo,
+    payload?.profile?.foto,
+    payload?.profile?.photo,
+    payload?.personal?.foto,
+    payload?.personal?.photo,
+  ];
+
+  const hasExplicitPhotoField = candidateSources.some(
+    (value) => value === null || value === "" || (typeof value === "string" && value.trim() !== "")
+  );
+
+  if (hasExplicitPhotoField) {
+    return pickMeaningfulValue(...candidateSources);
+  }
+
+  return fallbackPhoto;
 };
 
 const isDataDiriComplete = (data) => {
@@ -167,6 +189,7 @@ export default function DataDiri() {
   });
   const [selectedPhotoFile, setSelectedPhotoFile] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isPhotoPreviewBroken, setIsPhotoPreviewBroken] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -192,7 +215,7 @@ export default function DataDiri() {
 
     return {
       ...fallbackProfile,
-      photo: pickMeaningfulValue(normalizedProfile.photo, fallbackProfile.photo),
+      photo: resolveProfilePhotoFromPayload(payload, fallbackProfile.photo),
       about: pickMeaningfulValue(normalizedProfile.about, fallbackProfile.about),
       fullName: pickMeaningfulValue(normalizedProfile.name, fallbackProfile.fullName),
       gender: pickMeaningfulValue(
@@ -351,12 +374,19 @@ export default function DataDiri() {
   }, []);
 
   const aboutCount = useMemo(() => form.about.length, [form.about]);
+  const normalizedPhotoPreview = useMemo(() => {
+    return normalizeAssetUrl(form.photo);
+  }, [form.photo]);
 
   const openFile = () => {
     fileRef.current?.click();
   };
 
   const handleChange = (field, value) => {
+    if (field === "photo") {
+      setIsPhotoPreviewBroken(false);
+    }
+
     setForm((prev) => ({
       ...prev,
       ...(field === "province"
@@ -487,16 +517,19 @@ export default function DataDiri() {
             <div className="dpPhotoCard">
               {form.photo ? (
                 <img
-                  src={form.photo}
+                  src={normalizedPhotoPreview}
                   alt="foto profil"
                   className="dpPhotoPreview"
+                  onError={() => setIsPhotoPreviewBroken(true)}
                 />
-              ) : (
+              ) : null}
+
+              {!normalizedPhotoPreview || isPhotoPreviewBroken ? (
                 <>
                   <div className="dpPhotoAvatar" />
                   <div className="dpPhotoBadge">!</div>
                 </>
-              )}
+              ) : null}
             </div>
 
             <div className="dpPhotoInfo">
