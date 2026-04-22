@@ -20,6 +20,7 @@ import LoginCompany from "./pages/auth/LoginCompany";
 import RegisterPelamar from "./pages/auth/RegisterPelamar";
 import RegisterCompany from "./pages/auth/RegisterCompany";
 import RegisterSuccess from "./pages/auth/RegisterSuccess";
+import AdminActivateAccount from "./pages/auth/AdminActivateAccount";
 import CheckEmailNotice from "./pages/auth/CheckEmailNotice";
 import EmailVerificationStatus from "./pages/auth/EmailVerificationStatus";
 import ForgetPassword from "./pages/auth/ForgetPassword";
@@ -208,6 +209,7 @@ export default function App() {
           }
         />
         <Route path="/register-success" element={<RegisterSuccess />} />
+        <Route path="/admin/activate" element={<AdminActivateAccount />} />
         <Route path="/check-email" element={<CheckEmailNotice />} />
         <Route path="/email-verification" element={<EmailVerificationStatus />} />
         <Route path="/forget-password" element={<ForgetPassword />} />

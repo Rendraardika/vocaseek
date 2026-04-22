@@ -41,7 +41,10 @@ function Login() {
         password: form.password,
       });
 
-      saveAuthSession(response.data, { email: form.email });
+      saveAuthSession(response.data, {
+        email: form.email,
+        remember: form.remember,
+      });
       navigate(resolveUserHomeRoute(response.data?.role), { replace: true });
     } catch (requestError) {
       if (requestError?.response?.data?.code === "email_unverified") {
@@ -78,7 +81,9 @@ function Login() {
         access_token: accessToken,
       });
 
-      const session = saveAuthSession(response.data);
+      const session = saveAuthSession(response.data, {
+        remember: form.remember,
+      });
       navigate(resolveUserHomeRoute(session.role), { replace: true });
     } catch (requestError) {
       setError(

@@ -3,6 +3,19 @@ import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getApiErrorMessage, resendVerificationEmail } from "../../services/auth";
 
+function getVerificationErrorMessage(error) {
+  const message = String(error?.response?.data?.message || error?.message || "").toLowerCase();
+
+  if (message.includes("csrf token mismatch")) {
+    return "Permintaan kirim ulang email verifikasi sempat ditolak server. Silakan coba lagi setelah backend diperbarui.";
+  }
+
+  return getApiErrorMessage(
+    error,
+    "Gagal mengirim ulang email verifikasi.",
+  );
+}
+
 export default function CheckEmailNotice() {
   const location = useLocation();
   const initialEmail = useMemo(
@@ -29,12 +42,7 @@ export default function CheckEmailNotice() {
           "Jika email terdaftar dan belum diverifikasi, link verifikasi baru sudah dikirim.",
       );
     } catch (requestError) {
-      setError(
-        getApiErrorMessage(
-          requestError,
-          "Gagal mengirim ulang email verifikasi.",
-        ),
-      );
+      setError(getVerificationErrorMessage(requestError));
     } finally {
       setIsSubmitting(false);
     }

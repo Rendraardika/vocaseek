@@ -74,8 +74,8 @@ export function getManagedAdminUsers(params) {
   return api.get(`${ADMIN_BASE}/users-management`, { params });
 }
 
-export function createManagedAdminUser(payload) {
-  return api.post(`${ADMIN_BASE}/users-management`, payload);
+export function inviteManagedAdminUser(payload) {
+  return api.post(`${ADMIN_BASE}/users/invite`, payload);
 }
 
 export function updateManagedAdminUserStatus(id, payload) {
@@ -84,4 +84,20 @@ export function updateManagedAdminUserStatus(id, payload) {
 
 export function deleteManagedAdminUser(id) {
   return api.delete(`${ADMIN_BASE}/users-management/${id}`);
+}
+
+export function verifyAdminInvitation(params) {
+  return api.get(`${ADMIN_BASE}/invitations/verify`, { params });
+}
+
+export function acceptAdminInvitation(payload) {
+  return api.post(`${ADMIN_BASE}/invitations/accept`, payload);
+}
+
+export function resendAdminInvitation(payload) {
+  return api.post(`${ADMIN_BASE}/invitations/resend`, payload);
+}
+
+export function cancelAdminInvitation(payload) {
+  return api.post(`${ADMIN_BASE}/invitations/cancel`, payload);
 }

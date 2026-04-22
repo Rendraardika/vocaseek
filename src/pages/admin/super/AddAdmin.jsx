@@ -3,42 +3,47 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/admin/Sidebar";
 import "../../../styles/AddAdmin.css";
 import {
-  UserRound,
-  ShieldCheck,
-  LockKeyhole,
-  Save,
-  CircleHelp,
   ArrowLeft,
+  BadgeCheck,
+  CircleHelp,
+  Mail,
+  Phone,
+  Send,
+  ShieldCheck,
+  UserRound,
 } from "lucide-react";
 import { getApiErrorMessage } from "../../../services/auth";
-import { createManagedAdminUser } from "../../../services/admin";
+import { inviteManagedAdminUser } from "../../../services/admin";
 
-function SaveAdminModal({ open, onClose, onConfirm }) {
+function InviteAdminModal({ open, onClose, onConfirm, isSubmitting }) {
   if (!open) return null;
 
   return (
     <div className="aa-modal-overlay" onClick={onClose}>
-      <div className="aa-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="aa-modal" onClick={(event) => event.stopPropagation()}>
         <div className="aa-modal-icon-wrap">
           <div className="aa-modal-icon-ring">
             <CircleHelp size={28} />
           </div>
         </div>
 
-        <h3 className="aa-modal-title">Tambah Admin Baru?</h3>
+        <h3 className="aa-modal-title">Kirim Undangan Admin?</h3>
         <p className="aa-modal-text">
-          Admin staff baru akan dibuat
-          <br />
-          dengan password yang Anda tetapkan.
+          Tautan aktivasi akan dikirim ke email admin yang didaftarkan.
+          Password akan dibuat sendiri oleh admin saat aktivasi akun.
         </p>
 
         <div className="aa-modal-actions">
           <button type="button" className="aa-modal-cancel" onClick={onClose}>
             Batal
           </button>
-
-          <button type="button" className="aa-modal-confirm" onClick={onConfirm}>
-            Ya, Tambahkan
+          <button
+            type="button"
+            className="aa-modal-confirm"
+            onClick={onConfirm}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Mengirim..." : "Kirim Undangan"}
           </button>
         </div>
       </div>
@@ -46,60 +51,77 @@ function SaveAdminModal({ open, onClose, onConfirm }) {
   );
 }
 
+const INITIAL_FORM = {
+  nama: "",
+  email: "",
+  notelp: "",
+  role: "staff_admin",
+};
+
+function validateForm(form) {
+  if (!form.nama.trim()) return "Nama lengkap wajib diisi.";
+  if (!form.email.trim()) return "Alamat email wajib diisi.";
+  if (!form.notelp.trim()) return "Nomor telepon wajib diisi.";
+  return "";
+}
+
 export default function AddAdmin() {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = React.useState(false);
+  const [form, setForm] = React.useState(INITIAL_FORM);
   const [error, setError] = React.useState("");
-  const [isSaving, setIsSaving] = React.useState(false);
-  const [form, setForm] = React.useState({
-    nama: "",
-    email: "",
-    notelp: "",
-    password: "",
-    passwordConfirmation: "",
-  });
+  const [success, setSuccess] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setError("");
+    setSuccess("");
     setForm((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-    if (form.password !== form.passwordConfirmation) {
-      setError("Konfirmasi password harus sama dengan create password.");
+    const validationError = validateForm(form);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
     setOpenModal(true);
   };
 
-  const handleConfirmSave = async () => {
-    setIsSaving(true);
+  const handleConfirmInvite = async () => {
+    setIsSubmitting(true);
     setError("");
+    setSuccess("");
 
     try {
-      await createManagedAdminUser({
-        nama: form.nama,
-        email: form.email,
-        notelp: form.notelp,
-        role: "staff_admin",
-        password: form.password,
-        password_confirmation: form.passwordConfirmation,
+      await inviteManagedAdminUser({
+        nama: form.nama.trim(),
+        email: form.email.trim(),
+        notelp: form.notelp.trim(),
+        role: form.role,
       });
 
       setOpenModal(false);
-      navigate("/admin/user-management");
+      setSuccess("Undangan berhasil dikirim ke email admin.");
+
+      navigate("/admin/user-management", {
+        replace: true,
+        state: {
+          successMessage: "Undangan berhasil dikirim ke email admin.",
+        },
+      });
     } catch (submitError) {
       setOpenModal(false);
-      setError(getApiErrorMessage(submitError, "Admin gagal dibuat."));
+      setError(getApiErrorMessage(submitError, "Undangan admin gagal dikirim."));
     } finally {
-      setIsSaving(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -108,48 +130,74 @@ export default function AddAdmin() {
       <Sidebar />
 
       <main className="aa-main">
-
         <section className="aa-content">
           <div className="aa-breadcrumb">
             <span>Admin</span>
-            <span className="aa-breadcrumb-separator">›</span>
-            <span>User Management</span>
-            <span className="aa-breadcrumb-separator">›</span>
+            <span className="aa-breadcrumb-separator">&gt;</span>
+            <span>Manajemen User</span>
+            <span className="aa-breadcrumb-separator">&gt;</span>
             <span className="active">Tambah Admin Baru</span>
           </div>
 
-          <h1 className="aa-page-title">
-            <ArrowLeft
-              size={20}
-              className="aa-back-icon"
-              onClick={() => navigate(-1)}
-            />
-            Tambah Admin Website Baru
-          </h1>
-
-          <form className="aa-card" onSubmit={handleSubmit}>
-            <div className="aa-card-head">
-              <h2>Informasi Admin Baru</h2>
-              <p>
-                Silakan lengkapi detail informasi untuk membuat akun
-                administrasi baru.
+          <div className="aa-page-header">
+            <div>
+              <h1 className="aa-page-title">
+                <ArrowLeft
+                  size={20}
+                  className="aa-back-icon"
+                  onClick={() => navigate(-1)}
+                />
+                Tambah Admin Baru
+              </h1>
+              <p className="aa-page-subtitle">
+                Masukkan data admin yang akan diundang ke sistem. Tautan aktivasi akan
+                dikirim ke email yang didaftarkan.
               </p>
             </div>
 
-            {/* INFORMASI AKUN */}
+            <div className="aa-page-summary">
+              <div className="aa-summary-icon">
+                <BadgeCheck size={18} />
+              </div>
+              <div>
+                <strong>Invitation-based onboarding</strong>
+                <p>Password tidak diatur oleh admin master.</p>
+              </div>
+            </div>
+          </div>
+
+          {error ? <div className="aa-alert aa-alert-error">{error}</div> : null}
+          {success ? <div className="aa-alert aa-alert-success">{success}</div> : null}
+
+          <form className="aa-card" onSubmit={handleSubmit}>
+            <div className="aa-card-head">
+              <div>
+                <h2>Formulir Undangan Admin</h2>
+                <p>
+                  Informasi berikut akan digunakan untuk membuat akun admin staff
+                  dengan status undangan menunggu aktivasi.
+                </p>
+              </div>
+
+              <div className="aa-head-badge">Admin Staff</div>
+            </div>
 
             <div className="aa-section">
               <div className="aa-section-title">
                 <div className="aa-section-icon blue">
                   <UserRound size={18} />
                 </div>
-                <h3>Informasi Akun</h3>
+                <div>
+                  <h3>Informasi Akun</h3>
+                  <p>Lengkapi identitas dasar admin yang akan diundang.</p>
+                </div>
               </div>
 
               <div className="aa-grid-2">
                 <div className="aa-field">
-                  <label>NAMA LENGKAP</label>
+                  <label htmlFor="admin-name">Nama Lengkap</label>
                   <input
+                    id="admin-name"
                     type="text"
                     name="nama"
                     placeholder="Masukkan nama lengkap admin"
@@ -160,116 +208,112 @@ export default function AddAdmin() {
                 </div>
 
                 <div className="aa-field">
-                  <label>ALAMAT EMAIL</label>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="contoh@vokaseek.id"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                  />
+                  <label htmlFor="admin-email">Alamat Email</label>
+                  <div className="aa-input-icon-wrap">
+                    <Mail size={16} className="aa-input-icon" />
+                    <input
+                      id="admin-email"
+                      type="email"
+                      name="email"
+                      placeholder="contoh@vocaseek.com"
+                      value={form.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <small>Email ini akan menerima tautan aktivasi akun.</small>
                 </div>
               </div>
 
-              <div className="aa-field full">
-                <label>NOMOR TELEPON</label>
-                <input
-                  type="text"
-                  name="notelp"
-                  placeholder="+62 812 3456 7890"
-                  value={form.notelp}
-                  onChange={handleChange}
-                  required
-                />
+              <div className="aa-grid-2 aa-grid-compact">
+                <div className="aa-field">
+                  <label htmlFor="admin-phone">Nomor Telepon</label>
+                  <div className="aa-input-icon-wrap">
+                    <Phone size={16} className="aa-input-icon" />
+                    <input
+                      id="admin-phone"
+                      type="text"
+                      name="notelp"
+                      placeholder="+62 812 3456 7890"
+                      value={form.notelp}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="aa-field">
+                  <label htmlFor="admin-role">Role / Peran</label>
+                  <div className="aa-select-static" id="admin-role">
+                    <ShieldCheck size={16} />
+                    <span>Admin Staff</span>
+                  </div>
+                  <small>Role ini memiliki akses operasional sesuai otorisasi staff admin.</small>
+                </div>
               </div>
             </div>
 
-            {/* ROLE */}
-
-            <div className="aa-section">
+            <div className="aa-section aa-section-muted">
               <div className="aa-section-title">
                 <div className="aa-section-icon yellow">
-                  <ShieldCheck size={18} />
+                  <Send size={18} />
                 </div>
-                <h3>Pengaturan Peran</h3>
+                <div>
+                  <h3>Ringkasan Proses Aktivasi</h3>
+                  <p>Tahapan yang akan dijalankan sistem setelah undangan dikirim.</p>
+                </div>
               </div>
 
-              <div className="aa-field full">
-                <label>PILIH ROLE / PERAN</label>
-                <input type="text" value="Admin Staff" readOnly />
-
-                <small>
-                  Peran menentukan tingkat akses dan izin di dashboard internal.
-                </small>
+              <div className="aa-timeline">
+                <div className="aa-timeline-item">
+                  <span className="aa-timeline-step">1</span>
+                  <div>
+                    <strong>Undangan dikirim via email</strong>
+                    <p>Sistem membuat tautan aktivasi yang unik, aman, dan memiliki masa berlaku.</p>
+                  </div>
+                </div>
+                <div className="aa-timeline-item">
+                  <span className="aa-timeline-step">2</span>
+                  <div>
+                    <strong>Admin staff membuat password sendiri</strong>
+                    <p>Password hanya diketahui oleh admin yang menerima undangan.</p>
+                  </div>
+                </div>
+                <div className="aa-timeline-item">
+                  <span className="aa-timeline-step">3</span>
+                  <div>
+                    <strong>Akun aktif setelah aktivasi berhasil</strong>
+                    <p>Status akun akan berubah menjadi aktif dan dapat digunakan untuk login.</p>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* CREATE PASSWORD */}
-
-            <div className="aa-section">
-              <div className="aa-section-title">
-                <div className="aa-section-icon green">
-                  <LockKeyhole size={18} />
-                </div>
-                <h3>Create Password</h3>
-              </div>
-
-              <div className="aa-grid-2">
-                <div className="aa-field">
-                  <label>CREATE PASSWORD</label>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Masukkan password"
-                    value={form.password}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="aa-field">
-                  <label>KONFIRMASI PASSWORD</label>
-                  <input
-                    type="password"
-                    name="passwordConfirmation"
-                    placeholder="Ulangi password"
-                    value={form.passwordConfirmation}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              {error ? <p className="aa-form-error">{error}</p> : null}
-            </div>
-
-            {/* ACTION */}
 
             <div className="aa-actions">
               <button
                 type="button"
                 className="aa-cancel-btn"
                 onClick={() => navigate(-1)}
+                disabled={isSubmitting}
               >
                 Batal
               </button>
 
-              <button type="submit" className="aa-save-btn" disabled={isSaving}>
-                <Save size={16} />
-                <span>{isSaving ? "Menyimpan..." : "Simpan"}</span>
+              <button type="submit" className="aa-save-btn" disabled={isSubmitting}>
+                <Send size={16} />
+                <span>{isSubmitting ? "Mengirim..." : "Kirim Undangan"}</span>
               </button>
             </div>
           </form>
         </section>
       </main>
 
-      <SaveAdminModal
+      <InviteAdminModal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        onConfirm={handleConfirmSave}
+        onConfirm={handleConfirmInvite}
+        isSubmitting={isSubmitting}
       />
     </div>
   );
 }
-

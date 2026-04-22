@@ -1,29 +1,58 @@
 import axios from "axios";
-import { getAccessToken } from "../utils/authStorage";
+import {
+  clearAuthSession,
+  getAccessToken,
+  getUserRole,
+} from "../utils/authStorage";
 
 const LANGUAGE_STORAGE_KEY = "vocaseek_language";
 const DEFAULT_LANGUAGE = "id";
 
 function normalizeConfiguredApiBaseUrl() {
-  return String(import.meta.env.VITE_API_BASE_URL || "").trim();
+  return String(
+    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api",
+  ).trim();
 }
 
 export function resolveApiBaseUrl() {
   const configuredBaseUrl = normalizeConfiguredApiBaseUrl();
+  const publicBaseUrl = String(
+    import.meta.env.VITE_PUBLIC_API_BASE_URL ||
+      import.meta.env.VITE_API_PUBLIC_BASE_URL ||
+      "",
+  ).trim();
 
   if (typeof window === "undefined") {
-    return configuredBaseUrl || "/api";
+    return publicBaseUrl || configuredBaseUrl || "/api";
   }
 
-  const fallbackBaseUrl = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+  const currentHostname = window.location.hostname;
+  const fallbackBaseUrl = `${window.location.protocol}//${currentHostname}:8000/api`;
 
-  if (!configuredBaseUrl) {
+  const isLocalOrPrivateHost = (hostname = "") => {
+    const normalized = String(hostname || "").trim().toLowerCase();
+
+    if (!normalized) return false;
+    if (normalized === "localhost" || normalized === "127.0.0.1") return true;
+
+    return (
+      normalized.startsWith("192.168.") ||
+      normalized.startsWith("10.") ||
+      /^172\.(1[6-9]|2\d|3[0-1])\./.test(normalized)
+    );
+  };
+
+  const preferredBaseUrl =
+    !isLocalOrPrivateHost(currentHostname) && publicBaseUrl
+      ? publicBaseUrl
+      : configuredBaseUrl;
+
+  if (!preferredBaseUrl) {
     return fallbackBaseUrl;
   }
 
   try {
-    const configuredUrl = new URL(configuredBaseUrl, window.location.origin);
-    const currentHostname = window.location.hostname;
+    const configuredUrl = new URL(preferredBaseUrl, window.location.origin);
     const configuredHostname = configuredUrl.hostname;
     const isLocalFrontend = ["localhost", "127.0.0.1"].includes(currentHostname);
 
@@ -35,16 +64,21 @@ export function resolveApiBaseUrl() {
       return configuredUrl.toString().replace(/\/+$/, "");
     }
 
-    if (isLocalFrontend && !["localhost", "127.0.0.1"].includes(configuredHostname)) {
+    if (isLocalOrPrivateHost(currentHostname)) {
+      configuredUrl.hostname = currentHostname;
+
+      if (!configuredUrl.port) {
+        configuredUrl.port = "8000";
+      }
+    } else if (isLocalFrontend && !["localhost", "127.0.0.1"].includes(configuredHostname)) {
       return fallbackBaseUrl;
     }
 
     return configuredUrl.toString().replace(/\/+$/, "");
   } catch {
-    return fallbackBaseUrl;
+    return publicBaseUrl || configuredBaseUrl || fallbackBaseUrl;
   }
 }
-
 function getActiveLanguage() {
   if (typeof window === "undefined") {
     return DEFAULT_LANGUAGE;
@@ -61,6 +95,7 @@ function isPublicAuthEndpoint(url = "") {
     "/login",
     "/register",
     "/email/verification-notification",
+    "/admin/invitations/accept",
     "/forgot-password",
     "/forgot-password/validate-token",
     "/reset-password",
@@ -100,5 +135,31 @@ api.interceptors.request.use(async (config) => {
 
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const statusCode = error?.response?.status;
+    const requestUrl = String(error?.config?.url || "").toLowerCase();
+    const isAuthPage =
+      typeof window !== "undefined" &&
+      ["/login", "/login-company", "/admin/activate"].includes(window.location.pathname);
+
+    if (
+      statusCode === 401 &&
+      !isPublicAuthEndpoint(requestUrl) &&
+      !isAuthPage &&
+      typeof window !== "undefined"
+    ) {
+      const currentRole = String(getUserRole() || "").toLowerCase();
+      const loginPath = currentRole.includes("company") ? "/login-company" : "/login";
+
+      clearAuthSession();
+      window.location.replace(loginPath);
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 export default api;
