@@ -33,7 +33,10 @@ function Login() {
         email: form.email,
         password: form.password,
       });
-      const session = saveAuthSession(response.data, { email: form.email });
+      const session = saveAuthSession(response.data, {
+        email: form.email,
+        remember: form.remember,
+      });
       navigate(resolveUserHomeRoute(session.role), { replace: true });
     } catch (requestError) {
       if (requestError?.response?.data?.code === "email_unverified") {

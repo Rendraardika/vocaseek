@@ -1,22 +1,35 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
+import { fileURLToPath } from 'node:url'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true,
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
-      },
-      '/storage': {
-        target: 'http://127.0.0.1:8000',
-        changeOrigin: true,
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, fileURLToPath(new URL('.', import.meta.url)), '')
+  const proxyTarget =
+    env.VITE_PROXY_TARGET ||
+    env.VITE_API_PROXY_TARGET ||
+    'http://127.0.0.1:8000'
+  const serverHost = env.VITE_DEV_SERVER_HOST || '0.0.0.0'
+  const serverPort = Number(env.VITE_DEV_SERVER_PORT || 5173)
+
+  return {
+    plugins: [react()],
+    server: {
+      host: serverHost,
+      port: serverPort,
+      strictPort: true,
+      proxy: {
+        '/api': {
+          target: proxyTarget,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/storage': {
+          target: proxyTarget,
+          changeOrigin: true,
+          secure: false,
+        },
       },
     },
-  },
+  }
 })

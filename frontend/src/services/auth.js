@@ -148,9 +148,26 @@ export function getApiErrorMessage(error, fallbackMessage) {
   const errorCode = responseData?.code;
   const message = responseData?.message || error?.message || "";
   const apiBaseUrl = api?.defaults?.baseURL || "http://127.0.0.1:8000/api";
+  const requestUrl = String(error?.config?.url || "").toLowerCase();
 
   if (errorCode === "email_unverified") {
     return "Email belum diverifikasi. Silakan cek inbox Anda lalu klik link verifikasi terlebih dahulu.";
+  }
+
+  if (errorCode === "email_not_registered") {
+    return "Silahkan register terlebih dahulu.";
+  }
+
+  if (errorCode === "invitation_pending") {
+    return "Akun admin ini belum diaktifkan. Silakan buka tautan aktivasi dari email undangan Anda.";
+  }
+
+  if (errorCode === "account_disabled") {
+    return "Akun ini sedang dinonaktifkan. Silakan hubungi administrator.";
+  }
+
+  if (error?.response?.status === 401 || String(message).toLowerCase() === "unauthenticated.") {
+    return "Sesi login Anda sudah tidak valid. Silakan masuk kembali.";
   }
 
   if (!error?.response && error?.request) {
@@ -158,7 +175,15 @@ export function getApiErrorMessage(error, fallbackMessage) {
   }
 
   if (typeof message === "string" && message.toLowerCase().includes("csrf token mismatch")) {
-    return "Login Google ditolak backend karena route masih terkena proteksi CSRF. Endpoint Google perlu dibuat stateless di backend.";
+    if (requestUrl.includes("/auth/google")) {
+      return "Login Google ditolak backend karena route masih terkena proteksi CSRF. Endpoint Google perlu dibuat stateless di backend.";
+    }
+
+    if (requestUrl.includes("/email/verification-notification")) {
+      return "Permintaan kirim ulang email verifikasi ditolak backend. Proteksi CSRF untuk endpoint verifikasi email perlu dibuka.";
+    }
+
+    return "Permintaan ditolak backend karena token keamanan tidak cocok. Coba muat ulang halaman lalu ulangi lagi.";
   }
 
   if (responseData?.errors) {
