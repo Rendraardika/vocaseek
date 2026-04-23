@@ -1069,98 +1069,6 @@
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
 }
 
-/* ================= RECOMMEND ================= */
-
-.home-recommend {
-  padding: 0px 20px;
-  background: #ffffff;
-}
-
-.home-recommend-title {
-  text-align: center;
-  font-size: 36px;
-  font-weight: 700;
-  color: #111827;
-}
-
-.home-recommend-sub {
-  max-width: 1200px;
-  margin: 20px auto 50px auto;
-  color: #6b7280;
-  font-size: 16px;
-}
-
-/* GRID */
-
-.home-recommend-grid {
-  max-width: 1200px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-}
-
-/* CARD */
-
-.home-recommend-card {
-  border: 2px solid #f2b90d;
-  border-radius: 20px;
-  padding: 32px;
-  background: white;
-  transition: all 0.35s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* ICON */
-
-.home-recommend-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: #f3f4f6;
-  color: #374151;
-  font-size: 18px;
-  margin-bottom: 10px;
-  transition: all 0.3s ease;
-}
-
-/* HOVER */
-
-.home-recommend-card:hover {
-  transform: translateY(-8px);
-  border-color: #2563eb;
-  background: #f8fbff;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
-}
-
-/* ICON HOVER */
-
-.home-recommend-card:hover .home-recommend-icon {
-  background: #2563eb;
-  color: white;
-}
-
-/* TITLE */
-
-.home-recommend-card h3 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111827;
-}
-
-/* COMPANY */
-
-.home-recommend-card span {
-  color: #6b7280;
-  font-size: 14px;
-}
-
 /* ANIMATION */
 
 @keyframes homeCardFade {
@@ -1927,5 +1835,5 @@
 }
 
 .profile {
-  margin-top: 10px !important; /* naikkan dari 5px → 12px */
+  margin-top: 5px !important; /* naikkan dari 5px → 12px */
 }
