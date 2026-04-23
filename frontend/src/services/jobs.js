@@ -3,6 +3,7 @@ import { pickFirstMediaValue } from "../utils/media";
 
 const COMPANY_JOBS_ENDPOINT = "/company/jobs";
 const PUBLIC_JOBS_ENDPOINT = "/popular-vacancies";
+const LANDING_STATS_ENDPOINT = "/landing-stats";
 
 function normalizeAssetUrl(value) {
   if (!value) return "";
@@ -170,6 +171,10 @@ export function updateCompanyApplicationStatus(id, payload) {
 
 export function getPublicJobs() {
   return api.get(PUBLIC_JOBS_ENDPOINT);
+}
+
+export function getLandingStats() {
+  return api.get(LANDING_STATS_ENDPOINT);
 }
 
 export function mapCompanyJobRow(job) {
