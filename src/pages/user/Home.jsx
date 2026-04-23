@@ -61,10 +61,14 @@ const isAkademikComplete = (data) => {
   if (!data) return false;
 
   const pendidikan = data?.pendidikan || {};
+  const pengalaman = Array.isArray(data?.pengalaman) ? data.pengalaman : [];
+  const sertifikasi = Array.isArray(data?.sertifikasi) ? data.sertifikasi : [];
 
   return Boolean(
     pendidikan.institusi?.trim() &&
-      pendidikan.jurusan?.trim(),
+      pendidikan.jurusan?.trim() &&
+      pengalaman.length > 0 &&
+      sertifikasi.length > 0,
   );
 };
 
@@ -543,42 +547,6 @@ export default function Home() {
             </p>
           </div>
         )}
-      </section>
-
-      {/* REKOMENDASI */}
-      <section className="home-recommend">
-        <h2 className="home-recommend-title">Direkomendasikan Untukmu</h2>
-
-        <p className="home-recommend-sub">Berdasarkan profil awal Anda.</p>
-
-        <div className="home-recommend-grid">
-          <div className="home-recommend-card">
-            <div className="home-recommend-icon">
-              <FaCode />
-            </div>
-
-            <h3>Frontend Developer</h3>
-            <span>TechNusantara • Jakarta</span>
-          </div>
-
-          <div className="home-recommend-card">
-            <div className="home-recommend-icon">
-              <FaPenNib />
-            </div>
-
-            <h3>UI/UX Designer</h3>
-            <span>Kreatif Studio • Bandung</span>
-          </div>
-
-          <div className="home-recommend-card">
-            <div className="home-recommend-icon">
-              <FaBullhorn />
-            </div>
-
-            <h3>Digital Marketing</h3>
-            <span>GoCommerce • Surabaya</span>
-          </div>
-        </div>
       </section>
 
       {/* ===== BANNER ===== */}
