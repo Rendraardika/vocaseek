@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import mitraData from "../../components/user/MitraData";
 import "../../styles/mitradetail.css";
@@ -5,6 +6,35 @@ import {
   getScopedItem,
   USER_STORAGE_KEYS,
 } from "../../utils/userScopedStorage";
+
+function MitraHeroLogo({ name, logoUrl }) {
+  const [hasError, setHasError] = useState(false);
+  const fallback = String(name || "VS")
+    .trim()
+    .slice(0, 2)
+    .toUpperCase();
+
+  return (
+    <div className={`mitra-detail-logo ${!logoUrl || hasError ? "is-fallback" : ""}`}>
+      {logoUrl && !hasError ? (
+        <img
+          src={logoUrl}
+          alt={name || "Logo perusahaan"}
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <span>{fallback}</span>
+      )}
+    </div>
+  );
+}
+
+function parseMissionItems(mission) {
+  return String(mission || "")
+    .split(/\r?\n|•/)
+    .map((item) => item.trim().replace(/^[-*]\s*/, ""))
+    .filter(Boolean);
+}
 
 export default function MitraDetail() {
   const { id } = useParams();
@@ -37,15 +67,24 @@ export default function MitraDetail() {
   const activeJobs = mitra.jobs?.length
     ? mitra.jobs
     : ["Software Engineer", "Data Analyst", "UI/UX Designer"];
+  const missionItems = parseMissionItems(mitra.mission || mitra.misi);
+  const visionText =
+    mitra.vision ||
+    mitra.visi ||
+    `Menjadi perusahaan terdepan di bidang ${mitra.industry} yang berdaya saing global.`;
 
   return (
     <div className="mitra-detail-page">
       <div className="mitra-detail-hero">
-        <div>
-          <h1>{mitra.name}</h1>
-          <p>
-            {mitra.industry} • {mitra.location}
-          </p>
+        <div className="mitra-detail-hero-content">
+          <MitraHeroLogo name={mitra.name} logoUrl={mitra.logoUrl} />
+
+          <div>
+            <h1>{mitra.name}</h1>
+            <p>
+              {mitra.industry} • {mitra.location}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -63,19 +102,20 @@ export default function MitraDetail() {
           <div className="mitra-vision-mission">
             <div className="mitra-card-box">
               <h3>Visi</h3>
-              <p>
-                Menjadi perusahaan terdepan di bidang {mitra.industry} yang
-                berdaya saing global.
-              </p>
+              <p>{visionText}</p>
             </div>
 
             <div className="mitra-card-box">
               <h3>Misi</h3>
-              <ul>
-                <li>Menyediakan layanan berkualitas.</li>
-                <li>Mengembangkan SDM profesional.</li>
-                <li>Mendorong inovasi digital.</li>
-              </ul>
+              {missionItems.length > 0 ? (
+                <ul>
+                  {missionItems.map((item, index) => (
+                    <li key={`${item}-${index}`}>{item}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Misi perusahaan belum diisi.</p>
+              )}
             </div>
           </div>
 
@@ -83,7 +123,10 @@ export default function MitraDetail() {
             <h3>Lowongan Aktif</h3>
 
             {activeJobs.map((job, i) => (
-              <div className="mitra-job-item" key={typeof job === "string" ? `${job}-${i}` : job.id || i}>
+              <div
+                className="mitra-job-item"
+                key={typeof job === "string" ? `${job}-${i}` : job.id || i}
+              >
                 <div>
                   <strong>{typeof job === "string" ? job : job.title}</strong>
                   <br />
@@ -103,9 +146,6 @@ export default function MitraDetail() {
             </p>
             <p>
               <strong>Lokasi:</strong> {mitra.location}
-            </p>
-            <p>
-              <strong>Rating:</strong> ⭐ {mitra.rating || "4.8"}
             </p>
             <p>
               <strong>Karyawan:</strong> {mitra.size || "500 - 1000"}

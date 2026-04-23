@@ -291,6 +291,8 @@ export function mapPublicJob(job) {
         companyProfile?.website_url || companyProfile?.website,
       ),
       description: cleanText(companyProfile?.deskripsi),
+      vision: cleanText(companyProfile?.visi || companyProfile?.vision),
+      mission: cleanText(companyProfile?.misi || companyProfile?.mission),
       address: companyAddress,
       phone: cleanText(companyProfile?.notelp),
       status: cleanText(companyProfile?.status_mitra),

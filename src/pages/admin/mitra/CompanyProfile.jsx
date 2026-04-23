@@ -258,6 +258,34 @@ export default function CompanyProfile() {
                 </div>
               </InfoCard>
 
+              <div className="company-profile__vision-mission-grid">
+                <InfoCard className="company-profile__card-padding-lg">
+                  <h2 className="company-profile__section-title">Visi</h2>
+                  <div className="company-profile__headquarter-address">
+                    {profile?.visi ? (
+                      <p className="company-profile__address-detail">
+                        {profile.visi}
+                      </p>
+                    ) : (
+                      <EmptyValue>Visi perusahaan belum diisi.</EmptyValue>
+                    )}
+                  </div>
+                </InfoCard>
+
+                <InfoCard className="company-profile__card-padding-lg">
+                  <h2 className="company-profile__section-title">Misi</h2>
+                  <div className="company-profile__headquarter-address">
+                    {profile?.misi ? (
+                      <p className="company-profile__address-detail">
+                        {profile.misi}
+                      </p>
+                    ) : (
+                      <EmptyValue>Misi perusahaan belum diisi.</EmptyValue>
+                    )}
+                  </div>
+                </InfoCard>
+              </div>
+
               <div className="company-profile__jobs-section">
                 <div className="company-profile__jobs-header">
                   <h2 className="company-profile__jobs-title">

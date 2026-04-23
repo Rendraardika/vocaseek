@@ -17,6 +17,40 @@
   border-bottom-right-radius: 24px;
 }
 
+.mitra-detail-hero-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.mitra-detail-logo {
+  width: 92px;
+  height: 92px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 92px;
+  backdrop-filter: blur(6px);
+  padding: 10px;
+}
+
+.mitra-detail-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.mitra-detail-logo.is-fallback {
+  color: #f8fafc;
+  font-size: 28px;
+  font-weight: 800;
+}
+
 .mitra-detail-hero h1 {
   font-size: 34px;
   margin-bottom: 10px;
@@ -141,5 +175,9 @@
 
   .mitra-vision-mission {
     grid-template-columns: 1fr;
+  }
+
+  .mitra-detail-hero-content {
+    align-items: flex-start;
   }
 }

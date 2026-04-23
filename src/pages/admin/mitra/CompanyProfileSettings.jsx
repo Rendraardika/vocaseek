@@ -80,6 +80,8 @@ const emptyForm = {
   ukuran_perusahaan: "",
   website_url: "",
   deskripsi: "",
+  visi: "",
+  misi: "",
   notelp: "",
   alamat_kantor_pusat: "",
   linkedin_url: "",
@@ -139,6 +141,8 @@ export default function CompanyProfileSettings() {
           ukuran_perusahaan: data.ukuran_perusahaan || "",
           website_url: data.website_url || "",
           deskripsi: data.deskripsi || "",
+          visi: data.visi || "",
+          misi: data.misi || "",
           notelp: data.notelp || "",
           alamat_kantor_pusat: data.alamat_kantor_pusat || "",
           linkedin_url: data.linkedin_url || "",
@@ -237,6 +241,8 @@ export default function CompanyProfileSettings() {
     payload.append("ukuran_perusahaan", form.ukuran_perusahaan.trim());
     payload.append("website_url", normalizeUrl(form.website_url));
     payload.append("deskripsi", form.deskripsi.trim());
+    payload.append("visi", form.visi.trim());
+    payload.append("misi", form.misi.trim());
     payload.append("notelp", form.notelp.trim());
     payload.append("alamat_kantor_pusat", form.alamat_kantor_pusat.trim());
     payload.append("linkedin_url", normalizeUrl(form.linkedin_url));
@@ -260,6 +266,8 @@ export default function CompanyProfileSettings() {
         ukuran_perusahaan: updatedProfile.ukuran_perusahaan || prev.ukuran_perusahaan,
         website_url: updatedProfile.website_url || prev.website_url,
         deskripsi: updatedProfile.deskripsi || prev.deskripsi,
+        visi: updatedProfile.visi || prev.visi,
+        misi: updatedProfile.misi || prev.misi,
         notelp: updatedProfile.notelp || prev.notelp,
         alamat_kantor_pusat:
           updatedProfile.alamat_kantor_pusat || prev.alamat_kantor_pusat,
@@ -411,6 +419,36 @@ export default function CompanyProfileSettings() {
                       placeholder="Ceritakan profil, budaya kerja, dan keunggulan perusahaan..."
                       className="company-settings__textarea"
                     />
+                  </div>
+
+                  <div className="company-settings__two-col">
+                    <div>
+                      <label className="company-settings__label">Visi Perusahaan</label>
+                      <p className="company-settings__helper company-settings__helper--mb">
+                        Teks ini akan tampil di halaman mitra publik.
+                      </p>
+                      <textarea
+                        value={form.visi}
+                        onChange={handleInputChange("visi")}
+                        placeholder="Tuliskan visi perusahaan..."
+                        className="company-settings__textarea"
+                        rows={5}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="company-settings__label">Misi Perusahaan</label>
+                      <p className="company-settings__helper company-settings__helper--mb">
+                        Pisahkan poin misi dengan baris baru jika lebih dari satu.
+                      </p>
+                      <textarea
+                        value={form.misi}
+                        onChange={handleInputChange("misi")}
+                        placeholder="Tuliskan misi perusahaan..."
+                        className="company-settings__textarea"
+                        rows={5}
+                      />
+                    </div>
                   </div>
                 </div>
               </Card>
