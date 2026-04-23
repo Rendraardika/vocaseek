@@ -57,10 +57,6 @@ export function resolveApiBaseUrl() {
     const isLocalFrontend = ["localhost", "127.0.0.1"].includes(currentHostname);
 
     if (configuredUrl.origin === window.location.origin && configuredUrl.pathname === "/api") {
-      if (window.location.port && window.location.port !== "8000") {
-        return fallbackBaseUrl;
-      }
-
       return configuredUrl.toString().replace(/\/+$/, "");
     }
 
