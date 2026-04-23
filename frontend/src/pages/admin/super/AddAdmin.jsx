@@ -15,6 +15,17 @@ import {
 import { getApiErrorMessage } from "../../../services/auth";
 import { inviteManagedAdminUser } from "../../../services/admin";
 
+function sanitizePhoneInput(value) {
+  if (!value) return "";
+
+  const normalized = value.replace(/[^\d+]/g, "");
+  if (!normalized.startsWith("+")) {
+    return normalized.replace(/\+/g, "");
+  }
+
+  return `+${normalized.slice(1).replace(/\+/g, "")}`;
+}
+
 function InviteAdminModal({ open, onClose, onConfirm, isSubmitting }) {
   if (!open) return null;
 
@@ -62,6 +73,9 @@ function validateForm(form) {
   if (!form.nama.trim()) return "Nama lengkap wajib diisi.";
   if (!form.email.trim()) return "Alamat email wajib diisi.";
   if (!form.notelp.trim()) return "Nomor telepon wajib diisi.";
+  if (!/^\+?\d+$/.test(form.notelp.trim())) {
+    return "Nomor telepon hanya boleh berisi angka.";
+  }
   return "";
 }
 
@@ -79,7 +93,7 @@ export default function AddAdmin() {
     setSuccess("");
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "notelp" ? sanitizePhoneInput(value) : value,
     }));
   };
 
@@ -237,6 +251,9 @@ export default function AddAdmin() {
                       placeholder="+62 812 3456 7890"
                       value={form.notelp}
                       onChange={handleChange}
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      pattern="^\+?\d+$"
                       required
                     />
                   </div>
