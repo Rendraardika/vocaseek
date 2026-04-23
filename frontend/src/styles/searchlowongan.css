@@ -261,6 +261,40 @@
   flex-wrap: wrap;
 }
 
+.searchlowongan-company-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.searchlowongan-company-logo {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #b88907;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 6px;
+}
+
+.searchlowongan-company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.searchlowongan-company-copy {
+  min-width: 0;
+}
+
 /* ================= DETAIL ================= */
 
 .searchlowongan-detail {
@@ -384,19 +418,23 @@
 .job-logo {
   width: 50px;
   height: 50px;
-  background: #f3f4f6;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
   color: #6b7280;
+  overflow: hidden;
+  padding: 6px;
 }
 
 .job-logo img {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  background: #ffffff;
 }
 
 .job-info h2 {

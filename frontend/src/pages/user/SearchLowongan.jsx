@@ -28,6 +28,26 @@ function hasValue(value) {
   return String(value || "").trim().length > 0;
 }
 
+function CompanyLogo({ name, logoUrl, fallbackIcon = <FiBriefcase /> }) {
+  const [hasError, setHasError] = useState(false);
+  const fallback = String(name || "VS")
+    .trim()
+    .slice(0, 2)
+    .toUpperCase();
+
+  if (logoUrl && !hasError) {
+    return (
+      <img
+        src={logoUrl}
+        alt={name || "Logo perusahaan"}
+        onError={() => setHasError(true)}
+      />
+    );
+  }
+
+  return fallback.length > 0 ? <span>{fallback}</span> : fallbackIcon;
+}
+
 export default function SearchLowongan() {
   const navigate = useNavigate();
   const isLoggedIn = isAuthenticated();
@@ -378,8 +398,19 @@ export default function SearchLowongan() {
                   onClick={() => setSelectedJob(job)}
                 >
                   <div className="searchlowongan-left">
-                    <div className="searchlowongan-title">{job.title}</div>
-                    <div className="searchlowongan-company">{job.company}</div>
+                    <div className="searchlowongan-company-head">
+                      <div className="searchlowongan-company-logo">
+                        <CompanyLogo
+                          name={job.company}
+                          logoUrl={job.companyProfile?.logoUrl}
+                        />
+                      </div>
+
+                      <div className="searchlowongan-company-copy">
+                        <div className="searchlowongan-title">{job.title}</div>
+                        <div className="searchlowongan-company">{job.company}</div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="searchlowongan-right">
@@ -419,7 +450,11 @@ export default function SearchLowongan() {
                 <div className="job-detail-header">
                   <div className="job-company">
                     <div className="job-logo">
-                      <FiBriefcase />
+                      <CompanyLogo
+                        name={selectedJob.companyProfile?.name || selectedJob.company}
+                        logoUrl={selectedJob.companyProfile?.logoUrl}
+                        fallbackIcon={<FiBriefcase />}
+                      />
                     </div>
 
                     <div className="job-info">

@@ -66,6 +66,8 @@ function buildPartnerDirectoryFromJobs(jobs) {
         description:
           companyProfile?.description ||
           "Profil perusahaan belum dilengkapi oleh perusahaan.",
+        vision: companyProfile?.vision || "",
+        mission: companyProfile?.mission || "",
         rating: "4.8",
         website: companyProfile?.website || "",
         phone: companyProfile?.phone || "",

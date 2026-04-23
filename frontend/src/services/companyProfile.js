@@ -28,6 +28,8 @@ export function getCompanyProfileData(response) {
       source?.ukuran_perusahaan || source?.company_size || source?.size || "",
     website_url: source?.website_url || source?.website || "",
     deskripsi: source?.deskripsi || source?.description || "",
+    visi: source?.visi || source?.vision || "",
+    misi: source?.misi || source?.mission || "",
     notelp: source?.notelp || source?.phone || "",
     alamat_kantor_pusat:
       source?.alamat_kantor_pusat || source?.alamat_kantor || source?.address || "",
