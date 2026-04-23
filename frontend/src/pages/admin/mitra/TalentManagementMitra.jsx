@@ -22,10 +22,8 @@ import {
   Star,
   CalendarDays,
   CircleCheck,
-  Plus,
   Eye,
   Trash2,
-  FolderOpen,
   ChevronDown,
   X,
   SquarePen,
@@ -122,13 +120,14 @@ function resolveCandidatePhoto(source = {}) {
     profile?.avatar,
     user?.foto,
     user?.photo,
-    user?.avatar,
+    user?.avatar
   );
 }
 
 function mapCandidate(item, index) {
   const user = item?.user || item?.intern || item?.candidate || {};
-  const profile = user?.intern_profile || user?.internProfile || item?.intern_profile || {};
+  const profile =
+    user?.intern_profile || user?.internProfile || item?.intern_profile || {};
   const name = user?.nama || item?.nama || item?.name || "Kandidat";
   const status = normalizeCandidateStatus(item?.status || item?.candidate_status);
   const backendId =
@@ -161,7 +160,6 @@ function mapCandidate(item, index) {
     status,
     image: resolveCandidatePhoto(item),
     link: `/admin/mitra/talent/${backendId}`,
-    selected: false,
   };
 }
 
@@ -195,7 +193,6 @@ function Badge({ children, className = "" }) {
 }
 
 function CandidateRow({
-  selected = false,
   name,
   email,
   role,
@@ -204,7 +201,6 @@ function CandidateRow({
   applyDate,
   status,
   image,
-  onToggleSelect,
   onClick,
   onEditStatus,
   onViewDetail,
@@ -224,24 +220,14 @@ function CandidateRow({
   const workTypeMap = {
     Internship: "tm-badge--internship",
     "Full Time": "tm-badge--fulltime",
+    Magang: "tm-badge--internship",
   };
 
   return (
-    <tr className={`tm-table__row ${onClick ? "tm-table__row--clickable" : ""}`} onClick={onClick}>
-      <td className="tm-table__cell tm-table__cell--checkbox">
-        <div className="tm-center">
-          <input
-            type="checkbox"
-            checked={selected}
-            onChange={(e) => {
-              e.stopPropagation();
-              onToggleSelect?.();
-            }}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      </td>
-
+    <tr
+      className={`tm-table__row ${onClick ? "tm-table__row--clickable" : ""}`}
+      onClick={onClick}
+    >
       <td className="tm-table__cell">
         <div className="tm-candidate">
           <div className="tm-candidate__avatar-wrap">
@@ -261,14 +247,20 @@ function CandidateRow({
 
       <td className="tm-table__cell">
         <div className="tm-role">{role}</div>
-        <div className={`tm-role__level ${levelMap[level]}`}>{level}</div>
+        <div className={`tm-role__level ${levelMap[level] || "tm-text-orange"}`}>
+          {level}
+        </div>
       </td>
 
       <td className="tm-table__cell">
-        <Badge className={workTypeMap[workType]}>{workType}</Badge>
+        <Badge className={workTypeMap[workType] || "tm-badge--internship"}>
+          {workType}
+        </Badge>
       </td>
 
-      <td className="tm-table__cell tm-table__cell--muted tm-whitespace-pre">{applyDate}</td>
+      <td className="tm-table__cell tm-table__cell--muted tm-whitespace-pre">
+        {applyDate}
+      </td>
 
       <td className="tm-table__cell">
         <Badge className={statusMap[status]}>{getStatusLabel(status)}</Badge>
@@ -313,7 +305,7 @@ function CandidateRow({
   );
 }
 
-function CandidateCard({ candidate, onClick, onEditStatus, onViewDetail, onToggleSelect }) {
+function CandidateCard({ candidate, onClick, onEditStatus, onViewDetail }) {
   const statusMap = {
     PENDING: "tm-badge--pending",
     REJECTED: "tm-badge--rejected",
@@ -323,6 +315,7 @@ function CandidateCard({ candidate, onClick, onEditStatus, onViewDetail, onToggl
   const workTypeMap = {
     Internship: "tm-badge--internship",
     "Full Time": "tm-badge--fulltime",
+    Magang: "tm-badge--internship",
   };
 
   return (
@@ -343,15 +336,6 @@ function CandidateCard({ candidate, onClick, onEditStatus, onViewDetail, onToggl
             <div className="tm-candidate__email">{candidate.email}</div>
           </div>
         </div>
-        <input
-          type="checkbox"
-          checked={candidate.selected}
-          readOnly
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleSelect?.();
-          }}
-        />
       </div>
 
       <div className="tm-mobile-card__grid">
@@ -361,18 +345,24 @@ function CandidateCard({ candidate, onClick, onEditStatus, onViewDetail, onToggl
         </div>
         <div>
           <span className="tm-mobile-card__label">Tanggal Daftar</span>
-          <div className="tm-mobile-card__value tm-whitespace-pre">{candidate.applyDate}</div>
+          <div className="tm-mobile-card__value tm-whitespace-pre">
+            {candidate.applyDate}
+          </div>
         </div>
         <div>
           <span className="tm-mobile-card__label">Tipe</span>
           <div className="tm-mobile-card__value">
-            <Badge className={workTypeMap[candidate.workType]}>{candidate.workType}</Badge>
+            <Badge className={workTypeMap[candidate.workType] || "tm-badge--internship"}>
+              {candidate.workType}
+            </Badge>
           </div>
         </div>
       </div>
 
       <div className="tm-mobile-card__footer">
-        <Badge className={statusMap[candidate.status]}>{getStatusLabel(candidate.status)}</Badge>
+        <Badge className={statusMap[candidate.status]}>
+          {getStatusLabel(candidate.status)}
+        </Badge>
         <button
           type="button"
           className="tm-mobile-card__status-btn"
@@ -408,7 +398,12 @@ function ChangeStatusModal({
             <h2 className="tm-modal__title">Ubah Status Kandidat</h2>
           </div>
 
-          <button type="button" onClick={onClose} aria-label="Tutup popup" className="tm-modal__close">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup popup"
+            className="tm-modal__close"
+          >
             <X size={22} />
           </button>
         </div>
@@ -478,7 +473,6 @@ export default function TalentManagement({ mode = "all" }) {
     rejected: 0,
     accepted_this_month: 0,
   });
-  const [selectedIds, setSelectedIds] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const [isStatusModalOpen, setIsStatusModalOpen] = React.useState(false);
@@ -498,11 +492,12 @@ export default function TalentManagement({ mode = "all" }) {
         const response = isShortlistedPage
           ? await getSelectedCompanyCandidates()
           : await getCompanyCandidates();
+
         const payload = response?.data?.data || response?.data || {};
         let nextCandidates = extractCandidateCollection(payload).map(mapCandidate);
 
         const candidatesMissingPhoto = nextCandidates.filter(
-          (candidate) => !candidate.image && candidate.backendId,
+          (candidate) => !candidate.image && candidate.backendId
         );
 
         if (candidatesMissingPhoto.length > 0) {
@@ -515,7 +510,7 @@ export default function TalentManagement({ mode = "all" }) {
               } catch {
                 return [candidate.backendId, ""];
               }
-            }),
+            })
           );
 
           const photoMap = new Map(detailPhotos);
@@ -537,8 +532,8 @@ export default function TalentManagement({ mode = "all" }) {
         if (isShortlistedPage) {
           nextCandidates = nextCandidates.filter((item) => item.status === "HIRED");
         }
+
         setCandidateList(nextCandidates);
-        setSelectedIds(nextCandidates.filter((item) => item.selected).map((item) => item.recordId));
       } catch (error) {
         setCandidateList([]);
         if (!isShortlistedPage) {
@@ -549,7 +544,6 @@ export default function TalentManagement({ mode = "all" }) {
             accepted_this_month: 0,
           });
         }
-        setSelectedIds([]);
         setErrorMessage(getApiErrorMessage(error, "Gagal memuat data kandidat."));
       } finally {
         setIsLoading(false);
@@ -592,9 +586,7 @@ export default function TalentManagement({ mode = "all" }) {
       );
 
       if (isShortlistedPage && normalizedStatus !== "HIRED") {
-        const removed = updated.filter((item) => item.recordId !== activeCandidate.recordId);
-        setSelectedIds((ids) => ids.filter((candidateId) => candidateId !== activeCandidate.recordId));
-        return removed;
+        return updated.filter((item) => item.recordId !== activeCandidate.recordId);
       }
 
       return updated;
@@ -635,12 +627,6 @@ export default function TalentManagement({ mode = "all" }) {
     }
   };
 
-  const toggleSelect = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
   const filteredCandidates = candidateList;
 
   const { totalPages, pageItems: paginatedCandidates } = React.useMemo(
@@ -659,64 +645,19 @@ export default function TalentManagement({ mode = "all" }) {
   );
 
   React.useEffect(() => {
-    setCurrentPage((prev) => Math.min(prev, totalPages));
+    setCurrentPage((prev) => Math.min(prev, totalPages || 1));
   }, [totalPages]);
 
   React.useEffect(() => {
     setCurrentPage(1);
   }, [isShortlistedPage]);
 
-  const allVisibleSelected =
-    paginatedCandidates.length > 0 &&
-    paginatedCandidates.every((item) => selectedIds.includes(item.recordId));
-
-  const toggleSelectAllVisible = () => {
-    if (allVisibleSelected) {
-      setSelectedIds((prev) =>
-        prev.filter((id) => !paginatedCandidates.some((item) => item.recordId === id))
-      );
-    } else {
-      setSelectedIds((prev) => [
-        ...new Set([...prev, ...paginatedCandidates.map((item) => item.recordId)]),
-      ]);
-    }
-  };
-
-  const handleMoveSelected = () => {
-    if (!selectedIds.length) return;
-
-    setCandidateList((prev) =>
-      prev.map((item) =>
-        selectedIds.includes(item.recordId)
-          ? { ...item, status: "HIRED" }
-          : item
-      )
-    );
-  };
-
-  const handleArchiveSelected = () => {
-    if (!selectedIds.length) return;
-
-    setCandidateList((prev) =>
-      prev.filter((item) => !selectedIds.includes(item.recordId))
-    );
-    setSelectedIds([]);
-  };
-
   const pageTitle = isShortlistedPage ? "Kandidat Terpilih" : "Semua Kandidat";
   const pageBreadcrumb = isShortlistedPage ? "KANDIDAT TERPILIH" : "SEMUA KANDIDAT";
-  const totalLabel = isShortlistedPage
-    ? `Pilih Semua (${paginatedCandidates.length})`
-    : `Select All (${paginatedCandidates.length})`;
-  const selectedLabel = isShortlistedPage
-    ? `${selectedIds.length} terpilih`
-    : `${selectedIds.length} selected`;
   const topSummary = isShortlistedPage
     ? null
     : `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredCandidates.length} results`;
-  const bottomSummary = isShortlistedPage
-    ? `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredCandidates.length} hasil`
-    : `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredCandidates.length} hasil`;
+  const bottomSummary = `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredCandidates.length} hasil`;
 
   return (
     <div className="tm-layout">
@@ -741,51 +682,53 @@ export default function TalentManagement({ mode = "all" }) {
             <div className="tm-pagination-bar">
               <div className="tm-pagination-bar__text">{topSummary}</div>
               {filteredCandidates.length > 0 && (
-              <div className="tm-pagination">
-                <button
-                  type="button"
-                  className="tm-pagination__btn tm-pagination__btn--edge"
-                  disabled={paginationMeta.currentPage === 1}
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                >
-                  ‹
-                </button>
-                {pageNumbers.map((pageNumber, index) =>
-                  pageNumber === "ellipsis" ? (
-                    <button
-                      key={`top-ellipsis-${index}`}
-                      type="button"
-                      className="tm-pagination__btn"
-                      disabled
-                    >
-                      ...
-                    </button>
-                  ) : (
-                    <button
-                      key={`top-page-${pageNumber}`}
-                      type="button"
-                      className={`tm-pagination__btn ${
-                        pageNumber === paginationMeta.currentPage
-                          ? "tm-pagination__btn--active"
-                          : ""
-                      }`}
-                      onClick={() => setCurrentPage(pageNumber)}
-                    >
-                      {pageNumber}
-                    </button>
-                  )
-                )}
-                <button
-                  type="button"
-                  className="tm-pagination__btn tm-pagination__btn--edge"
-                  disabled={paginationMeta.currentPage === paginationMeta.totalPages}
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, paginationMeta.totalPages))
-                  }
-                >
-                  ›
-                </button>
-              </div>
+                <div className="tm-pagination">
+                  <button
+                    type="button"
+                    className="tm-pagination__btn tm-pagination__btn--edge"
+                    disabled={paginationMeta.currentPage === 1}
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  >
+                    ‹
+                  </button>
+                  {pageNumbers.map((pageNumber, index) =>
+                    pageNumber === "ellipsis" ? (
+                      <button
+                        key={`top-ellipsis-${index}`}
+                        type="button"
+                        className="tm-pagination__btn"
+                        disabled
+                      >
+                        ...
+                      </button>
+                    ) : (
+                      <button
+                        key={`top-page-${pageNumber}`}
+                        type="button"
+                        className={`tm-pagination__btn ${
+                          pageNumber === paginationMeta.currentPage
+                            ? "tm-pagination__btn--active"
+                            : ""
+                        }`}
+                        onClick={() => setCurrentPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    )
+                  )}
+                  <button
+                    type="button"
+                    className="tm-pagination__btn tm-pagination__btn--edge"
+                    disabled={paginationMeta.currentPage === paginationMeta.totalPages}
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(prev + 1, paginationMeta.totalPages)
+                      )
+                    }
+                  >
+                    ›
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -837,48 +780,10 @@ export default function TalentManagement({ mode = "all" }) {
 
           <div className="tm-content-grid">
             <div className="tm-table-card">
-              <div className="tm-table-toolbar">
-                <div className="tm-table-toolbar__left">
-                  <label className="tm-select-all">
-                    <input
-                      type="checkbox"
-                      checked={allVisibleSelected}
-                      onChange={toggleSelectAllVisible}
-                    />
-                    <span>{totalLabel}</span>
-                  </label>
-                  <span className="tm-divider">|</span>
-                  <span className="tm-toolbar-muted">{selectedLabel}</span>
-                </div>
-
-                <div className="tm-table-toolbar__actions">
-                  <button
-                    type="button"
-                    className="tm-btn tm-btn--neutral"
-                    onClick={handleMoveSelected}
-                    disabled={!selectedIds.length}
-                  >
-                    <FolderOpen size={14} />
-                    Pindahkan
-                  </button>
-
-                  <button
-                    type="button"
-                    className="tm-btn tm-btn--danger-soft"
-                    onClick={handleArchiveSelected}
-                    disabled={!selectedIds.length}
-                  >
-                    <Trash2 size={14} />
-                    Arsip
-                  </button>
-                </div>
-              </div>
-
               <div className="tm-table-wrap">
                 <table className="tm-table">
                   <thead className="tm-table__head">
                     <tr className="tm-table__head-row">
-                      <th className="tm-table__heading tm-table__heading--checkbox"></th>
                       <th className="tm-table__heading">Kandidat</th>
                       <th className="tm-table__heading">Posisi</th>
                       <th className="tm-table__heading">Tipe Pekerjaan</th>
@@ -891,8 +796,14 @@ export default function TalentManagement({ mode = "all" }) {
                   <tbody>
                     {isLoading ? (
                       <tr className="tm-table__row">
-                        <td className="tm-table__cell" colSpan={7}>
-                          <div style={{ padding: "32px 16px", textAlign: "center", color: "#6b7280" }}>
+                        <td className="tm-table__cell" colSpan={6}>
+                          <div
+                            style={{
+                              padding: "32px 16px",
+                              textAlign: "center",
+                              color: "#6b7280",
+                            }}
+                          >
                             Memuat data kandidat...
                           </div>
                         </td>
@@ -902,8 +813,6 @@ export default function TalentManagement({ mode = "all" }) {
                         <CandidateRow
                           key={item.recordId}
                           {...item}
-                          selected={selectedIds.includes(item.recordId)}
-                          onToggleSelect={() => toggleSelect(item.recordId)}
                           onClick={item.link ? () => navigate(item.link) : undefined}
                           onEditStatus={() => openStatusModal(item)}
                           onViewDetail={() => handleViewDetail(item)}
@@ -911,8 +820,14 @@ export default function TalentManagement({ mode = "all" }) {
                       ))
                     ) : (
                       <tr className="tm-table__row">
-                        <td className="tm-table__cell" colSpan={7}>
-                          <div style={{ padding: "32px 16px", textAlign: "center", color: "#6b7280" }}>
+                        <td className="tm-table__cell" colSpan={6}>
+                          <div
+                            style={{
+                              padding: "32px 16px",
+                              textAlign: "center",
+                              color: "#6b7280",
+                            }}
+                          >
                             Belum ada kandidat yang mendaftar.
                           </div>
                         </td>
@@ -934,11 +849,7 @@ export default function TalentManagement({ mode = "all" }) {
                   paginatedCandidates.map((item) => (
                     <CandidateCard
                       key={item.recordId}
-                      candidate={{
-                        ...item,
-                        selected: selectedIds.includes(item.recordId),
-                      }}
-                      onToggleSelect={() => toggleSelect(item.recordId)}
+                      candidate={item}
                       onClick={item.link ? () => navigate(item.link) : undefined}
                       onEditStatus={() => openStatusModal(item)}
                       onViewDetail={() => handleViewDetail(item)}
@@ -958,51 +869,53 @@ export default function TalentManagement({ mode = "all" }) {
                 <div className="tm-table-footer__text">{bottomSummary}</div>
 
                 {filteredCandidates.length > 0 && (
-                <div className="tm-pagination">
-                  <button
-                    type="button"
-                    className="tm-pagination__btn tm-pagination__btn--edge"
-                    disabled={paginationMeta.currentPage === 1}
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  >
-                    ‹
-                  </button>
-                  {pageNumbers.map((pageNumber, index) =>
-                    pageNumber === "ellipsis" ? (
-                      <button
-                        key={`bottom-ellipsis-${index}`}
-                        type="button"
-                        className="tm-pagination__btn"
-                        disabled
-                      >
-                        ...
-                      </button>
-                    ) : (
-                      <button
-                        key={`bottom-page-${pageNumber}`}
-                        type="button"
-                        className={`tm-pagination__btn ${
-                          pageNumber === paginationMeta.currentPage
-                            ? "tm-pagination__btn--active"
-                            : ""
-                        }`}
-                        onClick={() => setCurrentPage(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    )
-                  )}
-                  <button
-                    type="button"
-                    className="tm-pagination__btn tm-pagination__btn--edge"
-                    disabled={paginationMeta.currentPage === paginationMeta.totalPages}
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, paginationMeta.totalPages))
-                    }
-                  >
-                    ›
-                  </button>
-                </div>
+                  <div className="tm-pagination">
+                    <button
+                      type="button"
+                      className="tm-pagination__btn tm-pagination__btn--edge"
+                      disabled={paginationMeta.currentPage === 1}
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    >
+                      ‹
+                    </button>
+                    {pageNumbers.map((pageNumber, index) =>
+                      pageNumber === "ellipsis" ? (
+                        <button
+                          key={`bottom-ellipsis-${index}`}
+                          type="button"
+                          className="tm-pagination__btn"
+                          disabled
+                        >
+                          ...
+                        </button>
+                      ) : (
+                        <button
+                          key={`bottom-page-${pageNumber}`}
+                          type="button"
+                          className={`tm-pagination__btn ${
+                            pageNumber === paginationMeta.currentPage
+                              ? "tm-pagination__btn--active"
+                              : ""
+                          }`}
+                          onClick={() => setCurrentPage(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      )
+                    )}
+                    <button
+                      type="button"
+                      className="tm-pagination__btn tm-pagination__btn--edge"
+                      disabled={paginationMeta.currentPage === paginationMeta.totalPages}
+                      onClick={() =>
+                        setCurrentPage((prev) =>
+                          Math.min(prev + 1, paginationMeta.totalPages)
+                        )
+                      }
+                    >
+                      ›
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

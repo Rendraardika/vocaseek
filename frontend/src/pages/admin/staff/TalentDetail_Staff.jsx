@@ -350,7 +350,7 @@ export default function TalentDetailStaff() {
                   <h2>Data Akademik</h2>
                 </div>
 
-                <div className="detail-card-body">
+           <div className="detail-card-body">
                   <div className="detail-section-title">Pendidikan</div>
                   <div className="detail-education-row">
                     <div>
@@ -363,16 +363,17 @@ export default function TalentDetailStaff() {
                       {talent?.educationDocument?.available && (
                         <button
                           type="button"
-                          className="detail-support-document-button"
+                          className="detail-file-link"
                           onClick={() => openDocument(talent.educationDocument.url)}
                         >
-                          Preview Dokumen Pendidikan
+                          Lihat File
                         </button>
                       )}
                     </div>
                   </div>
 
                   <div className="detail-section-title work">Pengalaman</div>
+
                   <div className="detail-timeline">
                     {experiences.length > 0 ? (
                       experiences.map((experience, index) => (
@@ -390,10 +391,10 @@ export default function TalentDetailStaff() {
                             {experience?.documentUrl && (
                               <button
                                 type="button"
-                                className="detail-support-document-button"
+                                className="detail-file-link"
                                 onClick={() => openDocument(experience.documentUrl)}
                               >
-                                Preview Dokumen
+                                Lihat File
                               </button>
                             )}
                           </div>
@@ -420,10 +421,10 @@ export default function TalentDetailStaff() {
                           {certificate?.documentUrl && (
                             <button
                               type="button"
-                              className="detail-support-document-button compact"
+                              className="detail-file-link"
                               onClick={() => openDocument(certificate.documentUrl)}
                             >
-                              Preview Dokumen
+                              Lihat File
                             </button>
                           )}
                         </div>
@@ -434,7 +435,7 @@ export default function TalentDetailStaff() {
                   </div>
                 </div>
               </div>
-
+              
               <div className="detail-card">
                 <div className="detail-assessment-header">
                   <div className="detail-assessment-icon-box">

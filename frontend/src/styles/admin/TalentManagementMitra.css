@@ -448,7 +448,7 @@
 
 .tm-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 920px;
   border-collapse: collapse;
 }
 
@@ -467,12 +467,6 @@
 .tm-table__heading {
   padding: 16px 8px;
   font-weight: 600;
-}
-
-.tm-table__heading--checkbox,
-.tm-table__cell--checkbox {
-  padding-left: 16px;
-  padding-right: 16px;
 }
 
 .tm-table__row {
@@ -1004,8 +998,8 @@
   }
 
   .tm-table {
-    min-width: 980px;
-    width: 980px;
+    min-width: 920px;
+    width: 920px;
   }
 
   .tm-mobile-list {
