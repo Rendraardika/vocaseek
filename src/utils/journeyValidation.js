@@ -44,14 +44,10 @@ export const isAkademikComplete = (data) => {
   if (!data) return false;
 
   const pendidikan = data?.pendidikan || {};
-  const pengalaman = Array.isArray(data?.pengalaman) ? data.pengalaman : [];
-  const sertifikasi = Array.isArray(data?.sertifikasi) ? data.sertifikasi : [];
 
   return Boolean(
     pendidikan.institusi?.trim() &&
-      pendidikan.jurusan?.trim() &&
-      pengalaman.length > 0 &&
-      sertifikasi.length > 0
+      pendidikan.jurusan?.trim()
   );
 };
 

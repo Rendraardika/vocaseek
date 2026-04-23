@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Soal1.css";
+import { translatePhrase } from "../../i18n/phrases";
 import { getApiErrorMessage } from "../../services/auth";
 import { submitInternTest } from "../../services/intern";
+import { getSavedLanguage } from "../../utils/languagePreference";
 import {
   PRETEST_DURATION_MS,
   PRETEST_QUESTION_BANK,
   PRETEST_STORAGE_KEYS,
+  getPretestQuestionText,
 } from "../../utils/pretestAssessment";
 import { getScopedItem, setScopedItem } from "../../utils/userScopedStorage";
 
@@ -45,8 +48,13 @@ export default function Soal1() {
     return saved ? JSON.parse(saved) : {};
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [language, setLanguage] = useState(() => getSavedLanguage());
 
   const questions = useMemo(() => PRETEST_QUESTION_BANK, []);
+  const t = useCallback(
+    (text) => translatePhrase(text, language === "en" ? "en" : "id") || text,
+    [language],
+  );
 
   const questionIds = useMemo(() => {
     return Object.keys(questions)
@@ -54,8 +62,6 @@ export default function Soal1() {
       .filter((id) => Number.isFinite(id) && questions[id])
       .sort((a, b) => a - b);
   }, [questions]);
-
-  const total = questionIds.length;
 
   const [activeNo, setActiveNo] = useState(() => {
     const firstQuestionId =
@@ -67,12 +73,10 @@ export default function Soal1() {
     return firstQuestionId;
   });
 
-  const activeIndex = useMemo(() => {
-    return questionIds.indexOf(activeNo);
-  }, [questionIds, activeNo]);
-
+  const activeIndex = useMemo(() => questionIds.indexOf(activeNo), [questionIds, activeNo]);
   const currentQuestion = questions[activeNo];
   const currentAnswer = answers[activeNo] || "";
+  const currentQuestionText = getPretestQuestionText(currentQuestion, language);
 
   const finishTest = useCallback(async () => {
     if (isSubmitting) return;
@@ -82,7 +86,7 @@ export default function Soal1() {
     );
 
     if (unansweredQuestions.length > 0) {
-      window.alert("Semua soal pre-test harus dijawab sebelum dikirim.");
+      window.alert(t("Semua soal pre-test harus dijawab sebelum dikirim."));
       return;
     }
 
@@ -101,13 +105,11 @@ export default function Soal1() {
       setScopedItem(PRETEST_STORAGE_KEYS.questions, JSON.stringify(questions));
       navigate("/selesai-test");
     } catch (error) {
-      window.alert(
-        getApiErrorMessage(error, "Gagal mengirim jawaban pre-test."),
-      );
+      window.alert(getApiErrorMessage(error, t("Gagal mengirim jawaban pre-test.")));
     } finally {
       setIsSubmitting(false);
     }
-  }, [answers, isSubmitting, navigate, questionIds, questions]);
+  }, [answers, isSubmitting, navigate, questionIds, questions, t]);
 
   const timeText = formatRemainingTime(remainingMs);
 
@@ -126,6 +128,20 @@ export default function Soal1() {
       setActiveNo(questionIds[0]);
     }
   }, [questionIds, activeNo]);
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLanguage(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    window.addEventListener("storage", syncLanguage);
+
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+      window.removeEventListener("storage", syncLanguage);
+    };
+  }, []);
 
   useEffect(() => {
     const tick = () => {
@@ -155,16 +171,6 @@ export default function Soal1() {
     return null;
   };
 
-  const getPrevUnansweredQuestionId = (fromIndex) => {
-    for (let i = fromIndex - 1; i >= 0; i -= 1) {
-      const questionId = questionIds[i];
-      if (!["Ya", "Tidak"].includes(answers[questionId])) {
-        return questionId;
-      }
-    }
-    return null;
-  };
-
   const handlePickNumber = (questionId) => {
     const isAnswered = ["Ya", "Tidak"].includes(answers[questionId]);
     if (isAnswered) return;
@@ -181,13 +187,6 @@ export default function Soal1() {
     }));
   };
 
-  const handlePrev = () => {
-    const prevQuestionId = getPrevUnansweredQuestionId(activeIndex);
-    if (prevQuestionId !== null) {
-      setActiveNo(prevQuestionId);
-    }
-  };
-
   const handleNext = () => {
     const nextQuestionId = getNextUnansweredQuestionId(activeIndex);
 
@@ -199,7 +198,6 @@ export default function Soal1() {
     finishTest();
   };
 
-  const hasPrevUnanswered = getPrevUnansweredQuestionId(activeIndex) !== null;
   const hasNextUnanswered = getNextUnansweredQuestionId(activeIndex) !== null;
   const isAnsweredCurrent = ["Ya", "Tidak"].includes(currentAnswer);
 
@@ -229,9 +227,9 @@ export default function Soal1() {
       </header>
 
       <div className="assessBody">
-        <aside className="assessAside" aria-label="Navigasi Soal">
+        <aside className="assessAside" aria-label={t("Navigasi Soal")}>
           <div className="assessAsideInner">
-            <div className="assessAsideLabel">KATEGORI SOAL</div>
+            <div className="assessAsideLabel">{t("KATEGORI SOAL")}</div>
             <div className="assessAsideTitle">Cognitive &amp; Problem Solving</div>
 
             <div className="assessAsideDivider" />
@@ -256,7 +254,9 @@ export default function Soal1() {
             </div>
 
             <div className="assessAsideFooter">
-              © 2026 Vocaseek Education. Seluruh hak cipta dilindungi.
+              {language === "en"
+                ? "© 2026 Vocaseek Education. All rights reserved."
+                : "© 2026 Vocaseek Education. Seluruh hak cipta dilindungi."}
             </div>
           </div>
         </aside>
@@ -264,7 +264,7 @@ export default function Soal1() {
         <main className="assessMain">
           <div className="assessMainInner">
             <div className="assessQuestionWrap">
-              <h1 className="assessQuestion">{currentQuestion.title}</h1>
+              <h1 className="assessQuestion">{currentQuestionText}</h1>
             </div>
 
             <div className="assessAnswerGrid">
@@ -277,8 +277,8 @@ export default function Soal1() {
                 <div className="answerIcon yesIcon" aria-hidden="true">
                   ✓
                 </div>
-                <div className="answerTitle">Iya</div>
-                <div className="answerDesc">Saya setuju pernyataan</div>
+                <div className="answerTitle">{t("Iya")}</div>
+                <div className="answerDesc">{t("Saya setuju pernyataan")}</div>
               </button>
 
               <button
@@ -290,28 +290,19 @@ export default function Soal1() {
                 <div className="answerIcon noIcon" aria-hidden="true">
                   ✕
                 </div>
-                <div className="answerTitle">Tidak</div>
-                <div className="answerDesc">Tidak sesuai dengan pernyataan</div>
+                <div className="answerTitle">{t("Tidak")}</div>
+                <div className="answerDesc">{t("Tidak Setuju")}</div>
               </button>
             </div>
 
             <div className="assessBottomBar">
-              <button
-                className="backLink"
-                type="button"
-                onClick={handlePrev}
-                disabled={!hasPrevUnanswered}
-              >
-                ‹ Sebelumnya
-              </button>
-
               <button
                 className="assessNextBtn"
                 type="button"
                 onClick={handleNext}
                 disabled={isSubmitting || !isAnsweredCurrent}
               >
-                {hasNextUnanswered ? "Selanjutnya" : "Selesai"} <span>›</span>
+                {hasNextUnanswered ? t("Selanjutnya") : t("Selesai")} <span>›</span>
               </button>
             </div>
           </div>

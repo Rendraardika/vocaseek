@@ -13,106 +13,156 @@ export const PRETEST_DURATION_MS = 30 * 60 * 1000;
 
 export const PRETEST_QUESTION_BANK = {
   1: {
-    title:
+    titleId:
       "Ketika melihat ada pekerjaan yang belum selesai, saya bersedia membantu meskipun itu bukan tugas utama saya.",
+    titleEn:
+      "When I see unfinished work, I am willing to help even if it is not my main responsibility.",
     trait: "kolaborasi",
   },
   2: {
-    title:
+    titleId:
       "Jika saya tidak memahami instruksi kerja, saya akan bertanya untuk memastikan pekerjaan dilakukan dengan benar.",
+    titleEn:
+      "If I do not understand work instructions, I will ask questions to make sure the task is done correctly.",
     trait: "komunikasi",
   },
   3: {
-    title:
+    titleId:
       "Saya merasa nyaman menyampaikan ide atau pendapat kepada anggota tim.",
+    titleEn: "I feel comfortable sharing ideas or opinions with team members.",
     trait: "komunikasi",
   },
   4: {
-    title:
+    titleId:
       "Jika terjadi perbedaan pendapat dalam tim, saya mencoba berdiskusi untuk mencari solusi terbaik.",
+    titleEn:
+      "If there is a difference of opinion within the team, I try to discuss it to find the best solution.",
     trait: "kolaborasi",
   },
   5: {
-    title:
+    titleId:
       "Saya selalu berusaha menyelesaikan tugas tepat waktu sesuai dengan deadline yang diberikan.",
+    titleEn:
+      "I always try to complete tasks on time according to the given deadline.",
     trait: "disiplin",
   },
   6: {
-    title:
+    titleId:
       "Ketika menghadapi masalah dalam pekerjaan, saya mencoba mencari solusi terlebih dahulu sebelum meminta bantuan.",
+    titleEn:
+      "When facing problems at work, I try to find a solution first before asking for help.",
     trait: "inisiatif",
   },
   7: {
-    title:
+    titleId:
       "Saya terbuka menerima kritik atau saran untuk memperbaiki hasil kerja saya.",
+    titleEn:
+      "I am open to receiving criticism or suggestions to improve my work.",
     trait: "adaptabilitas",
   },
   8: {
-    title:
+    titleId:
       "Saya dapat menyesuaikan diri dengan cepat terhadap lingkungan kerja atau tugas baru.",
+    titleEn:
+      "I can adapt quickly to a new work environment or new tasks.",
     trait: "adaptabilitas",
   },
   9: {
-    title:
+    titleId:
       "Saya biasanya memeriksa kembali pekerjaan sebelum mengumpulkannya.",
+    titleEn: "I usually review my work before submitting it.",
     trait: "ketelitian",
   },
   10: {
-    title:
+    titleId:
       "Jika tim tidak memiliki pemimpin dalam suatu tugas, saya bersedia membantu mengoordinasikan pekerjaan.",
+    titleEn:
+      "If the team does not have a leader for a task, I am willing to help coordinate the work.",
     trait: "kepemimpinan",
   },
   11: {
-    title:
+    titleId:
       "Jika saya sudah menyelesaikan pekerjaan lebih cepat dari anggota tim lain, saya biasanya membantu pekerjaan mereka.",
+    titleEn:
+      "If I finish my work faster than other team members, I usually help with their work.",
     trait: "kolaborasi",
   },
   12: {
-    title:
+    titleId:
       "Ketika menerima kritik terhadap pekerjaan saya, saya mencoba memahami maksudnya sebelum merespons.",
+    titleEn:
+      "When receiving criticism about my work, I try to understand it before responding.",
     trait: "adaptabilitas",
   },
   13: {
-    title:
+    titleId:
       "Jika ada tugas yang sulit, saya tetap berusaha menyelesaikannya sebelum meminta bantuan untuk menyerah.",
+    titleEn:
+      "If there is a difficult task, I still try to complete it before asking for help or giving up.",
     trait: "resiliensi",
   },
   14: {
-    title:
+    titleId:
       "Saya tetap berusaha bekerja dengan baik meskipun tugas yang diberikan tidak terlalu saya sukai.",
+    titleEn:
+      "I still try to work well even when the assigned task is not something I particularly like.",
     trait: "disiplin",
   },
   15: {
-    title:
+    titleId:
       "Jika saya melakukan kesalahan dalam pekerjaan, saya akan mengakuinya dan berusaha memperbaikinya.",
+    titleEn:
+      "If I make a mistake at work, I will admit it and try to fix it.",
     trait: "integritas",
   },
   16: {
-    title:
+    titleId:
       "Dalam bekerja, saya berusaha memahami tujuan pekerjaan agar hasilnya sesuai dengan yang diharapkan.",
+    titleEn:
+      "At work, I try to understand the goal of the task so the result matches expectations.",
     trait: "ketelitian",
   },
   17: {
-    title:
+    titleId:
       "Saya merasa penting untuk menjaga komunikasi yang baik dengan anggota tim selama bekerja.",
+    titleEn:
+      "I believe it is important to maintain good communication with team members while working.",
     trait: "komunikasi",
   },
   18: {
-    title:
+    titleId:
       "Jika terdapat cara yang lebih efektif untuk menyelesaikan pekerjaan, saya bersedia mencoba cara tersebut.",
+    titleEn:
+      "If there is a more effective way to complete a task, I am willing to try that approach.",
     trait: "inisiatif",
   },
   19: {
-    title:
+    titleId:
       "Saya tetap berusaha menyelesaikan pekerjaan dengan baik meskipun berada dalam tekanan waktu.",
+    titleEn:
+      "I continue trying to complete work well even when under time pressure.",
     trait: "resiliensi",
   },
   20: {
-    title:
+    titleId:
       "Saya merasa bertanggung jawab terhadap hasil pekerjaan yang saya kerjakan, baik secara individu maupun dalam tim.",
+    titleEn:
+      "I feel responsible for the outcomes of the work I do, both individually and as part of a team.",
     trait: "integritas",
   },
 };
+
+export function getPretestQuestionText(question, locale = "id") {
+  if (!question) {
+    return locale === "en" ? "Question unavailable" : "Pertanyaan tidak tersedia";
+  }
+
+  if (locale === "en") {
+    return question.titleEn || question.title || question.titleId || "Question unavailable";
+  }
+
+  return question.titleId || question.title || question.titleEn || "Pertanyaan tidak tersedia";
+}
 
 const TRAIT_LABELS = {
   adaptabilitas: "adaptabilitas",
@@ -204,8 +254,10 @@ export function getPretestReviewList() {
         number,
         no: number,
         trait: question.trait || PRETEST_QUESTION_BANK[key]?.trait || "",
-        question: question.title || "Pertanyaan tidak tersedia",
-        pertanyaan: question.title || "Pertanyaan tidak tersedia",
+        question: getPretestQuestionText(question, "id"),
+        questionId: getPretestQuestionText(question, "id"),
+        questionEn: getPretestQuestionText(question, "en"),
+        pertanyaan: getPretestQuestionText(question, "id"),
         rawAnswer,
         selected: normalizeAnswer(rawAnswer),
         pilihan: normalizeAnswer(rawAnswer),

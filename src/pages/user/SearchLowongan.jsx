@@ -24,6 +24,10 @@ const defaultUserData = {
   photo: "",
 };
 
+function hasValue(value) {
+  return String(value || "").trim().length > 0;
+}
+
 export default function SearchLowongan() {
   const navigate = useNavigate();
   const isLoggedIn = isAuthenticated();
@@ -379,16 +383,22 @@ export default function SearchLowongan() {
                   </div>
 
                   <div className="searchlowongan-right">
-                    <div className="searchlowongan-badges">
-                      <span>{job.type}</span>
-                      <span>{job.duration}</span>
-                      <span>{job.work}</span>
-                    </div>
+                    {(hasValue(job.type) ||
+                      hasValue(job.duration) ||
+                      hasValue(job.work)) && (
+                      <div className="searchlowongan-badges">
+                        {hasValue(job.type) && <span>{job.type}</span>}
+                        {hasValue(job.duration) && <span>{job.duration}</span>}
+                        {hasValue(job.work) && <span>{job.work}</span>}
+                      </div>
+                    )}
 
-                    <div className="searchlowongan-meta">
-                      <span>{job.postedAt}</span>
-                      <span>{job.location}</span>
-                    </div>
+                    {(hasValue(job.postedAt) || hasValue(job.location)) && (
+                      <div className="searchlowongan-meta">
+                        {hasValue(job.postedAt) && <span>{job.postedAt}</span>}
+                        {hasValue(job.location) && <span>{job.location}</span>}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
@@ -416,16 +426,22 @@ export default function SearchLowongan() {
                       <h2>{selectedJob.title}</h2>
 
                       <div className="job-meta">
-                        <span>{selectedJob.company}</span>
-                        <span>
-                          <FiMapPin /> {selectedJob.location}
-                        </span>
+                        {hasValue(selectedJob.company) && (
+                          <span>{selectedJob.company}</span>
+                        )}
+                        {hasValue(selectedJob.location) && (
+                          <span>
+                            <FiMapPin /> {selectedJob.location}
+                          </span>
+                        )}
                       </div>
 
-                      <div className="job-status">
-                        <FiCheckCircle />
-                        Open for Applicants
-                      </div>
+                      {String(selectedJob.raw?.status || "").toUpperCase() === "ACTIVE" && (
+                        <div className="job-status">
+                          <FiCheckCircle />
+                          Open for Applicants
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -461,7 +477,7 @@ export default function SearchLowongan() {
 
                 {activeTab === "deskripsi" && (
                   <>
-                    {selectedJob.description && (
+                    {hasValue(selectedJob.description) && (
                       <div className="searchlowongan-section">
                         <h3>Deskripsi Pekerjaan</h3>
                         <p>{selectedJob.description}</p>
@@ -498,7 +514,8 @@ export default function SearchLowongan() {
                       </div>
                     )}
 
-                    {selectedJob.dates && (
+                    {(hasValue(selectedJob.dates?.deadline) ||
+                      hasValue(selectedJob.dates?.start)) && (
                       <div className="searchlowongan-section">
                         <h3>
                           <FiCalendar style={{ marginRight: "6px" }} />
@@ -506,62 +523,60 @@ export default function SearchLowongan() {
                         </h3>
 
                         <ul>
-                          <li>
-                            <b>Deadline:</b> {selectedJob.dates.deadline}
-                          </li>
+                          {hasValue(selectedJob.dates?.deadline) && (
+                            <li>
+                              <b>Deadline:</b> {selectedJob.dates.deadline}
+                            </li>
+                          )}
 
-                          <li>
-                            <b>Mulai:</b> {selectedJob.dates.start}
-                          </li>
+                          {hasValue(selectedJob.dates?.start) && (
+                            <li>
+                              <b>Mulai:</b> {selectedJob.dates.start}
+                            </li>
+                          )}
                         </ul>
                       </div>
                     )}
 
-                    <div className="searchlowongan-section">
-                      <h3>
-                        <FiCheckCircle style={{ marginRight: "6px" }} />
-                        Kualifikasi
-                      </h3>
+                    {selectedJob.qualifications.length > 0 && (
+                      <div className="searchlowongan-section">
+                        <h3>
+                          <FiCheckCircle style={{ marginRight: "6px" }} />
+                          Kualifikasi
+                        </h3>
 
-                      <ul>
-                        {selectedJob.qualifications.length > 0 ? (
-                          selectedJob.qualifications.map((item, index) => (
+                        <ul>
+                          {selectedJob.qualifications.map((item, index) => (
                             <li key={index}>{item}</li>
-                          ))
-                        ) : (
-                          <li>Belum ada persyaratan khusus.</li>
-                        )}
-                      </ul>
-                    </div>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                    <div className="searchlowongan-section">
-                      <h3>
-                        <FiDollarSign style={{ marginRight: "6px" }} />
-                        Benefit
-                      </h3>
+                    {selectedJob.benefits.length > 0 && (
+                      <div className="searchlowongan-section">
+                        <h3>
+                          <FiDollarSign style={{ marginRight: "6px" }} />
+                          Benefit
+                        </h3>
 
-                      <div className="searchlowongan-benefits">
-                        {selectedJob.benefits.length > 0 ? (
-                          selectedJob.benefits.map((item, index) => (
+                        <div className="searchlowongan-benefits">
+                          {selectedJob.benefits.map((item, index) => (
                             <div className="searchlowongan-benefit" key={index}>
                               {item}
                             </div>
-                          ))
-                        ) : (
-                          <div className="searchlowongan-benefit">
-                            Benefit belum disebutkan
-                          </div>
-                        )}
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </>
                 )}
 
                 {activeTab === "perusahaan" && (
-                  <div className="searchlowongan-company-panel">
-                    <div className="searchlowongan-company-hero">
-                      <div className="searchlowongan-company-avatar">
-                        {selectedJob.companyProfile?.logoUrl ? (
+                    <div className="searchlowongan-company-panel">
+                      <div className="searchlowongan-company-hero">
+                        <div className="searchlowongan-company-avatar">
+                          {selectedJob.companyProfile?.logoUrl ? (
                           <img
                             src={selectedJob.companyProfile.logoUrl}
                             alt={selectedJob.companyProfile.name}
@@ -577,40 +592,51 @@ export default function SearchLowongan() {
 
                       <div>
                         <h3>{selectedJob.companyProfile?.name || selectedJob.company}</h3>
-                        <p>{selectedJob.companyProfile?.description}</p>
+                        {hasValue(selectedJob.companyProfile?.description) && (
+                          <p>{selectedJob.companyProfile.description}</p>
+                        )}
                       </div>
                     </div>
 
-                    <div className="searchlowongan-company-facts">
-                      <div>
-                        <span>Industri</span>
-                        <strong>{selectedJob.companyProfile?.industry}</strong>
+                    {(hasValue(selectedJob.companyProfile?.industry) ||
+                      hasValue(selectedJob.companyProfile?.size) ||
+                      hasValue(selectedJob.companyProfile?.status) ||
+                      hasValue(selectedJob.companyProfile?.website)) && (
+                      <div className="searchlowongan-company-facts">
+                        {hasValue(selectedJob.companyProfile?.industry) && (
+                          <div>
+                            <span>Industri</span>
+                            <strong>{selectedJob.companyProfile.industry}</strong>
+                          </div>
+                        )}
+                        {hasValue(selectedJob.companyProfile?.size) && (
+                          <div>
+                            <span>Ukuran Perusahaan</span>
+                            <strong>{selectedJob.companyProfile.size}</strong>
+                          </div>
+                        )}
+                        {hasValue(selectedJob.companyProfile?.status) && (
+                          <div>
+                            <span>Status Mitra</span>
+                            <strong>{selectedJob.companyProfile.status}</strong>
+                          </div>
+                        )}
+                        {hasValue(selectedJob.companyProfile?.website) && (
+                          <div>
+                            <span>Website</span>
+                            <strong>
+                              <a
+                                href={selectedJob.companyProfile.website}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {selectedJob.companyProfile.website}
+                              </a>
+                            </strong>
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <span>Ukuran Perusahaan</span>
-                        <strong>{selectedJob.companyProfile?.size}</strong>
-                      </div>
-                      <div>
-                        <span>Status Mitra</span>
-                        <strong>{selectedJob.companyProfile?.status || "Aktif"}</strong>
-                      </div>
-                      <div>
-                        <span>Website</span>
-                        <strong>
-                          {selectedJob.companyProfile?.website ? (
-                            <a
-                              href={selectedJob.companyProfile.website}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {selectedJob.companyProfile.website}
-                            </a>
-                          ) : (
-                            "Belum diisi"
-                          )}
-                        </strong>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )}
 
@@ -621,10 +647,14 @@ export default function SearchLowongan() {
                     </div>
                     <div>
                       <h3>Lokasi Lowongan</h3>
-                      <p>{selectedJob.location}</p>
+                      {hasValue(selectedJob.location) && <p>{selectedJob.location}</p>}
 
-                      <h4>Alamat Perusahaan</h4>
-                      <p>{selectedJob.companyProfile?.address || selectedJob.location}</p>
+                      {hasValue(selectedJob.companyProfile?.address) && (
+                        <>
+                          <h4>Alamat Perusahaan</h4>
+                          <p>{selectedJob.companyProfile.address}</p>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
