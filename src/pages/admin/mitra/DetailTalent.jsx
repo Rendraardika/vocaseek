@@ -291,7 +291,7 @@ export default function DetailTalent() {
                   <h2>Data Akademik</h2>
                 </div>
 
-                <div className="detail-card-body">
+           <div className="detail-card-body">
                   <div className="detail-section-title">Pendidikan</div>
                   <div className="detail-education-row">
                     <div>
@@ -299,46 +299,32 @@ export default function DetailTalent() {
                         {talent?.university || "Belum ada data pendidikan"}
                       </div>
                       <div className="detail-education-subtitle">
-                        {talent?.major && talent.major !== "-"
-                          ? `${talent.major}${talent.ipk ? ` • IPK ${talent.ipk}` : ""}`
-                          : "-"}
+                        {talent?.major && talent.major !== "-" ? `${talent.major}${talent.ipk ? ` • IPK ${talent.ipk}` : ""}` : "-"}
                       </div>
                       {talent?.educationDocument?.available && (
                         <button
                           type="button"
-                          className="detail-support-document-button"
-                          onClick={() =>
-                            window.open(
-                              talent.educationDocument.url,
-                              "_blank",
-                              "noopener,noreferrer",
-                            )
-                          }
+                          className="detail-file-link"
+                          onClick={() => openDocument(talent.educationDocument.url)}
                         >
-                          Preview Dokumen Pendidikan
+                          Lihat File
                         </button>
                       )}
                     </div>
                   </div>
 
                   <div className="detail-section-title work">Pengalaman</div>
+
                   <div className="detail-timeline">
                     {experiences.length > 0 ? (
                       experiences.map((experience, index) => (
                         <div key={`experience-${index}`} className="detail-timeline-item">
                           <div className="detail-timeline-content">
                             <div className="detail-job-title">
-                              {experience?.posisi ||
-                                experience?.jabatan ||
-                                experience?.title ||
-                                "Pengalaman"}
+                              {experience?.posisi || experience?.jabatan || experience?.title || "Pengalaman"}
                             </div>
                             <div className="detail-job-subtitle">
-                              {experience?.subtitle ||
-                                experience?.perusahaan ||
-                                experience?.company ||
-                                experience?.deskripsi ||
-                                "-"}
+                              {experience?.subtitle || experience?.perusahaan || experience?.company || experience?.deskripsi || "-"}
                             </div>
                             {experience?.period && (
                               <div className="detail-job-subtitle">{experience.period}</div>
@@ -346,16 +332,10 @@ export default function DetailTalent() {
                             {experience?.documentUrl && (
                               <button
                                 type="button"
-                                className="detail-support-document-button"
-                                onClick={() =>
-                                  window.open(
-                                    experience.documentUrl,
-                                    "_blank",
-                                    "noopener,noreferrer",
-                                  )
-                                }
+                                className="detail-file-link"
+                                onClick={() => openDocument(experience.documentUrl)}
                               >
-                                Preview Dokumen
+                                Lihat File
                               </button>
                             )}
                           </div>
@@ -377,24 +357,15 @@ export default function DetailTalent() {
                       certifications.map((certificate, index) => (
                         <div key={`cert-${index}`} className="detail-certification-item">
                           <Chip>
-                            {certificate?.title ||
-                              certificate?.nama ||
-                              certificate?.sertifikasi ||
-                              "Sertifikasi"}
+                            {certificate?.title || certificate?.nama || certificate?.sertifikasi || "Sertifikasi"}
                           </Chip>
                           {certificate?.documentUrl && (
                             <button
                               type="button"
-                              className="detail-support-document-button compact"
-                              onClick={() =>
-                                window.open(
-                                  certificate.documentUrl,
-                                  "_blank",
-                                  "noopener,noreferrer",
-                                )
-                              }
+                              className="detail-file-link"
+                              onClick={() => openDocument(certificate.documentUrl)}
                             >
-                              Preview Dokumen
+                              Lihat File
                             </button>
                           )}
                         </div>
