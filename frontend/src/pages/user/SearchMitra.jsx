@@ -446,7 +446,6 @@ export default function SearchMitra() {
 
           {partnersErrorMessage ? (
             <div className="searchmitra-empty">
-              <div className="searchmitra-logo-circle">VS</div>
               <h2>Gagal memuat mitra</h2>
               <p>{partnersErrorMessage}</p>
             </div>
@@ -493,7 +492,6 @@ export default function SearchMitra() {
             </div>
           ) : (
             <div className="searchmitra-empty">
-              <div className="searchmitra-logo-circle">VS</div>
               <h2>Belum ada mitra tersedia</h2>
               <p>
                 Saat ini belum ada perusahaan mitra yang aktif. Ketika mitra

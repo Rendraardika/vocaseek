@@ -28,6 +28,12 @@ function normalizeAssetUrl(value) {
   }
 }
 
+function cleanText(value) {
+  if (value === null || value === undefined) return "";
+
+  return String(value).trim();
+}
+
 function formatDate(value) {
   if (!value) return "-";
 
@@ -61,7 +67,7 @@ function formatLongDate(value) {
 }
 
 function formatSalary(value) {
-  if (!value) return "Insentif tidak disebutkan";
+  if (!value) return "";
 
   const formattedValue = String(value)
     .split("-")
@@ -77,10 +83,10 @@ function formatSalary(value) {
 }
 
 function formatRelativeTime(value) {
-  if (!value) return "Baru saja";
+  if (!value) return "";
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Baru saja";
+  if (Number.isNaN(date.getTime())) return "";
 
   const diffMs = Date.now() - date.getTime();
   const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
@@ -95,13 +101,13 @@ function formatRelativeTime(value) {
 }
 
 function normalizeWorkSetting(value) {
-  const normalized = String(value || "").toLowerCase();
+  const normalized = cleanText(value).toLowerCase();
 
   if (normalized === "remote") return "Remote";
   if (normalized === "hybrid") return "Hybrid";
   if (normalized === "onsite") return "WFO";
 
-  return value || "WFO";
+  return cleanText(value);
 }
 
 function normalizeStatus(value) {
@@ -229,35 +235,37 @@ export function mapCompanyDashboardApplicant(applicant) {
 }
 
 export function mapPublicJob(job) {
-  const title = job?.judul_posisi || job?.title || "Lowongan";
+  const title = cleanText(job?.judul_posisi || job?.title);
   const companyProfile = job?.company_profile || job?.companyProfile || {};
   const companyName =
-    companyProfile?.nama_perusahaan ||
-    companyProfile?.name ||
-    job?.nama_perusahaan ||
-    "Perusahaan";
+    cleanText(
+      companyProfile?.nama_perusahaan ||
+        companyProfile?.name ||
+        job?.nama_perusahaan,
+    );
   const companyAddress =
-    companyProfile?.alamat_kantor_pusat ||
-    companyProfile?.alamat_kantor ||
-    job?.lokasi ||
-    "Lokasi belum diisi";
+    cleanText(
+      companyProfile?.alamat_kantor_pusat ||
+        companyProfile?.alamat_kantor ||
+        job?.lokasi,
+    );
+  const location = cleanText(job?.lokasi) || companyAddress;
+  const salary = formatSalary(job?.gaji_per_bulan);
 
   return {
     id: job?.id,
     title,
     company: companyName,
-    location: job?.lokasi || companyAddress,
-    type: "Magang",
-    duration: formatSalary(job?.gaji_per_bulan),
+    location,
+    type: cleanText(
+      job?.kategori_pekerjaan || job?.tipe_pekerjaan || job?.jenis_pekerjaan,
+    ),
+    duration: salary,
     work: normalizeWorkSetting(job?.tipe_magang),
     postedAt: formatRelativeTime(job?.created_at),
-    description:
-      job?.deskripsi_pekerjaan ||
-      "Deskripsi lowongan akan ditampilkan setelah perusahaan melengkapinya.",
+    description: cleanText(job?.deskripsi_pekerjaan),
     qualifications: splitLines(job?.persyaratan),
-    benefits: job?.gaji_per_bulan
-      ? [`Insentif: ${formatSalary(job.gaji_per_bulan)}`]
-      : [],
+    benefits: salary ? [`Insentif: ${salary}`] : [],
     education: null,
     documents: null,
     dates: {
@@ -270,18 +278,17 @@ export function mapPublicJob(job) {
     },
     companyProfile: {
       name: companyName,
-      industry:
-        companyProfile?.industri ||
-        companyProfile?.sektor_industri ||
-        "Industri belum diisi",
-      size: companyProfile?.ukuran_perusahaan || "Ukuran perusahaan belum diisi",
-      website: companyProfile?.website_url || companyProfile?.website || "",
-      description:
-        companyProfile?.deskripsi ||
-        "Profil perusahaan belum dilengkapi oleh perusahaan.",
+      industry: cleanText(
+        companyProfile?.industri || companyProfile?.sektor_industri,
+      ),
+      size: cleanText(companyProfile?.ukuran_perusahaan),
+      website: cleanText(
+        companyProfile?.website_url || companyProfile?.website,
+      ),
+      description: cleanText(companyProfile?.deskripsi),
       address: companyAddress,
-      phone: companyProfile?.notelp || "",
-      status: companyProfile?.status_mitra || "",
+      phone: cleanText(companyProfile?.notelp),
+      status: cleanText(companyProfile?.status_mitra),
       logoUrl: normalizeAssetUrl(
         companyProfile?.logo_url || companyProfile?.logo_perusahaan || "",
       ),
