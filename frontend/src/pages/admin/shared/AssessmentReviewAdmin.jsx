@@ -224,7 +224,10 @@ export default function AssessmentReviewAdmin({ mode = "super" }) {
   );
 
   const candidateName = talent?.name || "Kandidat Vocaseek";
-  const candidateRole = talent?.position || "Candidate Assessment Result";
+  const candidateRole =
+    talent?.position && String(talent.position).trim().length > 2
+      ? talent.position
+      : "Hasil review assessment kandidat";
   const backPath =
     mode === "staff"
       ? `/admin/staff/talent/${id}`
@@ -307,30 +310,30 @@ export default function AssessmentReviewAdmin({ mode = "super" }) {
                 </div>
               </div>
 
-              <div className="assessment-review__stats-grid">
-                <div className="assessment-review__stat-box">
-                  <span className="assessment-review__stat-label">Terjawab</span>
-                  <strong className="assessment-review__stat-value">
-                    {summary.answeredCount}/{summary.totalQuestions}
-                  </strong>
+                <div className="assessment-review__stats-grid">
+                  <div className="assessment-review__stat-box">
+                    <span className="assessment-review__stat-label">Total Terjawab</span>
+                    <strong className="assessment-review__stat-value">
+                      {summary.answeredCount}/{summary.totalQuestions}
+                    </strong>
+                  </div>
+                  <div className="assessment-review__stat-box">
+                    <span className="assessment-review__stat-label">Memilih Iya</span>
+                    <strong className="assessment-review__stat-value">
+                      {summary.yesCount}
+                    </strong>
+                  </div>
+                  <div className="assessment-review__stat-box">
+                    <span className="assessment-review__stat-label">Memilih Tidak</span>
+                    <strong className="assessment-review__stat-value">
+                      {summary.noCount}
+                    </strong>
+                  </div>
                 </div>
-                <div className="assessment-review__stat-box">
-                  <span className="assessment-review__stat-label">Jawaban Iya</span>
-                  <strong className="assessment-review__stat-value">
-                    {summary.yesCount}
-                  </strong>
-                </div>
-                <div className="assessment-review__stat-box">
-                  <span className="assessment-review__stat-label">Jawaban Tidak</span>
-                  <strong className="assessment-review__stat-value">
-                    {summary.noCount}
-                  </strong>
-                </div>
-              </div>
 
               <div className="assessment-review__summary-section">
                 <div className="assessment-review__summary-label">
-                  Summary Karakter
+                  Ringkasan Karakter
                 </div>
 
                 <div className="assessment-review__summary-box">
@@ -355,7 +358,7 @@ export default function AssessmentReviewAdmin({ mode = "super" }) {
                     Review Jawaban
                   </h2>
                   <p className="assessment-review__content-subtitle">
-                    Detail tanggapan yang diambil langsung dari hasil pre-test kandidat
+                    Detail jawaban kandidat yang diambil langsung dari hasil pre-test
                   </p>
                 </div>
               </div>

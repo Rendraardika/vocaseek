@@ -15,6 +15,10 @@ function sanitizePhoneInput(value) {
   return cleaned.replace(/\+/g, "");
 }
 
+function isStrongPassword(value) {
+  return /^[A-Z](?=.*[^A-Za-z0-9])[^\s]{7,}$/.test(String(value || ""));
+}
+
 export default function RegisterCompany() {
   const maxFileSizeInBytes = 5 * 1024 * 1024;
   const navigate = useNavigate();
@@ -86,6 +90,13 @@ export default function RegisterCompany() {
 
     if (form.password !== form.passwordConfirmation) {
       setError("Konfirmasi password harus sama dengan password.");
+      return;
+    }
+
+    if (!isStrongPassword(form.password)) {
+      setError(
+        "Password minimal 8 karakter, huruf pertama harus kapital, wajib mengandung karakter unik, dan tidak boleh memakai spasi.",
+      );
       return;
     }
 
@@ -238,6 +249,9 @@ export default function RegisterCompany() {
                 onChange={handleChange}
                 required
               />
+              <p style={{ marginTop: 8, fontSize: "0.82rem", color: "#6b7280", lineHeight: 1.5 }}>
+                Minimal 8 karakter, huruf pertama kapital, dan wajib ada karakter unik.
+              </p>
             </div>
 
             <div className="rc-group">

@@ -21,6 +21,10 @@ function sanitizePhoneInput(value) {
   return cleaned.replace(/\+/g, "");
 }
 
+function isStrongPassword(value) {
+  return /^[A-Z](?=.*[^A-Za-z0-9])[^\s]{7,}$/.test(String(value || ""));
+}
+
 function RegisterPelamar() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -48,6 +52,14 @@ function RegisterPelamar() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
+
+    if (!isStrongPassword(form.password)) {
+      setError(
+        "Password minimal 8 karakter, huruf pertama harus kapital, wajib mengandung karakter unik, dan tidak boleh memakai spasi.",
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -200,6 +212,9 @@ function RegisterPelamar() {
                 onChange={handleChange}
                 required
               />
+              <p style={{ marginTop: 8, fontSize: "0.82rem", color: "#6b7280", lineHeight: 1.5 }}>
+                Minimal 8 karakter, huruf pertama kapital, dan wajib ada karakter unik.
+              </p>
             </div>
 
             <div className="register-remember">
