@@ -183,7 +183,11 @@ export default function PartnerDetail() {
           <div className="pd-company-card">
             <div className="pd-company-head">
               <div className="pd-company-logo">
-                <Building2 size={28} />
+                {partner?.logoUrl ? (
+                  <img src={partner.logoUrl} alt={partner.name} className="pd-company-logo-image" />
+                ) : (
+                  <Building2 size={28} />
+                )}
               </div>
 
               <div className="pd-company-main">

@@ -35,6 +35,15 @@ function toAssetUrl(value) {
   return apiOrigin ? `${apiOrigin}/${normalizedPath}` : `/${normalizedPath}`;
 }
 
+function cleanDisplayValue(value) {
+  const normalized = String(value || "").trim();
+
+  if (!normalized) return "";
+  if (normalized === "-" || normalized.toLowerCase() === "n/a") return "";
+
+  return normalized;
+}
+
 function getDocumentUrl(candidate) {
   if (!candidate) return null;
 
@@ -168,12 +177,14 @@ function getCompanyCode(item) {
 function getCompanyName(item) {
   const nestedCompany = item?.nama_perusahaan;
   return (
-    (typeof nestedCompany === "object" ? nestedCompany?.nama : nestedCompany) ||
-    item?.nama_perusahaan ||
-    item?.company_name ||
-    item?.company_profile?.nama_perusahaan ||
-    item?.nama ||
-    item?.name ||
+    cleanDisplayValue(
+      typeof nestedCompany === "object" ? nestedCompany?.nama : nestedCompany,
+    ) ||
+    cleanDisplayValue(item?.nama_perusahaan) ||
+    cleanDisplayValue(item?.company_name) ||
+    cleanDisplayValue(item?.company_profile?.nama_perusahaan) ||
+    cleanDisplayValue(item?.nama) ||
+    cleanDisplayValue(item?.name) ||
     "Perusahaan Baru"
   );
 }
@@ -228,15 +239,17 @@ function mapCompanyRecord(item, index, mode = "verification") {
     raw: item,
     code: getCompanyCode(companyData),
     name: getCompanyName(companyData),
-    logoUrl: pickFirstMediaValue(
-      companyData?.logo_url,
-      companyData?.logo,
-      companyData?.logo_perusahaan,
-      companyData?.company_profile?.logo_url,
-      companyData?.company_profile?.logo,
-      companyData?.company_profile?.logo_perusahaan,
-      item?.logo_url,
-      item?.logo,
+    logoUrl: toAssetUrl(
+      pickFirstMediaValue(
+        companyData?.logo_url,
+        companyData?.logo,
+        companyData?.logo_perusahaan,
+        companyData?.company_profile?.logo_url,
+        companyData?.company_profile?.logo,
+        companyData?.company_profile?.logo_perusahaan,
+        item?.logo_url,
+        item?.logo,
+      ),
     ),
     city: getCity(companyData),
     businessType: getBusinessType(companyData),
@@ -256,8 +269,14 @@ function mapCompanyRecord(item, index, mode = "verification") {
       companyData?.user?.notelp ||
       "Telepon belum tersedia",
     nib: companyData?.nib || companyData?.company_profile?.nib || "-",
-    picName: pic?.nama || companyData?.nama_pic || getCompanyName(companyData),
-    picRole: pic?.jabatan || companyData?.jabatan_pic || "PIC Perusahaan",
+    picName:
+      cleanDisplayValue(pic?.nama) ||
+      cleanDisplayValue(companyData?.nama_pic) ||
+      getCompanyName(companyData),
+    picRole:
+      cleanDisplayValue(pic?.jabatan) ||
+      cleanDisplayValue(companyData?.jabatan_pic) ||
+      "Perusahaan Mitra",
     notes:
       companyData?.review_notes ||
       item?.notes ||

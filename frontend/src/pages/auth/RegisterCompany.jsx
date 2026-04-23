@@ -4,6 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { getApiErrorMessage, registerCompany } from "../../services/auth";
 import { saveLanguagePreference } from "../../utils/languagePreference";
 
+function sanitizePhoneInput(value) {
+  const cleaned = String(value || "").replace(/[^\d+]/g, "");
+
+  if (!cleaned) return "";
+  if (cleaned.startsWith("+")) {
+    return `+${cleaned.slice(1).replace(/\+/g, "")}`;
+  }
+
+  return cleaned.replace(/\+/g, "");
+}
+
 export default function RegisterCompany() {
   const maxFileSizeInBytes = 5 * 1024 * 1024;
   const navigate = useNavigate();
@@ -25,10 +36,12 @@ export default function RegisterCompany() {
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
+    const normalizedValue =
+      name === "phone" ? sanitizePhoneInput(value) : value;
 
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : normalizedValue,
     }));
   };
 
@@ -197,6 +210,9 @@ export default function RegisterCompany() {
                 placeholder="+62 "
                 value={form.phone}
                 onChange={handleChange}
+                inputMode="numeric"
+                pattern="^\+?\d+$"
+                autoComplete="tel"
                 required
               />
             </div>

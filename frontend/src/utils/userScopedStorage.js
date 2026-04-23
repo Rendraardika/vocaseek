@@ -28,7 +28,18 @@ function normalizeScopePart(value, fallback) {
 export function getUserStorageScope() {
   const session = getAuthSession();
   const role = normalizeScopePart(session?.role, "guest");
-  const identifier = normalizeScopePart(session?.identifier, "anonymous");
+  const sessionUser = session?.user || {};
+  const rawPayload = session?.raw || {};
+  const identifier = normalizeScopePart(
+    sessionUser?.user_id ||
+      sessionUser?.id ||
+      rawPayload?.user_data?.user_id ||
+      rawPayload?.user_data?.id ||
+      rawPayload?.user_id ||
+      rawPayload?.id ||
+      session?.identifier,
+    "anonymous",
+  );
   return `${role}_${identifier}`;
 }
 

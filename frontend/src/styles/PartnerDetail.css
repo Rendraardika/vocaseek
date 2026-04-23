@@ -123,6 +123,14 @@ body {
   flex-shrink: 0;
 }
 
+.pd-company-logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
 .pd-company-main {
   flex: 1;
 }

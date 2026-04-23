@@ -1,5 +1,6 @@
-import "../../styles/registersuccess.css";
+import "../../styles/auth-feedback.css";
 import { Link, useLocation } from "react-router-dom";
+import { FiArrowLeft, FiCheckCircle, FiMail } from "react-icons/fi";
 
 export default function RegisterSuccess() {
   const location = useLocation();
@@ -9,29 +10,63 @@ export default function RegisterSuccess() {
   const loginPath = location.state?.loginPath || "/login";
 
   return (
-    <div className="rs-page">
-      <div className="rs-logo">
-        <img src="/vocaseeklogo.png" alt="Vocaseek" />
-      </div>
+    <div className="auth-feedback-page">
+      <div className="auth-feedback-shell">
+        <section className="auth-feedback-panel">
+          <div className="auth-feedback-brand">
+            <img
+              src="/vocaseeklogo.png"
+              alt="Vocaseek"
+              className="auth-feedback-logo"
+            />
+            <div className="auth-feedback-kicker">
+              <FiMail />
+              Registrasi Berhasil
+            </div>
+            <h1>Akun baru sudah tercatat dan tinggal menunggu verifikasi email.</h1>
+            <p>
+              Kami sudah siapkan langkah berikutnya supaya kamu bisa lanjut ke
+              Vocaseek dengan alur yang lebih rapi dan jelas.
+            </p>
+          </div>
 
-      <div className="rs-card">
-        <div className="rs-icon">✓</div>
+          <div className="auth-feedback-stats">
+            <div className="auth-feedback-stat">
+              <strong>Langkah selanjutnya</strong>
+              <span>
+                Buka inbox email yang kamu daftarkan, lalu klik tautan
+                verifikasi dari Vocaseek.
+              </span>
+            </div>
+          </div>
+        </section>
 
-        <h2>Registrasi Berhasil!</h2>
+        <section className="auth-feedback-card">
+          <div className="auth-feedback-card-header">
+            <div className="auth-feedback-icon is-success">
+              <FiCheckCircle size={28} />
+            </div>
+            <div>
+              <h2>Registrasi Berhasil</h2>
+              <p className="auth-feedback-description">{message}</p>
+            </div>
+          </div>
 
-        <p>{message}</p>
+          <div className="auth-feedback-actions">
+            <Link to={loginPath} className="auth-feedback-link-button">
+              Masuk ke Akun
+            </Link>
 
-        <Link to={loginPath} className="rs-btn">
-          Masuk ke Akun
-        </Link>
+            <Link to="/" className="auth-feedback-link-ghost">
+              <FiArrowLeft />
+              Kembali ke Beranda
+            </Link>
+          </div>
 
-        <Link to="/" className="rs-back">
-          ← Kembali ke Beranda
-        </Link>
-      </div>
-
-      <div className="rs-footer">
-        © 2026 VOKASIK INC. ALL RIGHTS RESERVED.
+          <div className="auth-feedback-footer">
+            © 2026 VOCASEEK INC. ALL RIGHTS RESERVED.
+          </div>
+        </section>
       </div>
     </div>
   );
