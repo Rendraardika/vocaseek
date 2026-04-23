@@ -120,6 +120,12 @@ export function saveAuthSession(payload, meta = {}) {
     identifier:
       payload?.identifier ||
       payload?.data?.identifier ||
+      sessionUser?.user_id ||
+      sessionUser?.id ||
+      rawPayload?.user_data?.user_id ||
+      rawPayload?.user_data?.id ||
+      rawPayload?.user_id ||
+      rawPayload?.id ||
       sessionUser?.email ||
       rawPayload?.user_data?.email ||
       rawPayload?.email ||

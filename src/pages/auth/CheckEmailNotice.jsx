@@ -1,10 +1,16 @@
-import "../../styles/registersuccess.css";
+import "../../styles/auth-feedback.css";
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { getApiErrorMessage, resendVerificationEmail } from "../../services/auth";
+import { FiArrowLeft, FiMail, FiRefreshCcw, FiSend } from "react-icons/fi";
+import {
+  getApiErrorMessage,
+  resendVerificationEmail,
+} from "../../services/auth";
 
 function getVerificationErrorMessage(error) {
-  const message = String(error?.response?.data?.message || error?.message || "").toLowerCase();
+  const message = String(
+    error?.response?.data?.message || error?.message || "",
+  ).toLowerCase();
 
   if (message.includes("csrf token mismatch")) {
     return "Permintaan kirim ulang email verifikasi sempat ditolak server. Silakan coba lagi setelah backend diperbarui.";
@@ -49,59 +55,100 @@ export default function CheckEmailNotice() {
   };
 
   return (
-    <div className="rs-page">
-      <div className="rs-logo">
-        <img src="/vocaseeklogo.png" alt="Vocaseek" />
+    <div className="auth-feedback-page">
+      <div className="auth-feedback-shell">
+        <section className="auth-feedback-panel">
+          <div className="auth-feedback-brand">
+            <img
+              src="/vocaseeklogo.png"
+              alt="Vocaseek"
+              className="auth-feedback-logo"
+            />
+            <div className="auth-feedback-kicker">
+              <FiSend />
+              Verifikasi Email
+            </div>
+            <h1>Aktivasi akunmu lewat inbox dengan tampilan yang lebih jelas.</h1>
+            <p>
+              Setelah email diverifikasi, akun baru akan aktif dan bisa lanjut
+              ke langkah berikutnya di Vocaseek.
+            </p>
+          </div>
+
+          <div className="auth-feedback-stats">
+            <div className="auth-feedback-stat">
+              <strong>Sudah kirim email</strong>
+              <span>
+                Cek inbox dan folder spam/promosi untuk memastikan email
+                Vocaseek tidak terlewat.
+              </span>
+            </div>
+            <div className="auth-feedback-stat">
+              <strong>Butuh link baru?</strong>
+              <span>
+                Kamu bisa kirim ulang link verifikasi langsung dari halaman ini.
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="auth-feedback-card">
+          <div className="auth-feedback-card-header">
+            <div className="auth-feedback-icon">
+              <FiMail size={28} />
+            </div>
+            <div>
+              <h2>Cek Email Anda</h2>
+              <p className="auth-feedback-description">{statusMessage}</p>
+            </div>
+          </div>
+
+          <div className="auth-feedback-form">
+            <div className="auth-feedback-field">
+              <label htmlFor="verification-email">Email terdaftar</label>
+              <input
+                id="verification-email"
+                type="email"
+                className="auth-feedback-input"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="nama@email.com"
+                autoComplete="email"
+              />
+            </div>
+
+            {error ? (
+              <div className="auth-feedback-message is-error">{error}</div>
+            ) : null}
+
+            <button
+              type="button"
+              className="auth-feedback-button"
+              onClick={handleResend}
+              disabled={isSubmitting || !email}
+            >
+              <FiRefreshCcw />
+              {isSubmitting
+                ? "Mengirim ulang..."
+                : "Kirim Ulang Email Verifikasi"}
+            </button>
+          </div>
+
+          <div className="auth-feedback-actions" style={{ marginTop: 16 }}>
+            <Link to={loginPath} className="auth-feedback-link-secondary">
+              Masuk ke Halaman Login
+            </Link>
+            <Link to="/" className="auth-feedback-link-ghost">
+              <FiArrowLeft />
+              Kembali ke Beranda
+            </Link>
+          </div>
+
+          <div className="auth-feedback-footer">
+            © 2026 VOCASEEK INC. ALL RIGHTS RESERVED.
+          </div>
+        </section>
       </div>
-
-      <div className="rs-card">
-        <div className="rs-icon">@</div>
-        <h2>Cek Email Anda</h2>
-        <p>{statusMessage}</p>
-
-        <div style={{ textAlign: "left", marginBottom: 16 }}>
-          <label
-            htmlFor="verification-email"
-            style={{ display: "block", fontSize: 14, marginBottom: 8, color: "#374151" }}
-          >
-            Email terdaftar
-          </label>
-          <input
-            id="verification-email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="nama@email.com"
-            style={{
-              width: "100%",
-              padding: "12px 14px",
-              borderRadius: 10,
-              border: "1px solid #d1d5db",
-              outline: "none",
-            }}
-          />
-        </div>
-
-        {error ? (
-          <p style={{ color: "#d93025", marginBottom: 16 }}>{error}</p>
-        ) : null}
-
-        <button
-          type="button"
-          className="rs-btn"
-          onClick={handleResend}
-          disabled={isSubmitting || !email}
-          style={{ border: "none", cursor: "pointer" }}
-        >
-          {isSubmitting ? "Mengirim ulang..." : "Kirim Ulang Email Verifikasi"}
-        </button>
-
-        <Link to={loginPath} className="rs-back">
-          Kembali ke Login
-        </Link>
-      </div>
-
-      <div className="rs-footer">© 2026 VOCASEEK INC. ALL RIGHTS RESERVED.</div>
     </div>
   );
 }

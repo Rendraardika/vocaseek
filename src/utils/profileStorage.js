@@ -34,11 +34,15 @@ function getSessionIdentity() {
       raw?.user?.role ||
       "",
     identifier:
+      user?.user_id ||
+      user?.id ||
+      raw?.user_data?.user_id ||
+      raw?.user_data?.id ||
+      raw?.user_id ||
+      raw?.id ||
+      session?.identifier ||
       user?.email ||
       raw?.email ||
-      session?.identifier ||
-      user?.user_id ||
-      raw?.user_id ||
       "",
   };
 }

@@ -29,11 +29,15 @@ function getScope() {
       "guest",
     ),
     identifier: normalizePart(
-      user?.email ||
-        raw?.email ||
+      user?.user_id ||
+        raw?.user_data?.user_id ||
+        raw?.user_id ||
+        user?.id ||
+        raw?.user_data?.id ||
+        raw?.id ||
         session?.identifier ||
-        user?.user_id ||
-        raw?.user_id,
+        user?.email ||
+        raw?.email,
       "anonymous",
     ),
   };

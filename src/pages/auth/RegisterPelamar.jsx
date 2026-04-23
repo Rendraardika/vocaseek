@@ -10,6 +10,17 @@ import {
 import { resolveUserHomeRoute, saveAuthSession } from "../../utils/authStorage";
 import { saveLanguagePreference } from "../../utils/languagePreference";
 
+function sanitizePhoneInput(value) {
+  const cleaned = String(value || "").replace(/[^\d+]/g, "");
+
+  if (!cleaned) return "";
+  if (cleaned.startsWith("+")) {
+    return `+${cleaned.slice(1).replace(/\+/g, "")}`;
+  }
+
+  return cleaned.replace(/\+/g, "");
+}
+
 function RegisterPelamar() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -25,10 +36,12 @@ function RegisterPelamar() {
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
+    const normalizedValue =
+      name === "phone" ? sanitizePhoneInput(value) : value;
 
     setForm((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : normalizedValue,
     }));
   };
 
@@ -169,6 +182,9 @@ function RegisterPelamar() {
                 placeholder="+62"
                 value={form.phone}
                 onChange={handleChange}
+                inputMode="numeric"
+                pattern="^\+?\d+$"
+                autoComplete="tel"
                 required
               />
             </div>
