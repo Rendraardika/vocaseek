@@ -1,7 +1,7 @@
 import "../../styles/auth-feedback.css";
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiArrowLeft, FiMail, FiRefreshCcw, FiSend } from "react-icons/fi";
+import { FiArrowLeft, FiRefreshCcw } from "react-icons/fi";
 import {
   getApiErrorMessage,
   resendVerificationEmail,
@@ -56,47 +56,17 @@ export default function CheckEmailNotice() {
 
   return (
     <div className="auth-feedback-page">
-      <div className="auth-feedback-shell">
-        <section className="auth-feedback-panel">
-          <div className="auth-feedback-brand">
+      <div className="auth-feedback-shell auth-feedback-shell--single">
+        <section className="auth-feedback-card">
+          <div className="auth-feedback-brand auth-feedback-brand--card">
             <img
               src="/vocaseeklogo.png"
               alt="Vocaseek"
               className="auth-feedback-logo"
             />
-            <div className="auth-feedback-kicker">
-              <FiSend />
-              Verifikasi Email
-            </div>
-            <h1>Aktivasi akunmu lewat inbox dengan tampilan yang lebih jelas.</h1>
-            <p>
-              Setelah email diverifikasi, akun baru akan aktif dan bisa lanjut
-              ke langkah berikutnya di Vocaseek.
-            </p>
           </div>
 
-          <div className="auth-feedback-stats">
-            <div className="auth-feedback-stat">
-              <strong>Sudah kirim email</strong>
-              <span>
-                Cek inbox dan folder spam/promosi untuk memastikan email
-                Vocaseek tidak terlewat.
-              </span>
-            </div>
-            <div className="auth-feedback-stat">
-              <strong>Butuh link baru?</strong>
-              <span>
-                Kamu bisa kirim ulang link verifikasi langsung dari halaman ini.
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="auth-feedback-card">
           <div className="auth-feedback-card-header">
-            <div className="auth-feedback-icon">
-              <FiMail size={28} />
-            </div>
             <div>
               <h2>Cek Email Anda</h2>
               <p className="auth-feedback-description">{statusMessage}</p>
@@ -145,7 +115,7 @@ export default function CheckEmailNotice() {
           </div>
 
           <div className="auth-feedback-footer">
-            © 2026 VOCASEEK INC. ALL RIGHTS RESERVED.
+            (c) 2026 VOCASEEK INC. Semua hak dilindungi.
           </div>
         </section>
       </div>

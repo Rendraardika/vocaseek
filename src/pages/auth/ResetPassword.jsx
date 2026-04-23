@@ -15,6 +15,10 @@ import {
   validatePasswordResetToken,
 } from "../../services/auth";
 
+function isStrongPassword(value) {
+  return /^[A-Z](?=.*[^A-Za-z0-9])[^\s]{7,}$/.test(String(value || ""));
+}
+
 export default function ResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -51,6 +55,13 @@ export default function ResetPassword() {
 
     if (form.password !== form.password_confirmation) {
       setError("Konfirmasi password harus sama dengan password baru.");
+      return;
+    }
+
+    if (!isStrongPassword(form.password)) {
+      setError(
+        "Password minimal 8 karakter, huruf pertama harus kapital, wajib mengandung karakter unik, dan tidak boleh memakai spasi.",
+      );
       return;
     }
 
@@ -178,6 +189,9 @@ export default function ResetPassword() {
               <p className="auth-feedback-description">
                 Gunakan kata sandi yang kuat dan belum pernah digunakan
                 sebelumnya.
+              </p>
+              <p className="auth-feedback-description" style={{ marginTop: 8 }}>
+                Minimal 8 karakter, huruf pertama kapital, dan wajib ada karakter unik.
               </p>
             </div>
           </div>

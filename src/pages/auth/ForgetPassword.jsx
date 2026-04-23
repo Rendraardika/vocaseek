@@ -1,7 +1,7 @@
 import "../../styles/auth-feedback.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiArrowLeft, FiKey, FiMail, FiShield } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 import {
   getApiErrorMessage,
   requestPasswordReset,
@@ -39,48 +39,17 @@ export default function ForgetPassword() {
 
   return (
     <div className="auth-feedback-page">
-      <div className="auth-feedback-shell">
-        <section className="auth-feedback-panel">
-          <div className="auth-feedback-brand">
+      <div className="auth-feedback-shell auth-feedback-shell--single">
+        <section className="auth-feedback-card">
+          <div className="auth-feedback-brand auth-feedback-brand--card">
             <img
               src="/vocaseeklogo.png"
               alt="Vocaseek"
               className="auth-feedback-logo"
             />
-            <div className="auth-feedback-kicker">
-              <FiKey />
-              Pulihkan Akses
-            </div>
-            <h1>Reset password tanpa bingung dan tanpa tampilan yang polos.</h1>
-            <p>
-              Kami bantu kirim tautan aman ke email terdaftar agar kamu bisa
-              membuat kata sandi baru dengan cepat.
-            </p>
           </div>
 
-          <div className="auth-feedback-stats">
-            <div className="auth-feedback-stat">
-              <strong>Langkah aman</strong>
-              <span>
-                Tautan reset divalidasi dulu sebelum halaman ubah password bisa
-                dipakai.
-              </span>
-            </div>
-            <div className="auth-feedback-stat">
-              <strong>Fokus ke akunmu</strong>
-              <span>
-                Cukup masukkan email yang terdaftar di Vocaseek, sisanya kami
-                yang arahkan.
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="auth-feedback-card">
           <div className="auth-feedback-card-header">
-            <div className="auth-feedback-icon">
-              <FiMail size={28} />
-            </div>
             <div>
               <h2>Lupa Kata Sandi?</h2>
               <p className="auth-feedback-description">
@@ -103,13 +72,6 @@ export default function ForgetPassword() {
                 autoComplete="email"
                 required
               />
-            </div>
-
-            <div className="auth-feedback-meta">
-              <FiShield />
-              <span>
-                Tautan reset hanya berlaku untuk email yang memang terdaftar.
-              </span>
             </div>
 
             {error ? (
@@ -139,7 +101,7 @@ export default function ForgetPassword() {
           </div>
 
           <div className="auth-feedback-footer">
-            © 2026 VOCASEEK INC. ALL RIGHTS RESERVED.
+            (c) 2026 VOCASEEK INC. Semua hak dilindungi.
           </div>
         </section>
       </div>
