@@ -20,6 +20,8 @@ import {
   getStoredAdminProfile,
   setStoredAdminProfile,
 } from "../../../utils/profileStorage";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 function getStoredStaffProfile() {
   return getStoredAdminProfile("staff_admin");
@@ -60,6 +62,7 @@ function ChangePasswordModal({
   values,
   error,
   isSaving,
+  locale,
   showCurrent,
   setShowCurrent,
   showNew,
@@ -74,9 +77,9 @@ function ChangePasswordModal({
 
   return (
     <div className="pf-modal-overlay" onClick={onClose}>
-      <div className="pf-password-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="pf-password-modal" onClick={(event) => event.stopPropagation()}>
         <div className="pf-password-header">
-          <h3>Ubah Kata Sandi</h3>
+          <h3>{translatePhrase("Ubah Kata Sandi", locale) || "Ubah Kata Sandi"}</h3>
           <button type="button" className="pf-close-btn" onClick={onClose}>
             <X size={22} />
           </button>
@@ -84,12 +87,17 @@ function ChangePasswordModal({
 
         <div className="pf-password-body">
           <div className="pf-field">
-            <label>Kata Sandi Saat Ini</label>
+            <label>
+              {translatePhrase("Kata Sandi Saat Ini", locale) || "Kata Sandi Saat Ini"}
+            </label>
             <div className="pf-password-input-wrap">
               <input
                 type={showCurrent ? "text" : "password"}
                 name="currentPassword"
-                placeholder="Masukkan kata sandi lama"
+                placeholder={
+                  translatePhrase("Masukkan kata sandi lama", locale) ||
+                  "Masukkan kata sandi lama"
+                }
                 value={values.currentPassword}
                 onChange={onChange}
               />
@@ -104,12 +112,15 @@ function ChangePasswordModal({
           </div>
 
           <div className="pf-field">
-            <label>Kata Sandi Baru</label>
+            <label>{translatePhrase("Kata Sandi Baru", locale) || "Kata Sandi Baru"}</label>
             <div className="pf-password-input-wrap">
               <input
                 type={showNew ? "text" : "password"}
                 name="newPassword"
-                placeholder="Masukkan kata sandi baru"
+                placeholder={
+                  translatePhrase("Masukkan kata sandi baru", locale) ||
+                  "Masukkan kata sandi baru"
+                }
                 value={values.newPassword}
                 onChange={onChange}
               />
@@ -124,12 +135,18 @@ function ChangePasswordModal({
           </div>
 
           <div className="pf-field">
-            <label>Konfirmasi Kata Sandi Baru</label>
+            <label>
+              {translatePhrase("Konfirmasi Kata Sandi Baru", locale) ||
+                "Konfirmasi Kata Sandi Baru"}
+            </label>
             <div className="pf-password-input-wrap">
               <input
                 type={showConfirm ? "text" : "password"}
                 name="confirmPassword"
-                placeholder="Ulangi kata sandi baru"
+                placeholder={
+                  translatePhrase("Ulangi kata sandi baru", locale) ||
+                  "Ulangi kata sandi baru"
+                }
                 value={values.confirmPassword}
                 onChange={onChange}
               />
@@ -142,19 +159,23 @@ function ChangePasswordModal({
               </button>
             </div>
             <p className="pf-password-hint">
-              Kata sandi harus minimal 8 karakter dan berisi kombinasi huruf serta angka.
+              {translatePhrase(
+                "Kata sandi harus minimal 8 karakter dan berisi kombinasi huruf serta angka.",
+                locale,
+              ) ||
+                "Kata sandi harus minimal 8 karakter dan berisi kombinasi huruf serta angka."}
             </p>
-            {error && (
+            {error ? (
               <p className="pf-password-hint" style={{ color: "#dc2626" }}>
-                {error}
+                {translatePhrase(error, locale) || error}
               </p>
-            )}
+            ) : null}
           </div>
         </div>
 
         <div className="pf-password-footer">
           <button type="button" className="pf-cancel-btn" onClick={onClose}>
-            Batal
+            {translatePhrase("Batal", locale) || "Batal"}
           </button>
           <button
             type="button"
@@ -162,7 +183,9 @@ function ChangePasswordModal({
             onClick={onSave}
             disabled={isSaving}
           >
-            {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
+            {isSaving
+              ? translatePhrase("Menyimpan...", locale) || "Menyimpan..."
+              : translatePhrase("Simpan Perubahan", locale) || "Simpan Perubahan"}
           </button>
         </div>
       </div>
@@ -170,27 +193,32 @@ function ChangePasswordModal({
   );
 }
 
-function PasswordSuccessModal({ open, onDone }) {
+function PasswordSuccessModal({ open, onDone, locale }) {
   if (!open) return null;
 
   return (
     <div className="pf-modal-overlay" onClick={onDone}>
-      <div className="pf-success-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="pf-success-modal" onClick={(event) => event.stopPropagation()}>
         <div className="pf-success-icon-wrap">
           <div className="pf-success-icon-circle">
             <CheckCircle2 size={36} />
           </div>
         </div>
 
-        <h3>Kata Sandi Berhasil Diubah!</h3>
+        <h3>
+          {translatePhrase("Kata Sandi Berhasil Diubah!", locale) ||
+            "Kata Sandi Berhasil Diubah!"}
+        </h3>
         <p>
-          Kata sandi akun Anda telah diperbarui. Silakan
-          <br />
-          gunakan kata sandi baru untuk login berikutnya.
+          {translatePhrase(
+            "Kata sandi akun Anda telah diperbarui. Silakan gunakan kata sandi baru untuk login berikutnya.",
+            locale,
+          ) ||
+            "Kata sandi akun Anda telah diperbarui. Silakan gunakan kata sandi baru untuk login berikutnya."}
         </p>
 
         <button type="button" className="pf-success-btn" onClick={onDone}>
-          Selesai
+          {translatePhrase("Selesai", locale) || "Selesai"}
         </button>
       </div>
     </div>
@@ -199,6 +227,7 @@ function PasswordSuccessModal({ open, onDone }) {
 
 export default function ProfileStaff() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [savedProfile, setSavedProfile] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSavingPassword, setIsSavingPassword] = React.useState(false);
@@ -216,6 +245,17 @@ export default function ProfileStaff() {
   });
 
   React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
+
+  React.useEffect(() => {
     const loadProfile = async () => {
       setIsLoading(true);
       setErrorMessage("");
@@ -228,7 +268,9 @@ export default function ProfileStaff() {
       } catch (error) {
         const fallbackProfile = getStoredStaffProfile();
         setSavedProfile(fallbackProfile);
-        setErrorMessage(getApiErrorMessage(error, "Gagal memuat profil staff admin."));
+        setErrorMessage(
+          getApiErrorMessage(error, "Gagal memuat profil staff admin."),
+        );
       } finally {
         setIsLoading(false);
       }
@@ -303,17 +345,23 @@ export default function ProfileStaff() {
       <Sidebar />
 
       <main className="pf-main">
-
         <section className="pf-content">
           <div className="pf-breadcrumb">
-            <span>ADMIN &gt;</span>
-            <span className="active">PROFIL</span>
+            <span>{translatePhrase("ADMIN", locale) || "ADMIN"} &gt;</span>
+            <span className="active">
+              {translatePhrase("PROFIL", locale) || "PROFIL"}
+            </span>
           </div>
 
-          <h1 className="pf-page-title">Profil Admin</h1>
-          <p className="pf-page-subtitle">Lihat informasi akun dan keamanan admin.</p>
+          <h1 className="pf-page-title">
+            {translatePhrase("Profil Admin", locale) || "Profil Admin"}
+          </h1>
+          <p className="pf-page-subtitle">
+            {translatePhrase("Lihat informasi akun dan keamanan admin.", locale) ||
+              "Lihat informasi akun dan keamanan admin."}
+          </p>
 
-          {errorMessage && (
+          {errorMessage ? (
             <div
               style={{
                 marginBottom: 16,
@@ -326,9 +374,9 @@ export default function ProfileStaff() {
                 fontWeight: 500,
               }}
             >
-              {errorMessage}
+              {translatePhrase(errorMessage, locale) || errorMessage}
             </div>
-          )}
+          ) : null}
 
           <div className="pf-card">
             <div className="pf-hero" />
@@ -341,7 +389,9 @@ export default function ProfileStaff() {
                   onClick={() => navigate("/admin/staff/profil/edit")}
                 >
                   <SquarePen size={16} />
-                  <span>Edit Profile</span>
+                  <span>
+                    {translatePhrase("Edit Profile", locale) || "Edit Profile"}
+                  </span>
                 </button>
               </div>
 
@@ -358,12 +408,15 @@ export default function ProfileStaff() {
                       <User size={46} />
                     </div>
                   )}
-                  <div className="pf-active-dot"></div>
+                  <div className="pf-active-dot" />
                 </div>
 
                 <div className="pf-profile-info">
                   <h2>{savedProfile.fullName || "Staff Admin Vocaseek"}</h2>
-                  <p>Staff Admin{savedProfile.email ? ` • ${savedProfile.email}` : ""}</p>
+                  <p>
+                    {(translatePhrase("Staff Admin", locale) || "Staff Admin") +
+                      (savedProfile.email ? ` - ${savedProfile.email}` : "")}
+                  </p>
                 </div>
               </div>
 
@@ -372,28 +425,43 @@ export default function ProfileStaff() {
                   <div className="pf-section">
                     <div className="pf-section-title">
                       <BriefcaseBusiness size={20} />
-                      <h3>Informasi Akun</h3>
+                      <h3>
+                        {translatePhrase("Informasi Akun", locale) ||
+                          "Informasi Akun"}
+                      </h3>
                     </div>
 
                     <div className="pf-view-grid">
                       <div className="pf-view-item">
-                        <label>Nama Lengkap</label>
+                        <label>
+                          {translatePhrase("Nama Lengkap", locale) || "Nama Lengkap"}
+                        </label>
                         <div className="pf-view-box">
-                          {isLoading ? "Memuat..." : savedProfile.fullName || "-"}
+                          {isLoading
+                            ? translatePhrase("Memuat...", locale) || "Memuat..."
+                            : savedProfile.fullName || "-"}
                         </div>
                       </div>
 
                       <div className="pf-view-item">
-                        <label>Email Utama</label>
+                        <label>
+                          {translatePhrase("Email Utama", locale) || "Email Utama"}
+                        </label>
                         <div className="pf-view-box">
-                          {isLoading ? "Memuat..." : savedProfile.email || "-"}
+                          {isLoading
+                            ? translatePhrase("Memuat...", locale) || "Memuat..."
+                            : savedProfile.email || "-"}
                         </div>
                       </div>
 
                       <div className="pf-view-item">
-                        <label>Nomor Telepon</label>
+                        <label>
+                          {translatePhrase("Nomor Telepon", locale) || "Nomor Telepon"}
+                        </label>
                         <div className="pf-view-box">
-                          {isLoading ? "Memuat..." : savedProfile.phone || "-"}
+                          {isLoading
+                            ? translatePhrase("Memuat...", locale) || "Memuat..."
+                            : savedProfile.phone || "-"}
                         </div>
                       </div>
                     </div>
@@ -402,7 +470,10 @@ export default function ProfileStaff() {
                   <div className="pf-section">
                     <div className="pf-section-title">
                       <Shield size={20} />
-                      <h3>Keamanan Akun</h3>
+                      <h3>
+                        {translatePhrase("Keamanan Akun", locale) ||
+                          "Keamanan Akun"}
+                      </h3>
                     </div>
 
                     <div className="pf-security-actions">
@@ -412,7 +483,10 @@ export default function ProfileStaff() {
                         onClick={() => setPasswordModalOpen(true)}
                       >
                         <KeyRound size={16} />
-                        <span>Ubah Kata Sandi</span>
+                        <span>
+                          {translatePhrase("Ubah Kata Sandi", locale) ||
+                            "Ubah Kata Sandi"}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -428,6 +502,7 @@ export default function ProfileStaff() {
         values={passwordForm}
         error={passwordError}
         isSaving={isSavingPassword}
+        locale={locale}
         showCurrent={showCurrent}
         setShowCurrent={setShowCurrent}
         showNew={showNew}
@@ -441,6 +516,7 @@ export default function ProfileStaff() {
 
       <PasswordSuccessModal
         open={successModalOpen}
+        locale={locale}
         onDone={() => setSuccessModalOpen(false)}
       />
     </div>

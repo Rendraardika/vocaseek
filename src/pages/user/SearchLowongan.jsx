@@ -17,6 +17,8 @@ import { getPublicJobs, mapPublicJob } from "../../services/jobs";
 import { clearAuthSession, isAuthenticated } from "../../utils/authStorage";
 import { readProfileFromStorage } from "../../components/user/ProfileStorage";
 import { setScopedItem, USER_STORAGE_KEYS } from "../../utils/userScopedStorage";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 
 const defaultUserData = {
   name: "",
@@ -57,6 +59,7 @@ export default function SearchLowongan() {
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
   const [jobsErrorMessage, setJobsErrorMessage] = useState("");
   const [imageError, setImageError] = useState(false);
+  const [locale, setLocale] = useState(getSavedLanguage());
   const [selectedJob, setSelectedJob] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -115,6 +118,18 @@ export default function SearchLowongan() {
     };
 
     loadJobs();
+  }, [locale]);
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
   }, []);
 
   useEffect(() => {
@@ -474,7 +489,8 @@ export default function SearchLowongan() {
                       {String(selectedJob.raw?.status || "").toUpperCase() === "ACTIVE" && (
                         <div className="job-status">
                           <FiCheckCircle />
-                          Open for Applicants
+                          {translatePhrase("Sedang membuka lowongan", locale) ||
+                            "Sedang membuka lowongan"}
                         </div>
                       )}
                     </div>
@@ -640,20 +656,31 @@ export default function SearchLowongan() {
                       <div className="searchlowongan-company-facts">
                         {hasValue(selectedJob.companyProfile?.industry) && (
                           <div>
-                            <span>Industri</span>
+                            <span>{translatePhrase("Industri", locale) || "Industri"}</span>
                             <strong>{selectedJob.companyProfile.industry}</strong>
                           </div>
                         )}
                         {hasValue(selectedJob.companyProfile?.size) && (
                           <div>
-                            <span>Ukuran Perusahaan</span>
+                            <span>
+                              {translatePhrase("Ukuran Perusahaan", locale) ||
+                                "Ukuran Perusahaan"}
+                            </span>
                             <strong>{selectedJob.companyProfile.size}</strong>
                           </div>
                         )}
                         {hasValue(selectedJob.companyProfile?.status) && (
                           <div>
-                            <span>Status Mitra</span>
-                            <strong>{selectedJob.companyProfile.status}</strong>
+                            <span>
+                              {translatePhrase("Status Mitra", locale) ||
+                                "Status Mitra"}
+                            </span>
+                            <strong>
+                              {translatePhrase(
+                                selectedJob.companyProfile.status,
+                                locale
+                              ) || selectedJob.companyProfile.status}
+                            </strong>
                           </div>
                         )}
                         {hasValue(selectedJob.companyProfile?.website) && (
@@ -681,12 +708,18 @@ export default function SearchLowongan() {
                       <FiMapPin />
                     </div>
                     <div>
-                      <h3>Lokasi Lowongan</h3>
+                      <h3>
+                        {translatePhrase("Lokasi Lowongan", locale) ||
+                          "Lokasi Lowongan"}
+                      </h3>
                       {hasValue(selectedJob.location) && <p>{selectedJob.location}</p>}
 
                       {hasValue(selectedJob.companyProfile?.address) && (
                         <>
-                          <h4>Alamat Perusahaan</h4>
+                          <h4>
+                            {translatePhrase("Alamat Perusahaan", locale) ||
+                              "Alamat Perusahaan"}
+                          </h4>
                           <p>{selectedJob.companyProfile.address}</p>
                         </>
                       )}

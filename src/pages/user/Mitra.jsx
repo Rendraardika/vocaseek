@@ -1,16 +1,42 @@
 import "../../styles/mitra.css";
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaCheckCircle,
   FaUserTie,
   FaFileAlt,
   FaHandshake,
 } from "react-icons/fa";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 
 export default function Mitra() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [locale, setLocale] = useState(getSavedLanguage());
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
+
+  const testimonialText =
+    translatePhrase(
+      "Vocaseek sangat membantu! Proses rekrutmen kami menjadi 70% lebih efisien sejak menggunakan platform ini. Talenta yang kami dapatkan benar-benar siap pakai dan memiliki kompetensi yang sesuai dengan kebutuhan industri digital saat ini.",
+      locale
+    ) ||
+    "Vocaseek sangat membantu! Proses rekrutmen kami menjadi 70% lebih efisien sejak menggunakan platform ini. Talenta yang kami dapatkan benar-benar siap pakai dan memiliki kompetensi yang sesuai dengan kebutuhan industri digital saat ini.";
+
+  const testimonialRole =
+    translatePhrase("HR Manager - Tech Giant Indonesia", locale) ||
+    "HR Manager - Tech Giant Indonesia";
 
   return (
     <div className="mitra-page user-nav-shell">
@@ -37,23 +63,31 @@ export default function Mitra() {
           </div>
 
           <nav className={`nav ${menuOpen ? "show" : ""}`}>
-          <NavLink to="/" onClick={() => setMenuOpen(false)}>Beranda</NavLink>
-          <NavLink to="/lowongan" onClick={() => setMenuOpen(false)}>Lowongan</NavLink>
-          <NavLink to="/mitra" onClick={() => setMenuOpen(false)}>Mitra</NavLink>
-          <NavLink to="/kontak" onClick={() => setMenuOpen(false)}>Kontak</NavLink>
+            <NavLink to="/" onClick={() => setMenuOpen(false)}>
+              Beranda
+            </NavLink>
+            <NavLink to="/lowongan" onClick={() => setMenuOpen(false)}>
+              Lowongan
+            </NavLink>
+            <NavLink to="/mitra" onClick={() => setMenuOpen(false)}>
+              Mitra
+            </NavLink>
+            <NavLink to="/kontak" onClick={() => setMenuOpen(false)}>
+              Kontak
+            </NavLink>
 
-          <Link
-            to="/login"
-            className="mobile-login"
-            onClick={() => setMenuOpen(false)}
-          >
+            <Link
+              to="/login"
+              className="mobile-login"
+              onClick={() => setMenuOpen(false)}
+            >
+              Masuk
+            </Link>
+          </nav>
+
+          <Link to="/login" className="btn-login">
             Masuk
           </Link>
-        </nav>
-
-        <Link to="/login" className="btn-login">
-          Masuk
-        </Link>
         </div>
       </header>
 
@@ -215,17 +249,12 @@ export default function Mitra() {
       {/* TESTIMONIAL */}
       <section className="mitra-testimonial">
         <div className="testimonial-card">
-          <p className="testimonial-text">
-            “Vocaseek sangat membantu! Proses rekrutmen kami menjadi
-            <strong> 70% lebih efisien</strong> sejak menggunakan platform ini.
-            Talenta yang kami dapatkan benar-benar siap pakai dan memiliki
-            kompetensi yang sesuai dengan kebutuhan industri digital saat ini.”
-          </p>
+          <p className="testimonial-text">"{testimonialText}"</p>
 
           <div className="testimonial-user">
             <div className="avatar" />
             <h4>Fitri Maulana</h4>
-            <span>HR Manager – Tech Giant Indonesia</span>
+            <span>{testimonialRole}</span>
           </div>
         </div>
       </section>
@@ -339,7 +368,7 @@ export default function Mitra() {
         </div>
 
         <div className="footer-bottom">
-          © 2026 Vocaseek. All rights reserved.
+          Â© 2026 Vocaseek. All rights reserved.
         </div>
       </footer>
     </div>

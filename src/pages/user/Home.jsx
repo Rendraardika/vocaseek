@@ -16,6 +16,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { logoutUser } from "../../services/auth";
 import { clearAuthSession, isAuthenticated } from "../../utils/authStorage";
 import { readProfileFromStorage } from "../../components/user/ProfileStorage";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 import {
   getScopedItem,
   USER_STORAGE_KEYS,
@@ -99,12 +101,25 @@ export default function Home() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [locale, setLocale] = useState(getSavedLanguage());
   const [userData, setUserData] = useState(defaultUserData);
   const [appliedJob, setAppliedJob] = useState(null);
   const [progressState, setProgressState] = useState({
     completedSteps: 0,
     progressPercent: 0,
   });
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const readSavedProfile = () => {
     const profile = readProfileFromStorage();
@@ -476,10 +491,14 @@ export default function Home() {
 
       {/* STATUS LAMARAN */}
       <section className="home-status">
-        <h2 className="home-status-title">Status Lamaran Terbaru</h2>
+        <h2 className="home-status-title">
+          {translatePhrase("Status Lamaran Terbaru", locale) ||
+            "Status Lamaran Terbaru"}
+        </h2>
 
         <p className="home-status-sub">
-          Pantau aktivitas lamaran Anda di sini.
+          {translatePhrase("Pantau aktivitas lamaran Anda di sini.", locale) ||
+            "Pantau aktivitas lamaran Anda di sini."}
         </p>
 
         {appliedJob ? (
@@ -491,15 +510,21 @@ export default function Home() {
 
               <div className="home-status-card-main">
                 <div className="home-status-card-badge">
-                  Lamaran Aktif
+                  {translatePhrase("Lamaran Aktif", locale) || "Lamaran Aktif"}
                 </div>
                 <h3>{appliedJob.title}</h3>
                 <p>{appliedJob.company}</p>
               </div>
 
               <div className="home-status-stage">
-                <span className="home-status-stage-label">Tahap Saat Ini</span>
-                <strong>{appliedJob.stage || "Pending"}</strong>
+                <span className="home-status-stage-label">
+                  {translatePhrase("Tahap Saat Ini", locale) || "Tahap Saat Ini"}
+                </span>
+                <strong>
+                  {translatePhrase(appliedJob.stage || "Pending", locale) ||
+                    appliedJob.stage ||
+                    "Pending"}
+                </strong>
               </div>
             </div>
 
@@ -520,8 +545,11 @@ export default function Home() {
 
             <div className="home-status-card-footer">
               <p>
-                Lamaran kamu untuk posisi ini sudah berhasil dikirim. Pantau
-                perkembangan proses seleksinya dari halaman status lamaran.
+                {translatePhrase(
+                  "Lamaran kamu untuk posisi ini sudah berhasil dikirim. Pantau perkembangan proses seleksinya dari halaman status lamaran.",
+                  locale
+                ) ||
+                  "Lamaran kamu untuk posisi ini sudah berhasil dikirim. Pantau perkembangan proses seleksinya dari halaman status lamaran."}
               </p>
 
               <button
@@ -529,7 +557,9 @@ export default function Home() {
                 className="home-status-action"
                 onClick={() => navigate("/status-lamaran")}
               >
-                Lihat Status Lamaran <FaArrowRight />
+                {translatePhrase("Lihat Status Lamaran", locale) ||
+                  "Lihat Status Lamaran"}{" "}
+                <FaArrowRight />
               </button>
             </div>
           </div>
@@ -539,11 +569,17 @@ export default function Home() {
               <FaSearch />
             </div>
 
-            <h3>Belum Ada Lamaran Aktif</h3>
+            <h3>
+              {translatePhrase("Belum Ada Lamaran Aktif", locale) ||
+                "Belum Ada Lamaran Aktif"}
+            </h3>
 
             <p>
-              Perjalanan karirmu belum dimulai. Selesaikan Pre-Test sekarang agar
-              bisa mulai melamar pekerjaan impianmu!
+              {translatePhrase(
+                "Perjalanan karirmu belum dimulai. Selesaikan Pre-Test sekarang agar bisa mulai melamar pekerjaan impianmu!",
+                locale
+              ) ||
+                "Perjalanan karirmu belum dimulai. Selesaikan Pre-Test sekarang agar bisa mulai melamar pekerjaan impianmu!"}
             </p>
           </div>
         )}
@@ -552,18 +588,27 @@ export default function Home() {
       {/* ===== BANNER ===== */}
       <section className="home-banner">
         <div className="home-banner-box">
-          <h2>Mulai Membangun Karir Impian Anda Hari Ini</h2>
+          <h2>
+            {translatePhrase(
+              "Mulai Membangun Karir Impian Anda Hari Ini",
+              locale
+            ) || "Mulai Membangun Karir Impian Anda Hari Ini"}
+          </h2>
 
           <p>
-            Ribuan perusahaan top menanti talenta sepertimu. Selesaikan langkah
-            pendaftaran untuk mulai terhubung.
+            {translatePhrase(
+              "Ribuan perusahaan top menanti talenta sepertimu. Selesaikan langkah pendaftaran untuk mulai terhubung.",
+              locale
+            ) ||
+              "Ribuan perusahaan top menanti talenta sepertimu. Selesaikan langkah pendaftaran untuk mulai terhubung."}
           </p>
 
           <button
             className="home-btn-primary"
             onClick={() => navigate("/profil")}
           >
-            Lanjutkan Pendaftaran
+            {translatePhrase("Lanjutkan Pendaftaran", locale) ||
+              "Lanjutkan Pendaftaran"}
           </button>
         </div>
       </section>

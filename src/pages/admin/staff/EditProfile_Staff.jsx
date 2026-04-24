@@ -21,6 +21,8 @@ import {
   getStoredAdminProfile,
   setStoredAdminProfile,
 } from "../../../utils/profileStorage";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 function getStoredStaffProfile() {
   return getStoredAdminProfile("staff_admin");
@@ -56,7 +58,7 @@ function syncAdminProfileStorage(profile) {
   window.dispatchEvent(new Event("profileUpdated"));
 }
 
-function SaveProfileModal({ open, onClose, onConfirm, isSaving }) {
+function SaveProfileModal({ open, onClose, onConfirm, isSaving, locale }) {
   if (!open) return null;
 
   return (
@@ -68,16 +70,19 @@ function SaveProfileModal({ open, onClose, onConfirm, isSaving }) {
           </div>
         </div>
 
-        <h3 className="ep-modal-title">Simpan Perubahan?</h3>
+        <h3 className="ep-modal-title">
+          {translatePhrase("Simpan Perubahan?", locale) || "Simpan Perubahan?"}
+        </h3>
         <p className="ep-modal-text">
-          Apakah Anda yakin ingin menyimpan
-          <br />
-          perubahan profil ini?
+          {translatePhrase(
+            "Apakah Anda yakin ingin menyimpan perubahan profil ini?",
+            locale,
+          ) || "Apakah Anda yakin ingin menyimpan perubahan profil ini?"}
         </p>
 
         <div className="ep-modal-actions">
           <button type="button" className="ep-modal-cancel" onClick={onClose}>
-            Batal
+            {translatePhrase("Batal", locale) || "Batal"}
           </button>
           <button
             type="button"
@@ -85,7 +90,9 @@ function SaveProfileModal({ open, onClose, onConfirm, isSaving }) {
             onClick={onConfirm}
             disabled={isSaving}
           >
-            {isSaving ? "Menyimpan..." : "Simpan"}
+            {isSaving
+              ? translatePhrase("Menyimpan...", locale) || "Menyimpan..."
+              : translatePhrase("Simpan", locale) || "Simpan"}
           </button>
         </div>
       </div>
@@ -97,6 +104,7 @@ export default function EditProfileStaff() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const fallbackProfile = getStoredStaffProfile();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
 
   const [profileImage, setProfileImage] = React.useState(fallbackProfile.profileImage || "");
   const [profileImageFile, setProfileImageFile] = React.useState(null);
@@ -107,6 +115,17 @@ export default function EditProfileStaff() {
   const [openSaveModal, setOpenSaveModal] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [isSaving, setIsSaving] = React.useState(false);
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   React.useEffect(() => {
     const loadProfile = async () => {
@@ -137,7 +156,10 @@ export default function EditProfileStaff() {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      alert("File harus berupa gambar.");
+      alert(
+        translatePhrase("File harus berupa gambar.", locale) ||
+          "File harus berupa gambar.",
+      );
       return;
     }
 
@@ -234,9 +256,11 @@ export default function EditProfileStaff() {
       <main className="ep-main">
         <section className="ep-content">
           <div className="ep-breadcrumb">
-            <span>Admin &gt; </span>
-            <span>Profil &gt;  </span>
-            <span className="active">Edit Profile</span>
+            <span>{translatePhrase("Admin", locale) || "Admin"} &gt; </span>
+            <span>{translatePhrase("Profil", locale) || "Profil"} &gt;  </span>
+            <span className="active">
+              {translatePhrase("Edit Profile", locale) || "Edit Profile"}
+            </span>
           </div>
 
           <h1 className="ep-page-title">
@@ -245,7 +269,7 @@ export default function EditProfileStaff() {
               className="ep-back-icon"
               onClick={() => navigate(-1)}
             />
-            Edit Profile
+            {translatePhrase("Edit Profile", locale) || "Edit Profile"}
           </h1>
 
           {errorMessage && (
@@ -261,7 +285,7 @@ export default function EditProfileStaff() {
                 fontWeight: 500,
               }}
             >
-              {errorMessage}
+              {translatePhrase(errorMessage, locale) || errorMessage}
             </div>
           )}
 
@@ -298,7 +322,12 @@ export default function EditProfileStaff() {
 
                 <div className="ep-avatar-info">
                   <h2>{fullName || "Staff Admin Vocaseek"}</h2>
-                  <p>Ubah informasi akun utama staff admin.</p>
+                  <p>
+                    {translatePhrase(
+                      "Ubah informasi akun utama staff admin.",
+                      locale
+                    ) || "Ubah informasi akun utama staff admin."}
+                  </p>
 
                   {profileImage && (
                     <button
@@ -307,7 +336,7 @@ export default function EditProfileStaff() {
                       onClick={handleRemoveProfileImage}
                     >
                       <Trash2 size={15} />
-                      <span>Hapus Foto</span>
+                      <span>{translatePhrase("Hapus Foto", locale) || "Hapus Foto"}</span>
                     </button>
                   )}
                 </div>
@@ -315,12 +344,12 @@ export default function EditProfileStaff() {
 
               <div className="ep-section-title">
                 <UserRound size={20} />
-                <h3>Informasi Profil</h3>
+                <h3>{translatePhrase("Informasi Profil", locale) || "Informasi Profil"}</h3>
               </div>
 
               <div className="ep-form-grid">
                 <div className="ep-input-group">
-                  <label>Nama Lengkap</label>
+                  <label>{translatePhrase("Nama Lengkap", locale) || "Nama Lengkap"}</label>
                   <div className="ep-input-wrap">
                     <input
                       type="text"
@@ -331,7 +360,7 @@ export default function EditProfileStaff() {
                 </div>
 
                 <div className="ep-input-group">
-                  <label>Email Utama</label>
+                  <label>{translatePhrase("Email Utama", locale) || "Email Utama"}</label>
                   <div className="ep-input-wrap">
                     <Mail size={16} />
                     <input type="email" value={email} readOnly />
@@ -339,7 +368,7 @@ export default function EditProfileStaff() {
                 </div>
 
                 <div className="ep-input-group">
-                  <label>Nomor Telepon</label>
+                  <label>{translatePhrase("Nomor Telepon", locale) || "Nomor Telepon"}</label>
                   <div className="ep-input-wrap">
                     <Phone size={16} />
                     <input
@@ -358,7 +387,7 @@ export default function EditProfileStaff() {
                 className="ep-cancel-btn"
                 onClick={() => navigate(-1)}
               >
-                Batal
+                {translatePhrase("Batal", locale) || "Batal"}
               </button>
 
               <button
@@ -368,7 +397,11 @@ export default function EditProfileStaff() {
                 disabled={isSaving}
               >
                 <Save size={16} />
-                <span>{isSaving ? "Menyimpan..." : "Simpan Profile"}</span>
+                <span>
+                  {isSaving
+                    ? translatePhrase("Menyimpan...", locale) || "Menyimpan..."
+                    : translatePhrase("Simpan Profile", locale) || "Simpan Profile"}
+                </span>
               </button>
             </div>
           </div>
@@ -380,6 +413,7 @@ export default function EditProfileStaff() {
         onClose={() => setOpenSaveModal(false)}
         onConfirm={handleConfirmSave}
         isSaving={isSaving}
+        locale={locale}
       />
     </div>
   );

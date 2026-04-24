@@ -1,5 +1,5 @@
 import "../../../styles/admin/CreateJob.css";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/admin/SidebarMitra";
 import { getApiErrorMessage } from "../../../services/auth";
@@ -13,6 +13,8 @@ import {
   ChevronDown,
   SendHorizonal,
 } from "lucide-react";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 function SectionTitle({ icon, title }) {
   return (
@@ -119,12 +121,24 @@ function buildInitialFormData(job) {
 export default function CreateJob() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [locale, setLocale] = useState(getSavedLanguage());
   const editingJob = useMemo(() => location.state?.job || null, [location.state]);
   const isEditMode = Boolean(editingJob?.backendId || editingJob?.raw?.id || editingJob?.id);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState(() => buildInitialFormData(editingJob));
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const updateField = (field) => (event) => {
     setFormData((current) => ({
@@ -212,30 +226,47 @@ export default function CreateJob() {
           <div className="create-job__breadcrumb">
             <span className="muted">ADMIN</span>
             <span className="muted">›</span>
-            <span className="muted">MANAJEMEN LOWONGAN</span>
+            <span className="muted">
+              {translatePhrase("MANAJEMEN LOWONGAN", locale) ||
+                "MANAJEMEN LOWONGAN"}
+            </span>
             <span className="muted">›</span>
             <span className="active">{isEditMode ? "EDIT LOWONGAN" : "TAMBAH LOWONGAN BARU"}</span>
           </div>
 
           <div className="create-job__header">
             <h1 className="create-job__page-title">
-              {isEditMode ? "Edit Lowongan" : "Lowongan Baru"}
+              {isEditMode
+                ? translatePhrase("Edit Lowongan", locale) || "Edit Lowongan"
+                : translatePhrase("Lowongan Baru", locale) || "Lowongan Baru"}
             </h1>
             <p className="create-job__page-subtitle">
               {isEditMode
-                ? "Perbarui detail lowongan tanpa kehilangan data yang sudah ada."
-                : "Buat lowongan baru untuk menarik talenta vokasi terbaik."}
+                ? translatePhrase(
+                    "Perbarui detail lowongan tanpa kehilangan data yang sudah ada.",
+                    locale,
+                  ) || "Perbarui detail lowongan tanpa kehilangan data yang sudah ada."
+                : translatePhrase(
+                    "Buat lowongan baru untuk menarik talenta vokasi terbaik.",
+                    locale,
+                  ) || "Buat lowongan baru untuk menarik talenta vokasi terbaik."}
             </p>
           </div>
 
           <div className="create-job__card">
-            <SectionTitle icon={<Info size={16} />} title="Informasi Dasar" />
+            <SectionTitle
+              icon={<Info size={16} />}
+              title={translatePhrase("Informasi Dasar", locale) || "Informasi Dasar"}
+            />
 
             <div className="create-job__grid-two">
               <div className="create-job__full-width">
-                <Label>Judul Pekerjaan</Label>
+                <Label>{translatePhrase("Judul Pekerjaan", locale) || "Judul Pekerjaan"}</Label>
                 <TextInput
-                  placeholder="Contoh: Senior Frontend Developer"
+                  placeholder={
+                    translatePhrase("Contoh: Senior Frontend Developer", locale) ||
+                    "Contoh: Senior Frontend Developer"
+                  }
                   value={formData.judul_posisi}
                   onChange={updateField("judul_posisi")}
                   required
@@ -243,7 +274,7 @@ export default function CreateJob() {
               </div>
 
               <div>
-                <Label>Tipe Pekerjaan</Label>
+                <Label>{translatePhrase("Tipe Pekerjaan", locale) || "Tipe Pekerjaan"}</Label>
                 <SelectInput
                   value={formData.tipe_pekerjaan}
                   onChange={updateField("tipe_pekerjaan")}
@@ -258,13 +289,19 @@ export default function CreateJob() {
 
             <div className="create-job__divider" />
 
-            <SectionTitle icon={<MapPin size={16} />} title="Lokasi & Logistik" />
+            <SectionTitle
+              icon={<MapPin size={16} />}
+              title={translatePhrase("Lokasi & Logistik", locale) || "Lokasi & Logistik"}
+            />
 
             <div className="create-job__grid-two">
               <div>
-                <Label>Lokasi</Label>
+                <Label>{translatePhrase("Lokasi", locale) || "Lokasi"}</Label>
                 <TextInput
-                  placeholder="Contoh: Jakarta Selatan, Indonesia"
+                  placeholder={
+                    translatePhrase("Contoh: Jakarta Selatan, Indonesia", locale) ||
+                    "Contoh: Jakarta Selatan, Indonesia"
+                  }
                   value={formData.lokasi}
                   onChange={updateField("lokasi")}
                   required
@@ -272,7 +309,7 @@ export default function CreateJob() {
               </div>
 
               <div>
-                <Label>Pengaturan Kerja</Label>
+                <Label>{translatePhrase("Pengaturan Kerja", locale) || "Pengaturan Kerja"}</Label>
                 <SelectInput
                   value={formData.tipe_magang}
                   onChange={updateField("tipe_magang")}
@@ -285,7 +322,10 @@ export default function CreateJob() {
               </div>
 
               <div className="create-job__full-width">
-                <Label>Kisaran Gaji / Insentif</Label>
+                <Label>
+                  {translatePhrase("Kisaran Gaji / Insentif", locale) ||
+                    "Kisaran Gaji / Insentif"}
+                </Label>
 
                 <div className="create-job__salary-grid">
                   <div className="create-job__salary-input-wrap">
@@ -313,22 +353,36 @@ export default function CreateJob() {
 
             <div className="create-job__divider" />
 
-            <SectionTitle icon={<FileText size={16} />} title="Detail Pekerjaan" />
+            <SectionTitle
+              icon={<FileText size={16} />}
+              title={translatePhrase("Detail Pekerjaan", locale) || "Detail Pekerjaan"}
+            />
 
             <div className="create-job__stack">
               <div>
-                <Label>Deskripsi Pekerjaan</Label>
+                <Label>
+                  {translatePhrase("Deskripsi Pekerjaan", locale) || "Deskripsi Pekerjaan"}
+                </Label>
                 <RichEditorMock
-                  placeholder="Jelaskan tanggung jawab dan peran..."
+                  placeholder={
+                    translatePhrase("Jelaskan tanggung jawab dan peran...", locale) ||
+                    "Jelaskan tanggung jawab dan peran..."
+                  }
                   value={formData.deskripsi_pekerjaan}
                   onChange={updateField("deskripsi_pekerjaan")}
                 />
               </div>
 
               <div>
-                <Label>Persyaratan</Label>
+                <Label>{translatePhrase("Persyaratan", locale) || "Persyaratan"}</Label>
                 <RichEditorMock
-                  placeholder="Sebutkan kualifikasi, keahlian, dan pendidikan yang dibutuhkan..."
+                  placeholder={
+                    translatePhrase(
+                      "Sebutkan kualifikasi, keahlian, dan pendidikan yang dibutuhkan...",
+                      locale,
+                    ) ||
+                    "Sebutkan kualifikasi, keahlian, dan pendidikan yang dibutuhkan..."
+                  }
                   value={formData.persyaratan}
                   onChange={updateField("persyaratan")}
                 />

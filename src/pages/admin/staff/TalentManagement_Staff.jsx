@@ -17,6 +17,8 @@ import {
 import { pickFirstMediaValue } from "../../../utils/media";
 import { getApiErrorMessage } from "../../../services/auth";
 import { deleteAdminTalent, getAdminTalents } from "../../../services/admin";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -63,10 +65,15 @@ function getStatusClass(status) {
   return "reviewing";
 }
 
-function getStatusLabel(status) {
-  if (status === "ACCEPTED") return "Accepted";
-  if (status === "DECLINED") return "Declined";
-  return "Reviewing";
+function getStatusLabel(status, locale) {
+  if (status === "ACCEPTED") {
+    return translatePhrase("Diterima", locale) || "Accepted";
+  }
+  if (status === "DECLINED") {
+    return translatePhrase("Ditolak", locale) || "Declined";
+  }
+
+  return translatePhrase("Reviewing", locale) || "Reviewing";
 }
 
 function getInitials(name) {
@@ -198,11 +205,24 @@ function StatCard({ title, value, change, changeType, icon, iconClass }) {
 
 export default function TalentManagementStaff() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [talents, setTalents] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isLoading, setIsLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [deletingId, setDeletingId] = React.useState("");
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   React.useEffect(() => {
     const loadTalents = async () => {
@@ -216,7 +236,9 @@ export default function TalentManagementStaff() {
         setTalents(collection.map(mapTalentRow));
       } catch (error) {
         setTalents([]);
-        setErrorMessage(getApiErrorMessage(error, "Gagal memuat data talenta."));
+        setErrorMessage(
+          getApiErrorMessage(error, "Gagal memuat data talenta.")
+        );
       } finally {
         setIsLoading(false);
       }
@@ -252,31 +274,49 @@ export default function TalentManagementStaff() {
 
     return [
       {
-        title: "Total Talenta",
+        title: translatePhrase("Total Talenta", locale) || "Total Talenta",
         value: String(total),
-        change: total > 0 ? `${total} data tersedia` : "Belum ada data talenta",
+        change:
+          total > 0
+            ? `${
+                translatePhrase(String(total), locale) || String(total)
+              } ${translatePhrase("data tersedia", locale) || "data tersedia"}`
+            : translatePhrase("Belum ada data talenta", locale) ||
+              "Belum ada data talenta",
         changeType: total > 0 ? "positive" : "neutral",
         icon: <Users size={22} />,
         iconClass: "tm-stat-icon blue",
       },
       {
-        title: "Talenta Aktif",
+        title: translatePhrase("Talenta Aktif", locale) || "Talenta Aktif",
         value: String(active),
-        change: active > 0 ? `${active} talenta aktif` : "Belum ada talenta aktif",
+        change:
+          active > 0
+            ? `${
+                translatePhrase(String(active), locale) || String(active)
+              } ${translatePhrase("talenta aktif", locale) || "talenta aktif"}`
+            : translatePhrase("Belum ada talenta aktif", locale) ||
+              "Belum ada talenta aktif",
         changeType: active > 0 ? "positive" : "neutral",
         icon: <UserRoundCheck size={22} />,
         iconClass: "tm-stat-icon purple",
       },
       {
-        title: "Sedang Direview",
+        title: translatePhrase("Sedang Direview", locale) || "Sedang Direview",
         value: String(reviewing),
-        change: reviewing > 0 ? `${reviewing} menunggu review` : "Belum ada review baru",
+        change:
+          reviewing > 0
+            ? `${
+                translatePhrase(String(reviewing), locale) || String(reviewing)
+              } ${translatePhrase("menunggu review", locale) || "menunggu review"}`
+            : translatePhrase("Belum ada review baru", locale) ||
+              "Belum ada review baru",
         changeType: reviewing > 0 ? "warning" : "neutral",
         icon: <UserPlus size={22} />,
         iconClass: "tm-stat-icon orange",
       },
     ];
-  }, [talents]);
+  }, [locale, talents]);
 
   const { totalPages, pageItems: paginatedTalents } = React.useMemo(
     () => paginateItems(talents, currentPage, ITEMS_PER_PAGE),
@@ -305,11 +345,17 @@ export default function TalentManagementStaff() {
 
         <section className="tm-content">
           <div className="tm-breadcrumb">
-            <span>ADMIN &gt; </span>
-            <span className="active">TALENT MANAGEMENT</span>
+            <span>{translatePhrase("ADMIN", locale) || "ADMIN"} &gt; </span>
+            <span className="active">
+              {translatePhrase("Manajemen Talenta", locale) ||
+                "TALENT MANAGEMENT"}
+            </span>
           </div>
 
-          <h1 className="tm-page-title">Talent Pool Management</h1>
+          <h1 className="tm-page-title">
+            {translatePhrase("Talent Pool Management", locale) ||
+              "Talent Pool Management"}
+          </h1>
 
           {errorMessage && (
             <div style={{ marginBottom: 16, color: "#d93025", fontWeight: 500 }}>
@@ -328,12 +374,12 @@ export default function TalentManagementStaff() {
               <table className="tm-table">
                 <thead>
                   <tr>
-                    <th>NAMA TALENTA</th>
-                    <th>UNIVERSITAS</th>
-                    <th>JURUSAN</th>
-                    <th>TANGGAL DAFTAR</th>
-                    <th>STATUS</th>
-                    <th>AKSI</th>
+                    <th>{translatePhrase("NAMA TALENTA", locale) || "NAMA TALENTA"}</th>
+                    <th>{translatePhrase("UNIVERSITAS", locale) || "UNIVERSITAS"}</th>
+                    <th>{translatePhrase("JURUSAN", locale) || "JURUSAN"}</th>
+                    <th>{translatePhrase("TANGGAL DAFTAR", locale) || "TANGGAL DAFTAR"}</th>
+                    <th>{translatePhrase("STATUS", locale) || "STATUS"}</th>
+                    <th>{translatePhrase("AKSI", locale) || "AKSI"}</th>
                   </tr>
                 </thead>
 
@@ -380,7 +426,7 @@ export default function TalentManagementStaff() {
 
                         <td>
                           <span className={`tm-status-badge ${getStatusClass(item.status)}`}>
-                            {getStatusLabel(item.status)}
+                            {getStatusLabel(item.status, locale)}
                           </span>
                         </td>
 
@@ -399,7 +445,13 @@ export default function TalentManagementStaff() {
                               className="tm-icon-btn"
                               onClick={() => handleDelete(item.id)}
                               disabled={deletingId === item.id}
-                              title={deletingId === item.id ? "Menghapus..." : "Hapus talenta"}
+                              title={
+                                deletingId === item.id
+                                  ? translatePhrase("Menghapus...", locale) ||
+                                    "Menghapus..."
+                                  : translatePhrase("Hapus talenta", locale) ||
+                                    "Hapus talenta"
+                              }
                             >
                               <Trash2 size={16} />
                             </button>
@@ -413,7 +465,11 @@ export default function TalentManagementStaff() {
                         colSpan={6}
                         style={{ padding: "32px 16px", textAlign: "center", color: "#6b7280" }}
                       >
-                        {isLoading ? "Memuat data talenta..." : "Belum ada data talenta."}
+                        {isLoading
+                          ? translatePhrase("Memuat data talenta...", locale) ||
+                            "Memuat data talenta..."
+                          : translatePhrase("Belum ada data talenta.", locale) ||
+                            "Belum ada data talenta."}
                       </td>
                     </tr>
                   )}
@@ -424,7 +480,11 @@ export default function TalentManagementStaff() {
 
           <div className="tm-footer-row">
             <div className="tm-footer-text">
-              SHOWING {paginationMeta.start}-{paginationMeta.end} OF {talents.length} TALENTS
+              {translatePhrase(
+                `SHOWING ${paginationMeta.start}-${paginationMeta.end} OF ${talents.length} TALENTS`,
+                locale
+              ) ||
+                `SHOWING ${paginationMeta.start}-${paginationMeta.end} OF ${talents.length} TALENTS`}
             </div>
 
             {talents.length > 0 && (

@@ -24,6 +24,8 @@ import {
   getPaginationMeta,
   paginateItems,
 } from "../../../utils/pagination";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
@@ -32,9 +34,9 @@ const STATUS_OPTIONS = [
 ];
 const ITEMS_PER_PAGE = 8;
 
-function getStatusLabel(status) {
+function getStatusLabel(status, locale) {
   const found = STATUS_OPTIONS.find((item) => item.value === status);
-  return found ? found.label : status;
+  return found ? translatePhrase(found.label, locale) || found.label : status;
 }
 
 function ChangeVerificationStatusModal({
@@ -44,6 +46,7 @@ function ChangeVerificationStatusModal({
   setSelectedStatus,
   isSaving,
   error,
+  locale,
   onClose,
   onSave,
 }) {
@@ -57,7 +60,10 @@ function ChangeVerificationStatusModal({
         <div className="cv-modal-header">
           <div className="cv-modal-title-wrap">
             <ModalPen size={19} className="cv-modal-title-icon" />
-            <h3 className="cv-modal-title">Ubah Status Verifikasi Mitra</h3>
+            <h3 className="cv-modal-title">
+              {translatePhrase("Ubah Status Verifikasi Mitra", locale) ||
+                "Ubah Status Verifikasi Mitra"}
+            </h3>
           </div>
 
           <button className="cv-modal-close" onClick={onClose} type="button">
@@ -77,7 +83,9 @@ function ChangeVerificationStatusModal({
           </div>
 
           <div className="cv-field-group">
-            <label className="cv-field-label">Pilih Status Baru</label>
+            <label className="cv-field-label">
+              {translatePhrase("Pilih Status Baru", locale) || "Pilih Status Baru"}
+            </label>
             <div className="cv-select-wrap">
               <select
                 className="cv-select"
@@ -86,7 +94,7 @@ function ChangeVerificationStatusModal({
               >
                 {STATUS_OPTIONS.map((item) => (
                   <option key={item.value} value={item.value}>
-                    {item.label}
+                    {translatePhrase(item.label, locale) || item.label}
                   </option>
                 ))}
               </select>
@@ -101,10 +109,12 @@ function ChangeVerificationStatusModal({
 
         <div className="cv-modal-footer">
           <button type="button" className="cv-btn-cancel" onClick={onClose}>
-            Batal
+            {translatePhrase("Batal", locale) || "Batal"}
           </button>
           <button type="button" className="cv-btn-save" onClick={onSave} disabled={isSaving}>
-            {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
+            {isSaving
+              ? translatePhrase("Menyimpan...", locale) || "Menyimpan..."
+              : translatePhrase("Simpan Perubahan", locale) || "Simpan Perubahan"}
           </button>
         </div>
       </div>
@@ -114,6 +124,7 @@ function ChangeVerificationStatusModal({
 
 export default function CompanyVerification() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [companies, setCompanies] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [pageError, setPageError] = React.useState("");
@@ -127,6 +138,17 @@ export default function CompanyVerification() {
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [businessFilter, setBusinessFilter] = React.useState("all");
   const [currentPage, setCurrentPage] = React.useState(1);
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const loadCompanies = React.useCallback(async () => {
     setLoading(true);
@@ -236,29 +258,29 @@ export default function CompanyVerification() {
       {
         icon: <ShieldAlert size={20} strokeWidth={2.2} />,
         iconClass: "cv-summary-icon yellow",
-        title: "Total Pending",
+        title: translatePhrase("Total Pending", locale) || "Total Pending",
         value: String(pending),
-        badge: `${pending} menunggu review`,
+        badge: `${pending} ${translatePhrase("menunggu review", locale) || "menunggu review"}`,
         badgeClass: "green",
       },
       {
         icon: <ShieldCheck size={20} strokeWidth={2.2} />,
         iconClass: "cv-summary-icon blue",
-        title: "Total Disetujui",
+        title: translatePhrase("Total Disetujui", locale) || "Total Disetujui",
         value: String(approved),
-        badge: `${approved} mitra aktif`,
+        badge: `${approved} ${translatePhrase("mitra aktif", locale) || "mitra aktif"}`,
         badgeClass: "green",
       },
       {
         icon: <CircleOff size={20} strokeWidth={2.2} />,
         iconClass: "cv-summary-icon red",
-        title: "Total Ditolak",
+        title: translatePhrase("Total Ditolak", locale) || "Total Ditolak",
         value: String(rejected),
-        badge: `${rejected} pengajuan ditolak`,
+        badge: `${rejected} ${translatePhrase("pengajuan ditolak", locale) || "pengajuan ditolak"}`,
         badgeClass: rejected > 0 ? "red" : "green",
       },
     ];
-  }, [companies]);
+  }, [companies, locale]);
 
   return (
     <div className="cv-layout">
@@ -267,15 +289,24 @@ export default function CompanyVerification() {
       <main className="cv-main">
         <section className="cv-content">
           <div className="breadcrumb">
-            <span>ADMIN</span>
+            <span>{translatePhrase("ADMIN", locale) || "ADMIN"}</span>
             <span>›</span>
-            <span className="active">VERIFIKASI PERUSAHAAN</span>
+            <span className="active">
+              {translatePhrase("VERIFIKASI PERUSAHAAN", locale) ||
+                "VERIFIKASI PERUSAHAAN"}
+            </span>
           </div>
 
-          <h1 className="cv-page-title">Verifikasi Perusahaan Mitra</h1>
+          <h1 className="cv-page-title">
+            {translatePhrase("Verifikasi Perusahaan Mitra", locale) ||
+              "Verifikasi Perusahaan Mitra"}
+          </h1>
           <p className="cv-page-subtitle">
-            Tinjau dan setujui pendaftaran perusahaan baru untuk bergabung dengan
-            ekosistem Vocaseek.
+            {translatePhrase(
+              "Tinjau dan setujui pendaftaran perusahaan baru untuk bergabung dengan ekosistem Vocaseek.",
+              locale
+            ) ||
+              "Tinjau dan setujui pendaftaran perusahaan baru untuk bergabung dengan ekosistem Vocaseek."}
           </p>
 
           <div className="cv-summary-grid">
@@ -301,9 +332,10 @@ export default function CompanyVerification() {
           <div className="cv-table-card">
             <div className="cv-table-topbar">
               <div className="cv-table-title-wrap">
-                <h2>Daftar Pengajuan</h2>
+                <h2>{translatePhrase("Daftar Pengajuan", locale) || "Daftar Pengajuan"}</h2>
                 <span className="cv-total-badge">
-                  {filteredCompanies.filter((item) => item.status === "pending").length} Pending
+                  {filteredCompanies.filter((item) => item.status === "pending").length}{" "}
+                  {translatePhrase("Pending", locale) || "Pending"}
                 </span>
               </div>
 
@@ -312,7 +344,7 @@ export default function CompanyVerification() {
                   <Search size={18} />
                   <input
                     type="text"
-                    placeholder="Cari perusahaan..."
+                    placeholder={translatePhrase("Cari perusahaan...", locale) || "Cari perusahaan..."}
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
                   />
@@ -325,7 +357,7 @@ export default function CompanyVerification() {
                     onClick={() => setFilterOpen((prev) => !prev)}
                   >
                     <SlidersHorizontal size={17} />
-                    <span>Filter</span>
+                    <span>{translatePhrase("Filter", locale) || "Filter"}</span>
                     <ChevronDown
                       size={16}
                       className={`cv-filter-chevron ${filterOpen ? "open" : ""}`}
@@ -335,29 +367,33 @@ export default function CompanyVerification() {
                   {filterOpen && (
                     <div className="cv-filter-dropdown">
                       <div className="cv-filter-group">
-                        <label className="cv-filter-label">Status Verifikasi</label>
+                        <label className="cv-filter-label">
+                          {translatePhrase("Status Verifikasi", locale) || "Status Verifikasi"}
+                        </label>
                         <select
                           className="cv-filter-select"
                           value={statusFilter}
                           onChange={(event) => setStatusFilter(event.target.value)}
                         >
-                          <option value="all">Semua Status</option>
+                          <option value="all">{translatePhrase("Semua Status", locale) || "Semua Status"}</option>
                           {STATUS_OPTIONS.map((item) => (
                             <option key={item.value} value={item.value}>
-                              {item.label}
+                              {translatePhrase(item.label, locale) || item.label}
                             </option>
                           ))}
                         </select>
                       </div>
 
                       <div className="cv-filter-group">
-                        <label className="cv-filter-label">Tipe Bisnis</label>
+                        <label className="cv-filter-label">
+                          {translatePhrase("Tipe Bisnis", locale) || "Tipe Bisnis"}
+                        </label>
                         <select
                           className="cv-filter-select"
                           value={businessFilter}
                           onChange={(event) => setBusinessFilter(event.target.value)}
                         >
-                          <option value="all">Semua Tipe</option>
+                          <option value="all">{translatePhrase("Semua Tipe", locale) || "Semua Tipe"}</option>
                           {businessOptions.map((item) => (
                             <option key={item} value={item}>
                               {item}
@@ -375,7 +411,7 @@ export default function CompanyVerification() {
                             setBusinessFilter("all");
                           }}
                         >
-                          Reset
+                          {translatePhrase("Reset", locale) || "Reset"}
                         </button>
 
                         <button
@@ -383,7 +419,7 @@ export default function CompanyVerification() {
                           className="cv-filter-apply"
                           onClick={() => setFilterOpen(false)}
                         >
-                          Terapkan
+                          {translatePhrase("Terapkan", locale) || "Terapkan"}
                         </button>
                       </div>
                     </div>
@@ -400,11 +436,11 @@ export default function CompanyVerification() {
               <table className="cv-table">
                 <thead>
                   <tr>
-                    <th className="cv-col-name">NAMA PERUSAHAAN</th>
-                    <th className="cv-col-business">TIPE BISNIS</th>
-                    <th className="cv-col-date">TANGGAL PENGAJUAN</th>
-                    <th className="cv-col-status">STATUS VERIFIKASI</th>
-                    <th className="cv-col-action">AKSI</th>
+                    <th className="cv-col-name">{translatePhrase("NAMA PERUSAHAAN", locale) || "NAMA PERUSAHAAN"}</th>
+                    <th className="cv-col-business">{translatePhrase("TIPE BISNIS", locale) || "TIPE BISNIS"}</th>
+                    <th className="cv-col-date">{translatePhrase("TANGGAL PENGAJUAN", locale) || "TANGGAL PENGAJUAN"}</th>
+                    <th className="cv-col-status">{translatePhrase("STATUS VERIFIKASI", locale) || "STATUS VERIFIKASI"}</th>
+                    <th className="cv-col-action">{translatePhrase("AKSI", locale) || "AKSI"}</th>
                   </tr>
                 </thead>
 
@@ -440,7 +476,7 @@ export default function CompanyVerification() {
 
                           <td>
                             <span className={`cv-status-badge ${company.status}`}>
-                              {getStatusLabel(company.status)}
+                              {getStatusLabel(company.status, locale)}
                             </span>
                           </td>
 
@@ -453,9 +489,9 @@ export default function CompanyVerification() {
                               >
                                 <SquarePen size={14} />
                                 <span>
-                                  Ubah
+                                  {translatePhrase("Ubah", locale) || "Ubah"}
                                   <br />
-                                  Status
+                                  {translatePhrase("Status", locale) || "Status"}
                                 </span>
                               </button>
 
@@ -482,8 +518,10 @@ export default function CompanyVerification() {
                         style={{ padding: "32px 16px", textAlign: "center", color: "#6b7280" }}
                       >
                         {loading
-                          ? "Memuat pengajuan perusahaan..."
-                          : "Belum ada pengajuan perusahaan."}
+                          ? translatePhrase("Memuat pengajuan perusahaan...", locale) ||
+                            "Memuat pengajuan perusahaan..."
+                          : translatePhrase("Belum ada pengajuan perusahaan.", locale) ||
+                            "Belum ada pengajuan perusahaan."}
                       </td>
                     </tr>
                   )}
@@ -493,7 +531,11 @@ export default function CompanyVerification() {
 
             <div className="cv-table-footer">
               <p>
-                Menampilkan {pagination.start}-{pagination.end} dari {filteredCompanies.length} data
+                {translatePhrase(
+                  `Menampilkan ${pagination.start}-${pagination.end} dari ${filteredCompanies.length} data`,
+                  locale
+                ) ||
+                  `Menampilkan ${pagination.start}-${pagination.end} dari ${filteredCompanies.length} data`}
               </p>
 
               <div className="cv-pagination">
@@ -503,7 +545,7 @@ export default function CompanyVerification() {
                   disabled={pagination.currentPage <= 1}
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 >
-                  Previous
+                  {translatePhrase("Previous", locale) || "Previous"}
                 </button>
                 <button
                   className="cv-page-btn wide"
@@ -513,7 +555,7 @@ export default function CompanyVerification() {
                     setCurrentPage((prev) => Math.min(prev + 1, pagination.totalPages))
                   }
                 >
-                  Next
+                  {translatePhrase("Next", locale) || "Next"}
                 </button>
               </div>
             </div>
@@ -528,6 +570,7 @@ export default function CompanyVerification() {
         setSelectedStatus={setSelectedStatus}
         isSaving={isSaving}
         error={modalError}
+        locale={locale}
         onClose={closeModal}
         onSave={saveStatus}
       />

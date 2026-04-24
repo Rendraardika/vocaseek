@@ -18,6 +18,8 @@ import {
   getPaginationMeta,
   paginateItems,
 } from "../../../utils/pagination";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
@@ -27,13 +29,14 @@ const STATUS_OPTIONS = [
 ];
 const ITEMS_PER_PAGE = 8;
 
-function getStatusLabel(status) {
+function getStatusLabel(status, locale) {
   const found = STATUS_OPTIONS.find((item) => item.value === status);
-  return found ? found.label : status;
+  return found ? translatePhrase(found.label, locale) || found.label : status;
 }
 
 export default function PartnerManagementStaff() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [partners, setPartners] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [pageError, setPageError] = React.useState("");
@@ -57,6 +60,17 @@ export default function PartnerManagementStaff() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -108,29 +122,33 @@ export default function PartnerManagementStaff() {
       {
         icon: <Building2 size={20} strokeWidth={2.2} />,
         iconClass: "pm-summary-icon yellow",
-        title: "Total Partner",
+        title: translatePhrase("Total Partner", locale) || "Total Partner",
         value: String(totalPartners),
-        badge: `${totalPartners} terdaftar`,
+        badge: `${totalPartners} ${
+          translatePhrase("terdaftar", locale) || "terdaftar"
+        }`,
         badgeClass: "green",
       },
       {
         icon: <Handshake size={20} strokeWidth={2.2} />,
         iconClass: "pm-summary-icon blue",
-        title: "Kolaborasi Aktif",
+        title: translatePhrase("Kolaborasi Aktif", locale) || "Kolaborasi Aktif",
         value: String(activePartners),
-        badge: `${activePartners} aktif`,
+        badge: `${activePartners} ${translatePhrase("aktif", locale) || "aktif"}`,
         badgeClass: "green",
       },
       {
         icon: <ClipboardList size={20} strokeWidth={2.2} />,
         iconClass: "pm-summary-icon red",
-        title: "Butuh Review",
+        title: translatePhrase("Butuh Review", locale) || "Butuh Review",
         value: String(reviewPartners),
-        badge: `${reviewPartners} menunggu`,
+        badge: `${reviewPartners} ${
+          translatePhrase("menunggu", locale) || "menunggu"
+        }`,
         badgeClass: reviewPartners > 0 ? "red" : "green",
       },
     ];
-  }, [partners]);
+  }, [locale, partners]);
 
   return (
     <div className="pm-layout">
@@ -140,16 +158,25 @@ export default function PartnerManagementStaff() {
 
         <section className="pm-content">
           <div className="pm-breadcrumb">
-            <span>ADMIN &gt;</span>
-            <span className="active">PARTNER MANAGEMENT</span>
+            <span>{translatePhrase("ADMIN", locale) || "ADMIN"} &gt;</span>
+            <span className="active">
+              {translatePhrase("Partner Management", locale) ||
+                "PARTNER MANAGEMENT"}
+            </span>
           </div>
 
           <div className="pm-header-row">
             <div>
-              <h1 className="pm-page-title">Partner Management</h1>
+              <h1 className="pm-page-title">
+                {translatePhrase("Partner Management", locale) ||
+                  "Partner Management"}
+              </h1>
               <p className="pm-page-subtitle">
-                Tinjau dan kelola direktori partner perusahaan dan kolaborasi
-                dalam ekosistem Vocaseek.
+                {translatePhrase(
+                  "Tinjau dan kelola direktori partner perusahaan dan kolaborasi dalam ekosistem Vocaseek.",
+                  locale
+                ) ||
+                  "Tinjau dan kelola direktori partner perusahaan dan kolaborasi dalam ekosistem Vocaseek."}
               </p>
             </div>
 
@@ -159,7 +186,7 @@ export default function PartnerManagementStaff() {
               onClick={() => navigate("/admin/staff/partners/add-company")}
             >
               <Plus size={18} />
-              <span>Add Company</span>
+              <span>{translatePhrase("Add Company", locale) || "Add Company"}</span>
             </button>
           </div>
 
@@ -186,8 +213,10 @@ export default function PartnerManagementStaff() {
           <div className="pm-table-card">
             <div className="pm-table-topbar">
               <div className="pm-table-title-wrap">
-                <h2>Daftar Partner</h2>
-                <span className="pm-total-badge">{filteredPartners.length} Total</span>
+                <h2>{translatePhrase("Daftar Partner", locale) || "Daftar Partner"}</h2>
+                <span className="pm-total-badge">
+                  {filteredPartners.length} {translatePhrase("Total", locale) || "Total"}
+                </span>
               </div>
 
               <div className="pm-table-actions">
@@ -195,7 +224,10 @@ export default function PartnerManagementStaff() {
                   <Search size={18} />
                   <input
                     type="text"
-                    placeholder="Cari perusahaan..."
+                    placeholder={
+                      translatePhrase("Cari perusahaan...", locale) ||
+                      "Cari perusahaan..."
+                    }
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
                   />
@@ -208,7 +240,7 @@ export default function PartnerManagementStaff() {
                     onClick={() => setFilterOpen((prev) => !prev)}
                   >
                     <SlidersHorizontal size={17} />
-                    <span>Filter</span>
+                    <span>{translatePhrase("Filter", locale) || "Filter"}</span>
                     <ChevronDown
                       size={16}
                       className={`pm-filter-chevron ${filterOpen ? "open" : ""}`}
@@ -218,13 +250,18 @@ export default function PartnerManagementStaff() {
                   {filterOpen && (
                     <div className="pm-filter-dropdown">
                       <div className="pm-filter-group">
-                        <label className="pm-filter-label">Status Verifikasi</label>
+                        <label className="pm-filter-label">
+                          {translatePhrase("Status Verifikasi", locale) ||
+                            "Status Verifikasi"}
+                        </label>
                         <select
                           className="pm-filter-select"
                           value={statusFilter}
                           onChange={(event) => setStatusFilter(event.target.value)}
                         >
-                          <option value="all">Semua Status</option>
+                          <option value="all">
+                            {translatePhrase("Semua Status", locale) || "Semua Status"}
+                          </option>
                           {STATUS_OPTIONS.map((item) => (
                             <option key={item.value} value={item.value}>
                               {item.label}
@@ -234,13 +271,17 @@ export default function PartnerManagementStaff() {
                       </div>
 
                       <div className="pm-filter-group">
-                        <label className="pm-filter-label">Tipe Bisnis</label>
+                        <label className="pm-filter-label">
+                          {translatePhrase("Tipe Bisnis", locale) || "Tipe Bisnis"}
+                        </label>
                         <select
                           className="pm-filter-select"
                           value={businessFilter}
                           onChange={(event) => setBusinessFilter(event.target.value)}
                         >
-                          <option value="all">Semua Tipe</option>
+                          <option value="all">
+                            {translatePhrase("Semua Tipe", locale) || "Semua Tipe"}
+                          </option>
                           {businessOptions.map((item) => (
                             <option key={item} value={item}>
                               {item}
@@ -258,7 +299,7 @@ export default function PartnerManagementStaff() {
                             setBusinessFilter("all");
                           }}
                         >
-                          Reset
+                          {translatePhrase("Reset", locale) || "Reset"}
                         </button>
 
                         <button
@@ -266,7 +307,7 @@ export default function PartnerManagementStaff() {
                           className="pm-filter-apply"
                           onClick={() => setFilterOpen(false)}
                         >
-                          Terapkan
+                          {translatePhrase("Terapkan", locale) || "Terapkan"}
                         </button>
                       </div>
                     </div>
@@ -283,11 +324,11 @@ export default function PartnerManagementStaff() {
               <table className="pm-table">
                 <thead>
                   <tr>
-                    <th className="pm-col-name">NAMA PERUSAHAAN</th>
-                    <th className="pm-col-business">TIPE BISNIS</th>
-                    <th className="pm-col-date">TANGGAL PENGAJUAN</th>
-                    <th className="pm-col-status">STATUS VERIFIKASI</th>
-                    <th className="pm-col-action">AKSI</th>
+                    <th className="pm-col-name">{translatePhrase("NAMA PERUSAHAAN", locale) || "NAMA PERUSAHAAN"}</th>
+                    <th className="pm-col-business">{translatePhrase("TIPE BISNIS", locale) || "TIPE BISNIS"}</th>
+                    <th className="pm-col-date">{translatePhrase("TANGGAL PENGAJUAN", locale) || "TANGGAL PENGAJUAN"}</th>
+                    <th className="pm-col-status">{translatePhrase("STATUS VERIFIKASI", locale) || "STATUS VERIFIKASI"}</th>
+                    <th className="pm-col-action">{translatePhrase("AKSI", locale) || "AKSI"}</th>
                   </tr>
                 </thead>
 
@@ -331,7 +372,7 @@ export default function PartnerManagementStaff() {
 
                           <td>
                             <span className={`pm-status-badge ${partner.status}`}>
-                              {getStatusLabel(partner.status)}
+                              {getStatusLabel(partner.status, locale)}
                             </span>
                           </td>
 
@@ -359,7 +400,11 @@ export default function PartnerManagementStaff() {
                         colSpan={5}
                         style={{ padding: "32px 16px", textAlign: "center", color: "#6b7280" }}
                       >
-                        {loading ? "Memuat data partner..." : "Belum ada data partner."}
+                        {loading
+                          ? translatePhrase("Memuat data partner...", locale) ||
+                            "Memuat data partner..."
+                          : translatePhrase("Belum ada data partner.", locale) ||
+                            "Belum ada data partner."}
                       </td>
                     </tr>
                   )}
@@ -369,7 +414,11 @@ export default function PartnerManagementStaff() {
 
             <div className="pm-table-footer">
               <p>
-                Menampilkan {pagination.start}-{pagination.end} dari {filteredPartners.length} data
+                {translatePhrase(
+                  `Menampilkan ${pagination.start}-${pagination.end} dari ${filteredPartners.length} data`,
+                  locale
+                ) ||
+                  `Menampilkan ${pagination.start}-${pagination.end} dari ${filteredPartners.length} data`}
               </p>
 
               <div className="pm-pagination">
@@ -379,7 +428,7 @@ export default function PartnerManagementStaff() {
                   disabled={pagination.currentPage <= 1}
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 >
-                  Previous
+                  {translatePhrase("Previous", locale) || "Previous"}
                 </button>
                 <button
                   className="pm-page-btn wide"
@@ -389,7 +438,7 @@ export default function PartnerManagementStaff() {
                     setCurrentPage((prev) => Math.min(prev + 1, pagination.totalPages))
                   }
                 >
-                  Next
+                  {translatePhrase("Next", locale) || "Next"}
                 </button>
               </div>
             </div>

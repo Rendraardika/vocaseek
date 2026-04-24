@@ -17,6 +17,8 @@ import {
 import { pickFirstMediaValue } from "../../../utils/media";
 import { getApiErrorMessage } from "../../../services/auth";
 import { deleteAdminTalent, getAdminTalents } from "../../../services/admin";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -198,11 +200,23 @@ function StatCard({ title, value, change, changeType, icon, iconClass }) {
 
 export default function TalentManagement() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [talents, setTalents] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isLoading, setIsLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [deletingId, setDeletingId] = React.useState("");
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const loadTalents = React.useCallback(async () => {
     setIsLoading(true);
@@ -268,15 +282,20 @@ export default function TalentManagement() {
         iconClass: "tm-stat-icon purple",
       },
       {
-        title: "Talenta Baru (Bulan Ini)",
+        title:
+          translatePhrase("Talenta Baru (Bulan Ini)", locale) ||
+          "Talenta Baru (Bulan Ini)",
         value: String(reviewing),
-        change: reviewing > 0 ? `${reviewing} menunggu review` : "Belum ada review baru",
+        change:
+          reviewing > 0
+            ? `${reviewing} ${translatePhrase("menunggu review", locale) || "menunggu review"}`
+            : translatePhrase("Belum ada review baru", locale) || "Belum ada review baru",
         changeType: reviewing > 0 ? "warning" : "neutral",
         icon: <UserPlus size={22} />,
         iconClass: "tm-stat-icon orange",
       },
     ];
-  }, [talents]);
+  }, [locale, talents]);
 
   const { totalPages, pageItems: paginatedTalents } = React.useMemo(
     () => paginateItems(talents, currentPage, ITEMS_PER_PAGE),

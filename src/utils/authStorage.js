@@ -3,6 +3,67 @@ import { saveLanguagePreference } from "./languagePreference";
 export const AUTH_STORAGE_KEY = "vocaseek_auth";
 const AUTH_FLAG_KEY = "isLoggedIn";
 const LEGACY_TOKEN_KEY = "token";
+const AUTH_SCOPE_KEYS = {
+  intern: "intern",
+  company: "company",
+  staff: "staff",
+  super: "super",
+};
+
+function getScopedStorageKey(baseKey, scope) {
+  return `${baseKey}_${scope}`;
+}
+
+function normalizeAuthScope(value = "") {
+  const normalizedValue = String(value || "").trim().toLowerCase();
+
+  if (
+    normalizedValue.includes("company") ||
+    normalizedValue.includes("mitra")
+  ) {
+    return AUTH_SCOPE_KEYS.company;
+  }
+
+  if (normalizedValue.includes("staff")) {
+    return AUTH_SCOPE_KEYS.staff;
+  }
+
+  if (normalizedValue.includes("super")) {
+    return AUTH_SCOPE_KEYS.super;
+  }
+
+  return AUTH_SCOPE_KEYS.intern;
+}
+
+function getScopeFromPathname(pathname = "") {
+  const normalizedPath = String(pathname || "").trim().toLowerCase();
+
+  if (
+    normalizedPath.startsWith("/admin/mitra") ||
+    normalizedPath.startsWith("/login-company") ||
+    normalizedPath.startsWith("/register-company")
+  ) {
+    return AUTH_SCOPE_KEYS.company;
+  }
+
+  if (normalizedPath.startsWith("/admin/staff")) {
+    return AUTH_SCOPE_KEYS.staff;
+  }
+
+  if (normalizedPath.startsWith("/admin")) {
+    return AUTH_SCOPE_KEYS.super;
+  }
+
+  return AUTH_SCOPE_KEYS.intern;
+}
+
+function getActiveAuthScope() {
+  if (typeof window === "undefined") {
+    return AUTH_SCOPE_KEYS.intern;
+  }
+
+  return getScopeFromPathname(window.location.pathname);
+}
 
 function getSessionStorage() {
   if (typeof window === "undefined") {
@@ -20,11 +81,31 @@ function getLocalStorage() {
   return window.localStorage;
 }
 
-function clearAllAuthStorage() {
+function clearScopedAuthStorage(scope) {
   if (typeof window === "undefined") {
     return;
   }
 
+  const scopedAuthStorageKey = getScopedStorageKey(AUTH_STORAGE_KEY, scope);
+  const scopedAuthFlagKey = getScopedStorageKey(AUTH_FLAG_KEY, scope);
+  const scopedLegacyTokenKey = getScopedStorageKey(LEGACY_TOKEN_KEY, scope);
+
+  window.sessionStorage.removeItem(scopedAuthStorageKey);
+  window.sessionStorage.removeItem(scopedAuthFlagKey);
+  window.sessionStorage.removeItem(scopedLegacyTokenKey);
+  window.localStorage.removeItem(scopedAuthStorageKey);
+  window.localStorage.removeItem(scopedAuthFlagKey);
+  window.localStorage.removeItem(scopedLegacyTokenKey);
+}
+
+function clearAllAuthStorage() {
+  Object.values(AUTH_SCOPE_KEYS).forEach(clearScopedAuthStorage);
+
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  // Bersihkan key lama supaya sesi lintas-portal tidak saling menimpa lagi.
   window.sessionStorage.removeItem(AUTH_STORAGE_KEY);
   window.sessionStorage.removeItem(AUTH_FLAG_KEY);
   window.sessionStorage.removeItem(LEGACY_TOKEN_KEY);
@@ -36,6 +117,10 @@ function clearAllAuthStorage() {
 function persistAuthSession(normalized, options = {}) {
   const sessionStorage = getSessionStorage();
   const localStorage = getLocalStorage();
+  const scope = normalizeAuthScope(options.scope || normalized?.role);
+  const scopedAuthStorageKey = getScopedStorageKey(AUTH_STORAGE_KEY, scope);
+  const scopedAuthFlagKey = getScopedStorageKey(AUTH_FLAG_KEY, scope);
+  const scopedLegacyTokenKey = getScopedStorageKey(LEGACY_TOKEN_KEY, scope);
   const persistent =
     typeof options.persistent === "boolean"
       ? options.persistent
@@ -43,38 +128,78 @@ function persistAuthSession(normalized, options = {}) {
   const payloadToStore = {
     ...normalized,
     persistent,
+    scope,
   };
   const serialized = JSON.stringify(payloadToStore);
 
-  sessionStorage?.setItem(AUTH_STORAGE_KEY, serialized);
-  sessionStorage?.setItem(AUTH_FLAG_KEY, "true");
+  sessionStorage?.setItem(scopedAuthStorageKey, serialized);
+  sessionStorage?.setItem(scopedAuthFlagKey, "true");
   if (payloadToStore?.token) {
-    sessionStorage?.setItem(LEGACY_TOKEN_KEY, payloadToStore.token);
+    sessionStorage?.setItem(scopedLegacyTokenKey, payloadToStore.token);
   }
 
   if (persistent) {
-    localStorage?.setItem(AUTH_STORAGE_KEY, serialized);
-    localStorage?.setItem(AUTH_FLAG_KEY, "true");
+    localStorage?.setItem(scopedAuthStorageKey, serialized);
+    localStorage?.setItem(scopedAuthFlagKey, "true");
     if (payloadToStore?.token) {
-      localStorage?.setItem(LEGACY_TOKEN_KEY, payloadToStore.token);
+      localStorage?.setItem(scopedLegacyTokenKey, payloadToStore.token);
     }
   } else {
-    localStorage?.removeItem(AUTH_STORAGE_KEY);
-    localStorage?.removeItem(AUTH_FLAG_KEY);
-    localStorage?.removeItem(LEGACY_TOKEN_KEY);
+    localStorage?.removeItem(scopedAuthStorageKey);
+    localStorage?.removeItem(scopedAuthFlagKey);
+    localStorage?.removeItem(scopedLegacyTokenKey);
   }
+
+  // Matikan penyimpanan auth global lama agar token antar-portal tidak saling menimpa.
+  sessionStorage?.removeItem(AUTH_STORAGE_KEY);
+  sessionStorage?.removeItem(AUTH_FLAG_KEY);
+  sessionStorage?.removeItem(LEGACY_TOKEN_KEY);
+  localStorage?.removeItem(AUTH_STORAGE_KEY);
+  localStorage?.removeItem(AUTH_FLAG_KEY);
+  localStorage?.removeItem(LEGACY_TOKEN_KEY);
 }
 
-function getLegacyToken() {
+function getLegacyToken(scope = getActiveAuthScope()) {
   if (typeof window === "undefined") {
     return "";
   }
 
   return (
-    window.sessionStorage.getItem(LEGACY_TOKEN_KEY) ||
-    window.localStorage.getItem(LEGACY_TOKEN_KEY) ||
+    window.sessionStorage.getItem(getScopedStorageKey(LEGACY_TOKEN_KEY, scope)) ||
+    window.localStorage.getItem(getScopedStorageKey(LEGACY_TOKEN_KEY, scope)) ||
     ""
   );
+}
+
+function getLegacyScopedSession(scope) {
+  const sessionStorage = getSessionStorage();
+  const localStorage = getLocalStorage();
+  const legacySession =
+    sessionStorage?.getItem(AUTH_STORAGE_KEY) ||
+    localStorage?.getItem(AUTH_STORAGE_KEY) ||
+    "";
+
+  if (!legacySession) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(legacySession);
+    const legacyScope = normalizeAuthScope(
+      parsed?.scope || parsed?.role || parsed?.user?.role || parsed?.raw?.role,
+    );
+
+    if (legacyScope !== scope) {
+      return null;
+    }
+
+    return {
+      ...parsed,
+      scope,
+    };
+  } catch {
+    return null;
+  }
 }
 
 function syncLocaleFromPayload(payload) {
@@ -133,13 +258,23 @@ export function saveAuthSession(payload, meta = {}) {
       "",
     persistent: Boolean(meta.remember),
     raw: payload,
+    scope: normalizeAuthScope(
+      payload?.role ||
+        payload?.data?.role ||
+        payloadUser?.role ||
+        rawPayload?.role ||
+        meta.scope,
+    ),
   };
 
   if (!getSessionStorage() && !getLocalStorage()) {
     return normalized;
   }
 
-  persistAuthSession(normalized, { persistent: normalized.persistent });
+  persistAuthSession(normalized, {
+    persistent: normalized.persistent,
+    scope: normalized.scope,
+  });
   window.dispatchEvent(new Event("auth-changed"));
 
   return normalized;
@@ -168,11 +303,15 @@ export function updateAuthSession(updater) {
     identifier: nextValue?.identifier ?? current.identifier ?? "",
     persistent: nextValue?.persistent ?? current.persistent ?? false,
     raw: nextValue?.raw ?? current.raw ?? null,
+    scope: nextValue?.scope ?? current.scope ?? getActiveAuthScope(),
   };
 
   syncLocaleFromPayload(normalized.raw);
 
-  persistAuthSession(normalized, { persistent: normalized.persistent });
+  persistAuthSession(normalized, {
+    persistent: normalized.persistent,
+    scope: normalized.scope,
+  });
   window.dispatchEvent(new Event("auth-changed"));
 
   return normalized;
@@ -182,17 +321,28 @@ export function getAuthSession() {
   try {
     const sessionStorage = getSessionStorage();
     const localStorage = getLocalStorage();
+    const scope = getActiveAuthScope();
+    const scopedAuthStorageKey = getScopedStorageKey(AUTH_STORAGE_KEY, scope);
     if (!sessionStorage && !localStorage) return null;
 
-    const sessionSaved = sessionStorage?.getItem(AUTH_STORAGE_KEY);
+    const sessionSaved = sessionStorage?.getItem(scopedAuthStorageKey);
     if (sessionSaved) {
       const parsed = JSON.parse(sessionSaved);
       return parsed;
     }
 
-    const localSaved = localStorage?.getItem(AUTH_STORAGE_KEY);
+    const localSaved = localStorage?.getItem(scopedAuthStorageKey);
     if (!localSaved) {
-      const legacyToken = getLegacyToken();
+      const legacyScopedSession = getLegacyScopedSession(scope);
+      if (legacyScopedSession) {
+        persistAuthSession(legacyScopedSession, {
+          persistent: Boolean(legacyScopedSession?.persistent),
+          scope,
+        });
+        return legacyScopedSession;
+      }
+
+      const legacyToken = getLegacyToken(scope);
 
       return legacyToken
         ? {
@@ -201,6 +351,7 @@ export function getAuthSession() {
             role: "",
             identifier: "",
             raw: null,
+            scope,
           }
         : null;
     }
@@ -214,17 +365,19 @@ export function getAuthSession() {
           ...parsed,
           persistent: true,
         },
-        { persistent: true },
+        { persistent: true, scope },
       );
     }
 
     return {
       ...parsed,
       persistent: true,
+      scope,
     };
   } catch (error) {
     console.error("Gagal membaca sesi auth:", error);
-    const legacyToken = getLegacyToken();
+    const scope = getActiveAuthScope();
+    const legacyToken = getLegacyToken(scope);
 
     if (legacyToken) {
       return {
@@ -233,6 +386,7 @@ export function getAuthSession() {
         role: "",
         identifier: "",
         raw: null,
+        scope,
       };
     }
 
@@ -241,7 +395,8 @@ export function getAuthSession() {
 }
 
 export function getAccessToken() {
-  return getAuthSession()?.token || getLegacyToken() || "";
+  const scope = getActiveAuthScope();
+  return getAuthSession()?.token || getLegacyToken(scope) || "";
 }
 
 export function getUserRole() {
@@ -272,7 +427,7 @@ export function resolveUserHomeRoute(roleValue) {
 }
 
 export function clearAuthSession() {
-  clearAllAuthStorage();
+  clearScopedAuthStorage(getActiveAuthScope());
   window.dispatchEvent(new Event("auth-changed"));
 }
 

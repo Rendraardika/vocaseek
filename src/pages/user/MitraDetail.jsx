@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import mitraData from "../../components/user/MitraData";
 import "../../styles/mitradetail.css";
@@ -6,6 +6,8 @@ import {
   getScopedItem,
   USER_STORAGE_KEYS,
 } from "../../utils/userScopedStorage";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 
 function MitraHeroLogo({ name, logoUrl }) {
   const [hasError, setHasError] = useState(false);
@@ -15,7 +17,11 @@ function MitraHeroLogo({ name, logoUrl }) {
     .toUpperCase();
 
   return (
-    <div className={`mitra-detail-logo ${!logoUrl || hasError ? "is-fallback" : ""}`}>
+    <div
+      className={`mitra-detail-logo ${
+        !logoUrl || hasError ? "is-fallback" : ""
+      }`}
+    >
       {logoUrl && !hasError ? (
         <img
           src={logoUrl}
@@ -36,10 +42,26 @@ function parseMissionItems(mission) {
     .filter(Boolean);
 }
 
+function translateDynamicText(text, locale) {
+  return translatePhrase(text, locale) || text;
+}
+
 export default function MitraDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const [locale, setLocale] = useState(getSavedLanguage());
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const dynamicPartners = (() => {
     try {
@@ -61,7 +83,12 @@ export default function MitraDetail() {
   const mitra = dynamicMitra || staticMitra;
 
   if (!mitra) {
-    return <h2 style={{ padding: "40px" }}>Mitra tidak ditemukan</h2>;
+    return (
+      <h2 style={{ padding: "40px" }}>
+        {translatePhrase("Mitra tidak ditemukan", locale) ||
+          "Mitra tidak ditemukan"}
+      </h2>
+    );
   }
 
   const activeJobs = mitra.jobs?.length
@@ -82,7 +109,8 @@ export default function MitraDetail() {
           <div>
             <h1>{mitra.name}</h1>
             <p>
-              {mitra.industry} • {mitra.location}
+              {translateDynamicText(mitra.industry, locale)} |{" "}
+              {translateDynamicText(mitra.location, locale)}
             </p>
           </div>
         </div>
@@ -91,36 +119,49 @@ export default function MitraDetail() {
       <div className="mitra-detail-container">
         <div>
           <div className="mitra-card-box">
-            <h2>Tentang Perusahaan</h2>
-            <p>{mitra.description}</p>
+            <h2>
+              {translatePhrase("Tentang Perusahaan", locale) ||
+                "Tentang Perusahaan"}
+            </h2>
+            <p>{translateDynamicText(mitra.description, locale)}</p>
             <p>
-              Perusahaan ini berkomitmen menghadirkan inovasi berkelanjutan dan
-              menciptakan dampak positif bagi masyarakat serta industri nasional.
+              {translatePhrase(
+                "Perusahaan ini berkomitmen menghadirkan inovasi berkelanjutan dan menciptakan dampak positif bagi masyarakat serta industri nasional.",
+                locale
+              ) ||
+                "Perusahaan ini berkomitmen menghadirkan inovasi berkelanjutan dan menciptakan dampak positif bagi masyarakat serta industri nasional."}
             </p>
           </div>
 
           <div className="mitra-vision-mission">
             <div className="mitra-card-box">
-              <h3>Visi</h3>
-              <p>{visionText}</p>
+              <h3>{translatePhrase("Visi", locale) || "Visi"}</h3>
+              <p>{translateDynamicText(visionText, locale)}</p>
             </div>
 
             <div className="mitra-card-box">
-              <h3>Misi</h3>
+              <h3>{translatePhrase("Misi", locale) || "Misi"}</h3>
               {missionItems.length > 0 ? (
                 <ul>
                   {missionItems.map((item, index) => (
-                    <li key={`${item}-${index}`}>{item}</li>
+                    <li key={`${item}-${index}`}>
+                      {translateDynamicText(item, locale)}
+                    </li>
                   ))}
                 </ul>
               ) : (
-                <p>Misi perusahaan belum diisi.</p>
+                <p>
+                  {translatePhrase("Misi perusahaan belum diisi.", locale) ||
+                    "Misi perusahaan belum diisi."}
+                </p>
               )}
             </div>
           </div>
 
           <div className="mitra-card-box" style={{ marginTop: "30px" }}>
-            <h3>Lowongan Aktif</h3>
+            <h3>
+              {translatePhrase("Lowongan Aktif", locale) || "Lowongan Aktif"}
+            </h3>
 
             {activeJobs.map((job, i) => (
               <div
@@ -130,9 +171,16 @@ export default function MitraDetail() {
                 <div>
                   <strong>{typeof job === "string" ? job : job.title}</strong>
                   <br />
-                  <span>{typeof job === "string" ? mitra.location : job.location}</span>
+                  <span>
+                    {translateDynamicText(
+                      typeof job === "string" ? mitra.location : job.location,
+                      locale
+                    )}
+                  </span>
                 </div>
-                <button className="mitra-apply-btn">Lamar</button>
+                <button className="mitra-apply-btn">
+                  {translatePhrase("Lamar", locale) || "Lamar"}
+                </button>
               </div>
             ))}
           </div>
@@ -140,33 +188,38 @@ export default function MitraDetail() {
 
         <div>
           <div className="mitra-sidebar-box">
-            <h3>Informasi</h3>
+            <h3>{translatePhrase("Informasi", locale) || "Informasi"}</h3>
             <p>
-              <strong>Industri:</strong> {mitra.industry}
+              <strong>{translatePhrase("Industri:", locale) || "Industri:"}</strong>{" "}
+              {translateDynamicText(mitra.industry, locale)}
             </p>
             <p>
-              <strong>Lokasi:</strong> {mitra.location}
+              <strong>{translatePhrase("Lokasi:", locale) || "Lokasi:"}</strong>{" "}
+              {translateDynamicText(mitra.location, locale)}
             </p>
             <p>
-              <strong>Karyawan:</strong> {mitra.size || "500 - 1000"}
+              <strong>{translatePhrase("Karyawan:", locale) || "Karyawan:"}</strong>{" "}
+              {mitra.size || "500 - 1000"}
             </p>
           </div>
 
           <div className="mitra-sidebar-box">
-            <h3>Kontak</h3>
+            <h3>{translatePhrase("Kontak", locale) || "Kontak"}</h3>
             <p>Email: {mitra.website || "hr@company.com"}</p>
-            <p>Telepon: {mitra.phone || "+62 812 3456 7890"}</p>
+            <p>
+              {translatePhrase("Telepon:", locale) || "Telepon:"}{" "}
+              {mitra.phone || "+62 812 3456 7890"}
+            </p>
           </div>
 
-          <div className="mitra-sidebar-box mitra-verified">
-            ✔ Business Verified
-          </div>
+          <div className="mitra-sidebar-box mitra-verified">Business Verified</div>
         </div>
       </div>
 
       <div className="mitra-back-wrapper">
         <button onClick={() => navigate(-1)} className="mitra-back-btn">
-          ← Kembali ke Mitra
+          {"<- "}
+          {translatePhrase("Kembali ke Mitra", locale) || "Kembali ke Mitra"}
         </button>
       </div>
 

@@ -312,11 +312,7 @@ function App() {
               Karier Impianmu
             </h2>
 
-            <p>
-              Jembatan penghubung talenta vokasi dengan
-              <br />
-              dunia industri nyata.
-            </p>
+            <p>Jembatan penghubung talenta vokasi dengan dunia industri nyata.</p>
           </div>
 
           <Link to="/login" className="mulai-btn">

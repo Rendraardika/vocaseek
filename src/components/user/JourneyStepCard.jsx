@@ -16,15 +16,30 @@ import {
   isAkademikComplete,
   isDokumenComplete,
 } from "../../utils/journeyValidation";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 
 
 export default function PerjalananKarirmu() {
   const navigate = useNavigate();
+  const [locale, setLocale] = useState(getSavedLanguage());
   const [journeyState, setJourneyState] = useState({
     step1Completed: false,
     step2Completed: false,
     step3Completed: false,
   });
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   useEffect(() => {
     const syncJourneyState = () => {
@@ -235,11 +250,17 @@ export default function PerjalananKarirmu() {
           <FiFileText />
         </div>
         <div className="journey-step-label">LANGKAH 4</div>
-        <h3>Pantau Status</h3>
+        <h3>{translatePhrase("Pantau Status", locale) || "Pantau Status"}</h3>
         <p>
-          {journeyState.step3Completed
-            ? "Lacak proses lamaranmu di sini."
-            : "Pantau status setelah kamu berhasil apply lowongan."}
+          {translatePhrase(
+            journeyState.step3Completed
+              ? "Lacak proses lamaranmu di sini."
+              : "Pantau status setelah kamu berhasil apply lowongan.",
+            locale
+          ) ||
+            (journeyState.step3Completed
+              ? "Lacak proses lamaranmu di sini."
+              : "Pantau status setelah kamu berhasil apply lowongan.")}
         </p>
 
         {journeyState.step3Completed && (
@@ -248,7 +269,8 @@ export default function PerjalananKarirmu() {
             className="journey-btn"
             onClick={() => navigate("/status-lamaran")}
           >
-            Lihat Status Lamaran
+            {translatePhrase("Lihat Status Lamaran", locale) ||
+              "Lihat Status Lamaran"}
           </button>
         )}
       </div>
