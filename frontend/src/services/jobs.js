@@ -1,5 +1,6 @@
 import api from "../lib/api";
 import { pickFirstMediaValue } from "../utils/media";
+import { getSavedLanguage } from "../utils/languagePreference";
 
 const COMPANY_JOBS_ENDPOINT = "/company/jobs";
 const PUBLIC_JOBS_ENDPOINT = "/popular-vacancies";
@@ -60,11 +61,14 @@ function formatLongDate(value) {
     return value;
   }
 
-  return date.toLocaleDateString("id-ID", {
+  return date.toLocaleDateString(
+    getSavedLanguage() === "en" ? "en-US" : "id-ID",
+    {
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
+    }
+  );
 }
 
 function formatSalary(value) {
@@ -92,13 +96,26 @@ function formatRelativeTime(value) {
   const diffMs = Date.now() - date.getTime();
   const diffMinutes = Math.max(0, Math.floor(diffMs / 60000));
 
-  if (diffMinutes < 60) return `${Math.max(diffMinutes, 1)} menit lalu`;
+  const locale = getSavedLanguage();
+
+  if (diffMinutes < 60) {
+    const count = Math.max(diffMinutes, 1);
+    return locale === "en"
+      ? `${count} minute${count === 1 ? "" : "s"} ago`
+      : `${count} menit lalu`;
+  }
 
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours} jam lalu`;
+  if (diffHours < 24) {
+    return locale === "en"
+      ? `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`
+      : `${diffHours} jam lalu`;
+  }
 
   const diffDays = Math.floor(diffHours / 24);
-  return `${diffDays} hari lalu`;
+  return locale === "en"
+    ? `${diffDays} day${diffDays === 1 ? "" : "s"} ago`
+    : `${diffDays} hari lalu`;
 }
 
 function normalizeWorkSetting(value) {
@@ -270,7 +287,9 @@ export function mapPublicJob(job) {
     postedAt: formatRelativeTime(job?.created_at),
     description: cleanText(job?.deskripsi_pekerjaan),
     qualifications: splitLines(job?.persyaratan),
-    benefits: salary ? [`Insentif: ${salary}`] : [],
+    benefits: salary
+      ? [getSavedLanguage() === "en" ? `Allowance: ${salary}` : `Insentif: ${salary}`]
+      : [],
     education: null,
     documents: null,
     dates: {

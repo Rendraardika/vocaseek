@@ -24,6 +24,8 @@ import {
   Clock3,
 } from "lucide-react";
 import { FaInstagram, FaLinkedinIn, FaTwitter } from "react-icons/fa";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 function InfoCard({ children, className = "" }) {
   return (
@@ -80,10 +82,22 @@ function syncCompanyProfileStorage(profile) {
 
 export default function CompanyProfile() {
   const navigate = useNavigate();
+  const [locale, setLocale] = useState(getSavedLanguage());
   const [profile, setProfile] = useState(null);
   const [activeJobs, setActiveJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -172,7 +186,7 @@ export default function CompanyProfile() {
               className="company-profile__edit-btn"
             >
               <Eye size={16} />
-              Edit Profile
+              {translatePhrase("Edit Profile", locale) || "Edit Profile"}
             </button>
           </div>
 
@@ -224,7 +238,8 @@ export default function CompanyProfile() {
                 <div className="company-profile__header-right">
                   <div className="company-profile__active-job-badge">
                     <BriefcaseBusiness size={16} />
-                    {activeJobs.length} Lowongan Aktif
+                    {activeJobs.length}{" "}
+                    {translatePhrase("Lowongan Aktif", locale) || "Lowongan Aktif"}
                   </div>
                 </div>
               </div>
@@ -240,12 +255,12 @@ export default function CompanyProfile() {
                     className="company-profile__office-title-icon"
                   />
                   <h2 className="company-profile__section-title">
-                    Office Location
+                    {translatePhrase("Office Location", locale) || "Office Location"}
                   </h2>
                 </div>
 
                 <div className="company-profile__label-small">
-                  Alamat Lengkap
+                  {translatePhrase("Alamat Lengkap", locale) || "Alamat Lengkap"}
                 </div>
                 <div className="company-profile__headquarter-address">
                   {profile?.alamat_kantor_pusat ? (
@@ -260,7 +275,9 @@ export default function CompanyProfile() {
 
               <div className="company-profile__vision-mission-grid">
                 <InfoCard className="company-profile__card-padding-lg">
-                  <h2 className="company-profile__section-title">Visi</h2>
+                  <h2 className="company-profile__section-title">
+                    {translatePhrase("Visi", locale) || "Visi"}
+                  </h2>
                   <div className="company-profile__headquarter-address">
                     {profile?.visi ? (
                       <p className="company-profile__address-detail">
@@ -273,7 +290,9 @@ export default function CompanyProfile() {
                 </InfoCard>
 
                 <InfoCard className="company-profile__card-padding-lg">
-                  <h2 className="company-profile__section-title">Misi</h2>
+                  <h2 className="company-profile__section-title">
+                    {translatePhrase("Misi", locale) || "Misi"}
+                  </h2>
                   <div className="company-profile__headquarter-address">
                     {profile?.misi ? (
                       <p className="company-profile__address-detail">
@@ -289,13 +308,13 @@ export default function CompanyProfile() {
               <div className="company-profile__jobs-section">
                 <div className="company-profile__jobs-header">
                   <h2 className="company-profile__jobs-title">
-                    Lowongan Aktif
+                    {translatePhrase("Lowongan Aktif", locale) || "Lowongan Aktif"}
                   </h2>
                   <button
                     onClick={() => navigate("/admin/mitra/lowongan")}
                     className="company-profile__see-all-btn"
                   >
-                    Lihat Semua →
+                    {translatePhrase("Lihat Semua ->", locale) || "Lihat Semua ->"}
                   </button>
                 </div>
 
@@ -314,7 +333,8 @@ export default function CompanyProfile() {
                   ) : (
                     <InfoCard className="company-profile__card-padding-md">
                       <div style={{ textAlign: "center", color: "#6b7280" }}>
-                        Belum ada lowongan aktif.
+                        {translatePhrase("Belum ada lowongan aktif.", locale) ||
+                          "Belum ada lowongan aktif."}
                       </div>
                     </InfoCard>
                   )}
@@ -351,7 +371,7 @@ export default function CompanyProfile() {
                     />
                     <div>
                       <div className="company-profile__info-label">
-                        Industri
+                        {translatePhrase("Industri", locale) || "Industri"}
                       </div>
                       <div className="company-profile__info-value">
                         {profile?.industri || <EmptyValue />}
@@ -366,7 +386,8 @@ export default function CompanyProfile() {
                     />
                     <div>
                       <div className="company-profile__info-label">
-                        Ukuran Perusahaan
+                        {translatePhrase("Ukuran Perusahaan", locale) ||
+                          "Ukuran Perusahaan"}
                       </div>
                       <div className="company-profile__info-value">
                         {profile?.ukuran_perusahaan || <EmptyValue />}
@@ -391,7 +412,7 @@ export default function CompanyProfile() {
 
               <InfoCard className="company-profile__card-padding-md">
                 <h3 className="company-profile__side-title">
-                  Informasi Kontak
+                  {translatePhrase("Informasi Kontak", locale) || "Informasi Kontak"}
                 </h3>
 
                 <div className="company-profile__contact-list">
@@ -402,7 +423,7 @@ export default function CompanyProfile() {
                     />
                     <div>
                       <div className="company-profile__contact-label">
-                        Telepon
+                        {translatePhrase("Telepon", locale) || "Telepon"}
                       </div>
                       <div className="company-profile__contact-value">
                         {profile?.notelp || <EmptyValue />}
@@ -426,7 +447,9 @@ export default function CompanyProfile() {
               </InfoCard>
 
               <InfoCard className="company-profile__card-padding-md">
-                <h3 className="company-profile__side-title">Social Presence</h3>
+                <h3 className="company-profile__side-title">
+                  {translatePhrase("Social Presence", locale) || "Social Presence"}
+                </h3>
 
                 <div className="company-profile__social-row">
                   <button
@@ -455,15 +478,17 @@ export default function CompanyProfile() {
 
               <InfoCard className="company-profile__card-padding-md">
                 <div className="company-profile__verification-label">
-                  Verification
+                  {translatePhrase("Verification", locale) || "Verification"}
                 </div>
 
                 <div className="company-profile__verification-status">
                   <ShieldCheck size={18} />
                   <span>
                     {profile?.status_mitra === "active"
-                      ? "Mitra terverifikasi"
-                      : "Menunggu verifikasi"}
+                      ? translatePhrase("Mitra terverifikasi", locale) ||
+                        "Mitra terverifikasi"
+                      : translatePhrase("Menunggu verifikasi", locale) ||
+                        "Menunggu verifikasi"}
                   </span>
                 </div>
               </InfoCard>

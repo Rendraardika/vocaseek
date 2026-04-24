@@ -16,6 +16,8 @@ import {
 import { normalizeCompanyCandidateStatus } from "../../../utils/applicationStatus";
 import { pickFirstMediaValue } from "../../../utils/media";
 import { mapTalentDetailPayload } from "../../../utils/talentProfile";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 import { useNavigate } from "react-router-dom";
 import {
@@ -276,7 +278,7 @@ function CandidateRow({
               onEditStatus?.();
             }}
           >
-            Ubah
+            Change
             <br />
             Status
           </button>
@@ -372,7 +374,7 @@ function CandidateCard({ candidate, onClick, onEditStatus, onViewDetail }) {
             onViewDetail?.();
           }}
         >
-          Ubah Status
+          Change Status
         </button>
       </div>
     </div>
@@ -465,6 +467,7 @@ function ChangeStatusModal({
 
 export default function TalentManagement({ mode = "all" }) {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
 
   const [candidateList, setCandidateList] = React.useState([]);
   const [stats, setStats] = React.useState({
@@ -482,6 +485,17 @@ export default function TalentManagement({ mode = "all" }) {
   const [errorMessage, setErrorMessage] = React.useState("");
 
   const isShortlistedPage = mode === "shortlisted";
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   React.useEffect(() => {
     const loadCandidates = async () => {
@@ -657,7 +671,10 @@ export default function TalentManagement({ mode = "all" }) {
   const topSummary = isShortlistedPage
     ? null
     : `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredCandidates.length} results`;
-  const bottomSummary = `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredCandidates.length} hasil`;
+  const bottomSummary =
+    locale === "en"
+      ? `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredCandidates.length} results`
+      : `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredCandidates.length} hasil`;
 
   return (
     <div className="tm-layout">
@@ -667,13 +684,19 @@ export default function TalentManagement({ mode = "all" }) {
         <section className="tm-page">
           <div className="tm-breadcrumbs">
             <span>ADMIN &gt; </span>
-            <span>MANAJEMEN TALENT</span>
+            <span>
+              {translatePhrase("MANAJEMEN TALENT", locale) || "MANAJEMEN TALENT"}
+            </span>
             <span>›</span>
-            <span className="tm-breadcrumbs__active">{pageBreadcrumb}</span>
+            <span className="tm-breadcrumbs__active">
+              {translatePhrase(pageBreadcrumb, locale) || pageBreadcrumb}
+            </span>
           </div>
 
           <div className="tm-header">
-            <h1 className="tm-page__title">{pageTitle}</h1>
+            <h1 className="tm-page__title">
+              {translatePhrase(pageTitle, locale) || pageTitle}
+            </h1>
           </div>
 
           {errorMessage && <div className="tm-alert tm-alert--error">{errorMessage}</div>}
@@ -735,12 +758,16 @@ export default function TalentManagement({ mode = "all" }) {
 
           <div className="tm-stats-grid">
             <StatCard
-              title="Total Diterima"
+              title={translatePhrase("Total Diterima", locale) || "Total Diterima"}
               value={String(stats.accepted)}
               subtitle={
                 stats.accepted > 0
-                  ? `${stats.accepted} kandidat sudah diterima`
-                  : "Belum ada kandidat diterima"
+                  ? `${stats.accepted} ${
+                      translatePhrase("kandidat sudah diterima", locale) ||
+                      "kandidat sudah diterima"
+                    }`
+                  : translatePhrase("Belum ada kandidat diterima", locale) ||
+                    "Belum ada kandidat diterima"
               }
               extra={<span className="tm-growth">{stats.accepted_this_month}</span>}
               icon={<Star size={18} className="tm-text-blue" />}
@@ -748,16 +775,22 @@ export default function TalentManagement({ mode = "all" }) {
             />
 
             <StatCard
-              title="Status Pending"
+              title={translatePhrase("Status Pending", locale) || "Status Pending"}
               value={String(stats.pending)}
               subtitle={
                 stats.pending > 0
-                  ? `${stats.pending} kandidat sedang menunggu keputusan`
-                  : "Belum ada kandidat pending"
+                  ? `${stats.pending} ${
+                      translatePhrase("kandidat sedang menunggu keputusan", locale) ||
+                      "kandidat sedang menunggu keputusan"
+                    }`
+                  : translatePhrase("Belum ada kandidat pending", locale) ||
+                    "Belum ada kandidat pending"
               }
               extra={
                 <Badge className="tm-badge--upcoming">
-                  {stats.pending > 0 ? "Aktif" : "Kosong"}
+                  {stats.pending > 0
+                    ? translatePhrase("Aktif", locale) || "Aktif"
+                    : translatePhrase("Kosong", locale) || "Kosong"}
                 </Badge>
               }
               icon={<CalendarDays size={18} className="tm-text-purple" />}
@@ -765,14 +798,20 @@ export default function TalentManagement({ mode = "all" }) {
             />
 
             <StatCard
-              title="Diterima Bulan Ini"
+              title={translatePhrase("Diterima Bulan Ini", locale) || "Diterima Bulan Ini"}
               value={String(stats.accepted_this_month)}
               subtitle={
                 stats.accepted_this_month > 0
-                  ? "Kandidat baru diterima bulan ini"
-                  : "Belum ada kandidat diterima"
+                  ? translatePhrase("Kandidat baru diterima bulan ini", locale) ||
+                    "Kandidat baru diterima bulan ini"
+                  : translatePhrase("Belum ada kandidat diterima", locale) ||
+                    "Belum ada kandidat diterima"
               }
-              extra={<span className="tm-extra-text">kandidat</span>}
+              extra={
+                <span className="tm-extra-text">
+                  {translatePhrase("kandidat", locale) || "kandidat"}
+                </span>
+              }
               icon={<CircleCheck size={18} className="tm-text-green" />}
               iconWrapClass="tm-bg-light-green"
             />
@@ -784,12 +823,24 @@ export default function TalentManagement({ mode = "all" }) {
                 <table className="tm-table">
                   <thead className="tm-table__head">
                     <tr className="tm-table__head-row">
-                      <th className="tm-table__heading">Kandidat</th>
-                      <th className="tm-table__heading">Posisi</th>
-                      <th className="tm-table__heading">Tipe Pekerjaan</th>
-                      <th className="tm-table__heading">Tanggal Daftar</th>
-                      <th className="tm-table__heading">Status</th>
-                      <th className="tm-table__heading">Aksi</th>
+                      <th className="tm-table__heading">
+                        {translatePhrase("Kandidat", locale) || "Kandidat"}
+                      </th>
+                      <th className="tm-table__heading">
+                        {translatePhrase("Posisi", locale) || "Posisi"}
+                      </th>
+                      <th className="tm-table__heading">
+                        {translatePhrase("Tipe Pekerjaan", locale) || "Tipe Pekerjaan"}
+                      </th>
+                      <th className="tm-table__heading">
+                        {translatePhrase("Tanggal Daftar", locale) || "Tanggal Daftar"}
+                      </th>
+                      <th className="tm-table__heading">
+                        {translatePhrase("Status", locale) || "Status"}
+                      </th>
+                      <th className="tm-table__heading">
+                        {translatePhrase("Aksi", locale) || "Aksi"}
+                      </th>
                     </tr>
                   </thead>
 

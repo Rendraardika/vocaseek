@@ -4,7 +4,6 @@ import Sidebar from "../../../components/admin/Sidebar";
 import "../../../styles/UserManagement.css";
 import {
   Ban,
-  MailPlus,
   Pencil,
   Plus,
   RotateCcw,
@@ -25,6 +24,8 @@ import {
   getManagedAdminUsers,
   resendAdminInvitation,
 } from "../../../services/admin";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -78,6 +79,7 @@ function ActionConfirmModal({
   title,
   description,
   confirmLabel,
+  locale,
   onClose,
   onConfirm,
 }) {
@@ -97,7 +99,7 @@ function ActionConfirmModal({
 
         <div className="um-modal-actions">
           <button type="button" className="um-modal-cancel" onClick={onClose}>
-            Batal
+            {translatePhrase("Batal", locale) || "Batal"}
           </button>
           <button type="button" className="um-modal-confirm" onClick={onConfirm}>
             {confirmLabel}
@@ -111,7 +113,7 @@ function ActionConfirmModal({
 export default function UserManagement() {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [admins, setAdmins] = React.useState([]);
   const [stats, setStats] = React.useState({
     total_admin: 0,
@@ -130,6 +132,17 @@ export default function UserManagement() {
     invitationId: null,
   });
 
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
+
   const loadAdmins = React.useCallback(async () => {
     setIsLoading(true);
     setErrorMessage("");
@@ -138,11 +151,13 @@ export default function UserManagement() {
       const response = await getManagedAdminUsers();
       const payload = response?.data || {};
 
-      setStats(payload?.stats || {
-        total_admin: 0,
-        super_admin: 0,
-        staff_admin: 0,
-      });
+      setStats(
+        payload?.stats || {
+          total_admin: 0,
+          super_admin: 0,
+          staff_admin: 0,
+        },
+      );
       setAdmins(extractAdminCollection(payload).map(mapAdminRow));
     } catch (error) {
       setAdmins([]);
@@ -166,26 +181,29 @@ export default function UserManagement() {
     return () => window.clearTimeout(timer);
   }, [successMessage]);
 
-  const statCards = React.useMemo(() => [
-    {
-      title: "Total Admin",
-      value: String(stats.total_admin || 0),
-      icon: <UserRound size={22} strokeWidth={2.2} />,
-      iconClass: "um-stat-icon blue",
-    },
-    {
-      title: "Super Admin",
-      value: String(stats.super_admin || 0),
-      icon: <ShieldCheck size={22} strokeWidth={2.2} />,
-      iconClass: "um-stat-icon purple",
-    },
-    {
-      title: "Admin Staff",
-      value: String(stats.staff_admin || 0),
-      icon: <UserSearch size={22} strokeWidth={2.2} />,
-      iconClass: "um-stat-icon green",
-    },
-  ], [stats]);
+  const statCards = React.useMemo(
+    () => [
+      {
+        title: translatePhrase("Total Admin", locale) || "Total Admin",
+        value: String(stats.total_admin || 0),
+        icon: <UserRound size={22} strokeWidth={2.2} />,
+        iconClass: "um-stat-icon blue",
+      },
+      {
+        title: translatePhrase("Super Admin", locale) || "Super Admin",
+        value: String(stats.super_admin || 0),
+        icon: <ShieldCheck size={22} strokeWidth={2.2} />,
+        iconClass: "um-stat-icon purple",
+      },
+      {
+        title: translatePhrase("Admin Staff", locale) || "Admin Staff",
+        value: String(stats.staff_admin || 0),
+        icon: <UserSearch size={22} strokeWidth={2.2} />,
+        iconClass: "um-stat-icon green",
+      },
+    ],
+    [locale, stats],
+  );
 
   const { totalPages, pageItems: paginatedAdmins } = React.useMemo(
     () => paginateItems(admins, currentPage, ITEMS_PER_PAGE),
@@ -256,18 +274,35 @@ export default function UserManagement() {
       <main className="um-main">
         <section className="um-content">
           <div className="breadcrumb">
-            <span>ADMIN</span>
+            <span>{translatePhrase("ADMIN", locale) || "ADMIN"}</span>
             <span>&gt;</span>
-            <span className="active">MANAJEMEN USER</span>
+            <span className="active">
+              {translatePhrase("MANAJEMEN USER", locale) || "MANAJEMEN USER"}
+            </span>
           </div>
 
-          <h1 className="um-page-title">Manajemen Admin Website</h1>
+          <h1 className="um-page-title">
+            {translatePhrase("Manajemen Admin Website", locale) ||
+              "Manajemen Admin Website"}
+          </h1>
           <p className="um-page-subtitle">
-            Kelola admin internal, pantau status invitation, dan tindak lanjuti aktivasi akun admin staff.
+            {translatePhrase(
+              "Kelola admin internal, pantau status invitation, dan tindak lanjuti aktivasi akun admin staff.",
+              locale,
+            ) ||
+              "Kelola admin internal, pantau status invitation, dan tindak lanjuti aktivasi akun admin staff."}
           </p>
 
-          {errorMessage ? <div className="um-alert error">{errorMessage}</div> : null}
-          {successMessage ? <div className="um-alert success">{successMessage}</div> : null}
+          {errorMessage ? (
+            <div className="um-alert error">
+              {translatePhrase(errorMessage, locale) || errorMessage}
+            </div>
+          ) : null}
+          {successMessage ? (
+            <div className="um-alert success">
+              {translatePhrase(successMessage, locale) || successMessage}
+            </div>
+          ) : null}
 
           <div className="um-stats-grid">
             {statCards.map((item) => (
@@ -285,9 +320,16 @@ export default function UserManagement() {
           <div className="um-table-card">
             <div className="um-table-header">
               <div>
-                <h2>Daftar Admin Internal</h2>
+                <h2>
+                  {translatePhrase("Daftar Admin Internal", locale) ||
+                    "Daftar Admin Internal"}
+                </h2>
                 <p className="um-table-subtitle">
-                  Status invitation akan diperbarui otomatis sesuai aktivitas aktivasi akun.
+                  {translatePhrase(
+                    "Status invitation akan diperbarui otomatis sesuai aktivitas aktivasi akun.",
+                    locale,
+                  ) ||
+                    "Status invitation akan diperbarui otomatis sesuai aktivitas aktivasi akun."}
                 </p>
               </div>
 
@@ -297,7 +339,10 @@ export default function UserManagement() {
                 onClick={() => navigate("/admin/user-management/add-admin")}
               >
                 <Plus size={18} strokeWidth={2.5} />
-                <span>Tambah Admin Website</span>
+                <span>
+                  {translatePhrase("Tambah Admin Website", locale) ||
+                    "Tambah Admin Website"}
+                </span>
               </button>
             </div>
 
@@ -305,10 +350,18 @@ export default function UserManagement() {
               <table className="um-table">
                 <thead>
                   <tr>
-                    <th className="col-name">NAMA &amp; EMAIL</th>
-                    <th className="col-role">ROLE</th>
-                    <th className="col-status">STATUS</th>
-                    <th className="col-action">AKSI</th>
+                    <th className="col-name">
+                      {translatePhrase("NAMA & EMAIL", locale) || "NAMA & EMAIL"}
+                    </th>
+                    <th className="col-role">
+                      {translatePhrase("ROLE", locale) || "ROLE"}
+                    </th>
+                    <th className="col-status">
+                      {translatePhrase("STATUS", locale) || "STATUS"}
+                    </th>
+                    <th className="col-action">
+                      {translatePhrase("AKSI", locale) || "AKSI"}
+                    </th>
                   </tr>
                 </thead>
 
@@ -323,7 +376,8 @@ export default function UserManagement() {
                             <h4>{admin.name}</h4>
                             <p>{admin.email}</p>
                             <span className="um-user-meta">
-                              Diundang oleh: {admin.invitedBy || "-"}
+                              {translatePhrase("Diundang oleh:", locale) || "Diundang oleh:"}{" "}
+                              {admin.invitedBy || "-"}
                             </span>
                           </div>
                         </div>
@@ -331,18 +385,21 @@ export default function UserManagement() {
 
                       <td>
                         <span className={`um-role-badge ${admin.roleClass}`}>
-                          {admin.roleLabel}
+                          {translatePhrase(admin.roleLabel, locale) || admin.roleLabel}
                         </span>
                       </td>
 
                       <td>
                         <span className={`um-status ${admin.statusClass}`}>
                           <span className="um-status-dot" />
-                          {admin.statusLabel}
+                          {translatePhrase(admin.statusLabel, locale) || admin.statusLabel}
                         </span>
                         {admin.invitationExpiresAt && admin.status !== "active" ? (
                           <div className="um-status-meta">
-                            Berlaku sampai {new Date(admin.invitationExpiresAt).toLocaleString("id-ID")}
+                            {translatePhrase("Berlaku sampai", locale) || "Berlaku sampai"}{" "}
+                            {new Date(admin.invitationExpiresAt).toLocaleString(
+                              locale === "en" ? "en-US" : "id-ID",
+                            )}
                           </div>
                         ) : null}
                       </td>
@@ -356,7 +413,7 @@ export default function UserManagement() {
                               onClick={() => handleResendInvitation(admin.invitationId)}
                             >
                               <RotateCcw size={14} />
-                              Kirim Ulang
+                              {translatePhrase("Kirim Ulang", locale) || "Kirim Ulang"}
                             </button>
                           ) : null}
 
@@ -373,7 +430,7 @@ export default function UserManagement() {
                               }
                             >
                               <Ban size={14} />
-                              Batalkan
+                              {translatePhrase("Batalkan", locale) || "Batalkan"}
                             </button>
                           ) : null}
 
@@ -414,7 +471,8 @@ export default function UserManagement() {
                   {isLoading ? (
                     <tr>
                       <td colSpan="4" className="um-empty-state">
-                        Memuat data admin...
+                        {translatePhrase("Memuat data admin...", locale) ||
+                          "Memuat data admin..."}
                       </td>
                     </tr>
                   ) : null}
@@ -422,7 +480,8 @@ export default function UserManagement() {
                   {!isLoading && admins.length === 0 ? (
                     <tr>
                       <td colSpan="4" className="um-empty-state">
-                        Belum ada data admin internal.
+                        {translatePhrase("Belum ada data admin internal.", locale) ||
+                          "Belum ada data admin internal."}
                       </td>
                     </tr>
                   ) : null}
@@ -432,7 +491,9 @@ export default function UserManagement() {
 
             <div className="um-table-footer">
               <p>
-                Menampilkan {paginationMeta.start} sampai {paginationMeta.end} dari {admins.length} hasil
+                {locale === "en"
+                  ? `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${admins.length} results`
+                  : `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${admins.length} hasil`}
               </p>
 
               {admins.length > 0 ? (
@@ -443,11 +504,16 @@ export default function UserManagement() {
                     disabled={paginationMeta.currentPage === 1}
                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   >
-                    Previous
+                    {translatePhrase("Previous", locale) || "Previous"}
                   </button>
                   {pageNumbers.map((pageNumber, index) =>
                     pageNumber === "ellipsis" ? (
-                      <button key={`ellipsis-${index}`} className="um-page-btn muted" type="button" disabled>
+                      <button
+                        key={`ellipsis-${index}`}
+                        className="um-page-btn muted"
+                        type="button"
+                        disabled
+                      >
                         ...
                       </button>
                     ) : (
@@ -466,10 +532,12 @@ export default function UserManagement() {
                     type="button"
                     disabled={paginationMeta.currentPage === paginationMeta.totalPages}
                     onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, paginationMeta.totalPages))
+                      setCurrentPage((prev) =>
+                        Math.min(prev + 1, paginationMeta.totalPages),
+                      )
                     }
                   >
-                    Next
+                    {translatePhrase("Next", locale) || "Next"}
                   </button>
                 </div>
               ) : null}
@@ -480,18 +548,36 @@ export default function UserManagement() {
 
       <ActionConfirmModal
         open={modalState.type === "delete"}
-        title="Hapus Admin?"
-        description="Data admin akan dihapus dari sistem. Tindakan ini tidak dapat dibatalkan."
-        confirmLabel="Hapus Admin"
+        title={translatePhrase("Hapus Admin?", locale) || "Hapus Admin?"}
+        description={
+          translatePhrase(
+            "Data admin akan dihapus dari sistem. Tindakan ini tidak dapat dibatalkan.",
+            locale,
+          ) ||
+          "Data admin akan dihapus dari sistem. Tindakan ini tidak dapat dibatalkan."
+        }
+        confirmLabel={translatePhrase("Hapus Admin", locale) || "Hapus Admin"}
+        locale={locale}
         onClose={closeModal}
         onConfirm={handleDeleteAdmin}
       />
 
       <ActionConfirmModal
         open={modalState.type === "cancel"}
-        title="Batalkan Undangan?"
-        description="Tautan aktivasi akan dinonaktifkan dan admin tidak dapat menggunakannya lagi."
-        confirmLabel="Batalkan Undangan"
+        title={
+          translatePhrase("Batalkan Undangan?", locale) || "Batalkan Undangan?"
+        }
+        description={
+          translatePhrase(
+            "Tautan aktivasi akan dinonaktifkan dan admin tidak dapat menggunakannya lagi.",
+            locale,
+          ) ||
+          "Tautan aktivasi akan dinonaktifkan dan admin tidak dapat menggunakannya lagi."
+        }
+        confirmLabel={
+          translatePhrase("Batalkan Undangan", locale) || "Batalkan Undangan"
+        }
+        locale={locale}
         onClose={closeModal}
         onConfirm={handleCancelInvitation}
       />

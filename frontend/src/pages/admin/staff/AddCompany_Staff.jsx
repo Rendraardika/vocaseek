@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { getApiErrorMessage } from "../../../services/auth";
 import { createAdminPartner } from "../../../services/admin";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const INDUSTRY_OPTIONS = [
   "Teknologi Informasi",
@@ -41,6 +43,7 @@ function SaveConfirmationModal({
   onClose,
   onConfirm,
   isSubmitting,
+  locale,
 }) {
   if (!open) return null;
 
@@ -53,11 +56,14 @@ function SaveConfirmationModal({
           </div>
         </div>
 
-        <h3 className="ac-modal-title">Simpan Perubahan?</h3>
+        <h3 className="ac-modal-title">
+          {translatePhrase("Simpan Perubahan?", locale) || "Simpan Perubahan?"}
+        </h3>
         <p className="ac-modal-text">
-          Apakah Anda yakin ingin menambah
+          {(translatePhrase("Apakah Anda yakin ingin menambah", locale) ||
+            "Apakah Anda yakin ingin menambah")}
           <br />
-          Perusahaan ini?
+          {translatePhrase("Perusahaan ini?", locale) || "Perusahaan ini?"}
         </p>
 
         <div className="ac-modal-actions">
@@ -67,7 +73,7 @@ function SaveConfirmationModal({
             onClick={onClose}
             disabled={isSubmitting}
           >
-            Tidak
+            {translatePhrase("Tidak", locale) || "Tidak"}
           </button>
 
           <button
@@ -76,7 +82,9 @@ function SaveConfirmationModal({
             onClick={onConfirm}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Menyimpan..." : "Iya"}
+            {isSubmitting
+              ? translatePhrase("Menyimpan...", locale) || "Menyimpan..."
+              : translatePhrase("Iya", locale) || "Iya"}
           </button>
         </div>
       </div>
@@ -137,11 +145,23 @@ function buildPartnerPayload(form) {
 
 export default function AddCompany() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [form, setForm] = React.useState(INITIAL_FORM);
   const [openModal, setOpenModal] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const handleBack = () => {
     navigate(-1);
@@ -167,11 +187,20 @@ export default function AddCompany() {
       const payload = buildPartnerPayload(form);
       await createAdminPartner(payload);
 
-      setSuccessMessage("Mitra baru berhasil ditambahkan.");
+      setSuccessMessage(
+        translatePhrase("Mitra baru berhasil ditambahkan.", locale) ||
+          "Mitra baru berhasil ditambahkan.",
+      );
       setOpenModal(false);
       navigate("/admin/staff/partners");
     } catch (error) {
-      setErrorMessage(getApiErrorMessage(error, "Gagal menambahkan mitra baru."));
+      setErrorMessage(
+        getApiErrorMessage(
+          error,
+          translatePhrase("Gagal menambahkan mitra baru.", locale) ||
+            "Gagal menambahkan mitra baru.",
+        ),
+      );
       setOpenModal(false);
     } finally {
       setIsSubmitting(false);
@@ -188,16 +217,22 @@ export default function AddCompany() {
             <div>
               <div className="ac-breadcrumb">
                 <span>ADMIN &gt; </span>
-                <span>PARTNERS &gt; </span>
-                <span className="active">TAMBAH MITRA</span>
+                <span>{translatePhrase("PARTNERS", locale) || "PARTNERS"} &gt; </span>
+                <span className="active">
+                  {translatePhrase("TAMBAH MITRA", locale) || "TAMBAH MITRA"}
+                </span>
               </div>
 
-              <h1 className="ac-page-title">Tambah Mitra Baru</h1>
+              <h1 className="ac-page-title">
+                {translatePhrase("Tambah Mitra Baru", locale) || "Tambah Mitra Baru"}
+              </h1>
             </div>
 
             <button type="button" className="ac-back-btn" onClick={handleBack}>
               <ArrowLeft size={15} />
-              <span>Kembali ke Daftar</span>
+              <span>
+                {translatePhrase("Kembali ke Daftar", locale) || "Kembali ke Daftar"}
+              </span>
             </button>
           </div>
 
@@ -216,18 +251,28 @@ export default function AddCompany() {
           <form className="ac-form" onSubmit={handleSubmit}>
             <div className="ac-card">
               <div className="ac-card-head">
-                <h2>Informasi Dasar Perusahaan</h2>
-                <p>Detail utama profil perusahaan mitra.</p>
+                <h2>
+                  {translatePhrase("Informasi Dasar Perusahaan", locale) ||
+                    "Informasi Dasar Perusahaan"}
+                </h2>
+                <p>
+                  {translatePhrase("Detail utama profil perusahaan mitra.", locale) ||
+                    "Detail utama profil perusahaan mitra."}
+                </p>
 
                 <div className="ac-field full">
                   <label>
-                    Nama Perusahaan <span>*</span>
+                    {translatePhrase("Nama Perusahaan", locale) || "Nama Perusahaan"}{" "}
+                    <span>*</span>
                   </label>
                   <input
                     type="text"
                     value={form.nama_perusahaan}
                     onChange={handleChange("nama_perusahaan")}
-                    placeholder="Masukkan nama perusahaan"
+                    placeholder={
+                      translatePhrase("Masukkan nama perusahaan", locale) ||
+                      "Masukkan nama perusahaan"
+                    }
                     required
                   />
                 </div>
@@ -235,7 +280,7 @@ export default function AddCompany() {
                 <div className="ac-grid-2">
                   <div className="ac-field">
                     <label>
-                      Industri <span>*</span>
+                      {translatePhrase("Industri", locale) || "Industri"} <span>*</span>
                     </label>
                     <div className="ac-select-wrap">
                       <select
@@ -245,7 +290,7 @@ export default function AddCompany() {
                       >
                         {INDUSTRY_OPTIONS.map((option) => (
                           <option key={option} value={option}>
-                            {option}
+                            {translatePhrase(option, locale) || option}
                           </option>
                         ))}
                       </select>
@@ -268,29 +313,44 @@ export default function AddCompany() {
                 </div>
 
                 <div className="ac-field full">
-                  <label>Deskripsi Singkat</label>
+                  <label>
+                    {translatePhrase("Deskripsi Singkat", locale) || "Deskripsi Singkat"}
+                  </label>
                   <textarea
                     rows={4}
                     value={form.description}
                     onChange={handleChange("description")}
                     maxLength={500}
                   />
-                  <small>Maksimal 500 karakter.</small>
+                  <small>
+                    {translatePhrase("Maksimal 500 karakter.", locale) ||
+                      "Maksimal 500 karakter."}
+                  </small>
                 </div>
               </div>
             </div>
 
             <div className="ac-card">
               <div className="ac-card-head">
-                <h2>Kontak PIC (Person In Charge)</h2>
-                <p>Informasi kontak penanggung jawab dari pihak mitra.</p>
+                <h2>
+                  {translatePhrase("Kontak PIC (Person In Charge)", locale) ||
+                    "Kontak PIC (Person In Charge)"}
+                </h2>
+                <p>
+                  {translatePhrase(
+                    "Informasi kontak penanggung jawab dari pihak mitra.",
+                    locale,
+                  ) || "Informasi kontak penanggung jawab dari pihak mitra."}
+                </p>
               </div>
 
               <div className="ac-card-body">
                 <div className="ac-grid-2">
                   <div className="ac-field">
                     <label>
-                      Nama Lengkap PIC <span>*</span>
+                      {translatePhrase("Nama Lengkap PIC", locale) ||
+                        "Nama Lengkap PIC"}{" "}
+                      <span>*</span>
                     </label>
                     <input
                       type="text"
@@ -302,7 +362,7 @@ export default function AddCompany() {
 
                   <div className="ac-field">
                     <label>
-                      Jabatan <span>*</span>
+                      {translatePhrase("Jabatan", locale) || "Jabatan"} <span>*</span>
                     </label>
                     <input
                       type="text"
@@ -316,13 +376,17 @@ export default function AddCompany() {
                 <div className="ac-grid-2">
                   <div className="ac-field">
                     <label>
-                      Alamat Email <span>*</span>
+                      {translatePhrase("Alamat Email", locale) || "Alamat Email"}{" "}
+                      <span>*</span>
                     </label>
                     <div className="ac-icon-input">
                       <Mail size={15} />
                       <input
                         type="email"
-                        placeholder="pic@perusahaan.com"
+                        placeholder={
+                          translatePhrase("pic@perusahaan.com", locale) ||
+                          "pic@perusahaan.com"
+                        }
                         value={form.email}
                         onChange={handleChange("email")}
                         required
@@ -332,7 +396,9 @@ export default function AddCompany() {
 
                   <div className="ac-field">
                     <label>
-                      Nomor Telepon / WhatsApp <span>*</span>
+                      {translatePhrase("Nomor Telepon / WhatsApp", locale) ||
+                        "Nomor Telepon / WhatsApp"}{" "}
+                      <span>*</span>
                     </label>
                     <div className="ac-icon-input">
                       <Phone size={15} />
@@ -351,13 +417,18 @@ export default function AddCompany() {
 
             <div className="ac-card">
               <div className="ac-card-head">
-                <h2>Alamat Kantor</h2>
-                <p>Lokasi operasional utama perusahaan.</p>
+                <h2>{translatePhrase("Alamat Kantor", locale) || "Alamat Kantor"}</h2>
+                <p>
+                  {translatePhrase("Lokasi operasional utama perusahaan.", locale) ||
+                    "Lokasi operasional utama perusahaan."}
+                </p>
               </div>
 
               <div className="ac-card-body">
                 <div className="ac-field full">
-                  <label>Alamat Lengkap</label>
+                  <label>
+                    {translatePhrase("Alamat Lengkap", locale) || "Alamat Lengkap"}
+                  </label>
                       <input
                         type="text"
                         value={form.alamat_kantor_pusat}
@@ -368,7 +439,7 @@ export default function AddCompany() {
 
                     <div className="ac-grid-3">
                       <div className="ac-field">
-                        <label>Kota</label>
+                        <label>{translatePhrase("Kota", locale) || "Kota"}</label>
                         <input
                           type="text"
                           value={form.kota}
@@ -378,7 +449,7 @@ export default function AddCompany() {
                       </div>
 
                       <div className="ac-field">
-                        <label>Provinsi</label>
+                        <label>{translatePhrase("Provinsi", locale) || "Provinsi"}</label>
                         <input
                           type="text"
                           value={form.provinsi}
@@ -388,7 +459,7 @@ export default function AddCompany() {
                       </div>
 
                       <div className="ac-field">
-                        <label>Kode Pos</label>
+                        <label>{translatePhrase("Kode Pos", locale) || "Kode Pos"}</label>
                         <input
                           type="text"
                           value={form.kode_pos}
@@ -402,12 +473,16 @@ export default function AddCompany() {
 
             <div className="ac-actions">
               <button type="button" className="ac-cancel-btn" onClick={handleBack}>
-                Batal
+                {translatePhrase("Batal", locale) || "Batal"}
               </button>
 
               <button type="submit" className="ac-save-btn" disabled={isSubmitting}>
                 <Save size={15} />
-                <span>{isSubmitting ? "Menyimpan..." : "Simpan Mitra"}</span>
+                <span>
+                  {isSubmitting
+                    ? translatePhrase("Menyimpan...", locale) || "Menyimpan..."
+                    : translatePhrase("Simpan Mitra", locale) || "Simpan Mitra"}
+                </span>
               </button>
             </div>
           </form>
@@ -421,6 +496,7 @@ export default function AddCompany() {
         onClose={() => setOpenModal(false)}
         onConfirm={handleConfirmSave}
         isSubmitting={isSubmitting}
+        locale={locale}
       />
     </div>
   );

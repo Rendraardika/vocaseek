@@ -17,6 +17,8 @@ import {
   clearStoredCompanyProfile,
   getStoredCompanyProfile,
 } from "../../utils/profileStorage";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 
 function resolveCompanyDisplayName(session) {
   const user = session?.user;
@@ -81,6 +83,7 @@ function getCompanyInitials(name) {
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [locale, setLocale] = useState(getSavedLanguage());
   const [isOpen, setIsOpen] = useState(false);
   const [companyMeta, setCompanyMeta] = useState(() => {
     const session = getAuthSession();
@@ -147,6 +150,17 @@ export default function Sidebar() {
       navigate("/login", { replace: true });
     }
   };
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   useEffect(() => {
     setIsOpen(false);
@@ -240,7 +254,9 @@ export default function Sidebar() {
                     className={`sidebar-menu-item ${item.active ? "active" : ""}`}
                   >
                     <Icon size={18} strokeWidth={2.1} />
-                    <span className="sidebar-menu-text">{item.label}</span>
+                    <span className="sidebar-menu-text">
+                      {translatePhrase(item.label, locale) || item.label}
+                    </span>
                   </button>
 
                   {item.label === "Manajemen Talent" && item.active && (
@@ -254,7 +270,7 @@ export default function Sidebar() {
                           isAllCandidates ? "active" : ""
                         }`}
                       >
-                        Semua Kandidat
+                        {translatePhrase("Semua Kandidat", locale) || "Semua Kandidat"}
                       </button>
 
                       <button
@@ -268,7 +284,7 @@ export default function Sidebar() {
                           isShortlisted ? "active highlight" : ""
                         }`}
                       >
-                        Kandidat Terpilih
+                        {translatePhrase("Kandidat Terpilih", locale) || "Kandidat Terpilih"}
                       </button>
                     </div>
                   )}
@@ -296,7 +312,9 @@ export default function Sidebar() {
 
             <div className="sidebar-user-info">
               <p className="sidebar-user-name">{companyMeta.displayName || "Company"}</p>
-              <p className="sidebar-user-role">Company</p>
+              <p className="sidebar-user-role">
+                {translatePhrase("Company", locale) || "Company"}
+              </p>
             </div>
 
             <button type="button" className="sidebar-logout-btn" onClick={handleLogout}>

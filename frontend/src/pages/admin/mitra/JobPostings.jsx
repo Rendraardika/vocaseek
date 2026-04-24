@@ -26,6 +26,8 @@ import {
   getPaginationMeta,
   paginateItems,
 } from "../../../utils/pagination";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -137,12 +139,24 @@ const INITIAL_ROWS = [];
 
 export default function JobPostings() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [jobRows, setJobRows] = React.useState(INITIAL_ROWS);
   const [activeTab, setActiveTab] = React.useState("All");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const loadJobs = React.useCallback(async () => {
     setIsLoading(true);
@@ -261,13 +275,16 @@ export default function JobPostings() {
             <p className="dashboard-mitra__breadcrumb">
               <span>ADMIN &gt; </span>
               <span className="dashboard-mitra__breadcrumb-active">
-                MANAJEMEN LOWONGAN
+                {translatePhrase("MANAJEMEN LOWONGAN", locale) ||
+                  "MANAJEMEN LOWONGAN"}
               </span>
             </p>
           </div>
 
           <div className="job-postings__header">
-            <h1 className="job-postings__title">Job Postings</h1>
+            <h1 className="job-postings__title">
+              {translatePhrase("Job Postings", locale) || "Job Postings"}
+            </h1>
 
             <button
               type="button"
@@ -275,40 +292,48 @@ export default function JobPostings() {
               className="job-postings__create-btn"
             >
               <Plus size={20} />
-              Create New Job
+              {translatePhrase("Create New Job", locale) || "Create New Job"}
             </button>
           </div>
 
           <div className="job-postings__stats-grid">
             <StatBox
-              title="Total Jobs"
+              title={translatePhrase("Total Jobs", locale) || "Total Jobs"}
               value={stats.total}
               subtitle={
-                stats.total > 0 ? "Total lowongan dibuat" : "Belum ada lowongan"
+                stats.total > 0
+                  ? translatePhrase("Total lowongan dibuat", locale) ||
+                    "Total lowongan dibuat"
+                  : translatePhrase("Belum ada lowongan", locale) ||
+                    "Belum ada lowongan"
               }
               icon={<BriefcaseBusiness size={20} />}
               iconBg="job-postings__icon-bg--blue"
               iconColor="job-postings__icon-color--blue"
             />
             <StatBox
-              title="Active Openings"
+              title={translatePhrase("Active Openings", locale) || "Active Openings"}
               value={stats.active}
               subtitle={
                 stats.active > 0
-                  ? "Lowongan sedang dibuka"
-                  : "Belum ada lowongan aktif"
+                  ? translatePhrase("Lowongan sedang dibuka", locale) ||
+                    "Lowongan sedang dibuka"
+                  : translatePhrase("Belum ada lowongan aktif", locale) ||
+                    "Belum ada lowongan aktif"
               }
               icon={<CircleCheck size={20} />}
               iconBg="job-postings__icon-bg--green"
               iconColor="job-postings__icon-color--green"
             />
             <StatBox
-              title="Closed Jobs"
+              title={translatePhrase("Closed Jobs", locale) || "Closed Jobs"}
               value={stats.closed}
               subtitle={
                 stats.closed > 0
-                  ? "Lowongan sudah ditutup"
-                  : "Belum ada lowongan ditutup"
+                  ? translatePhrase("Lowongan sudah ditutup", locale) ||
+                    "Lowongan sudah ditutup"
+                  : translatePhrase("Belum ada lowongan ditutup", locale) ||
+                    "Belum ada lowongan ditutup"
               }
               icon={<FileX2 size={20} />}
               iconBg="job-postings__icon-bg--red"
@@ -365,7 +390,8 @@ export default function JobPostings() {
                 <thead className="job-postings__table-head">
                   <tr className="job-postings__table-head-row">
                     <th className="job-postings__table-head-cell job-postings__table-head-cell--first">
-                      Posisi Lowongan
+                      {translatePhrase("Posisi Lowongan", locale) ||
+                        "Posisi Lowongan"}
                     </th>
                     <th className="job-postings__table-head-cell">
                       Department

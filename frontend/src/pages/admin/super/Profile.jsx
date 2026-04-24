@@ -20,6 +20,8 @@ import {
   getStoredAdminProfile,
   setStoredAdminProfile,
 } from "../../../utils/profileStorage";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 function normalizeAdminProfile(payload) {
   const source = payload?.data?.data || payload?.data || payload || {};
@@ -196,6 +198,7 @@ function PasswordSuccessModal({ open, onDone }) {
 
 export default function Profile() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
 
   const [passwordModalOpen, setPasswordModalOpen] = React.useState(false);
   const [successModalOpen, setSuccessModalOpen] = React.useState(false);
@@ -212,6 +215,17 @@ export default function Profile() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   React.useEffect(() => {
     const loadProfile = async () => {
@@ -311,7 +325,11 @@ export default function Profile() {
 
           <h1 className="pf-page-title">Profil Admin</h1>
           <p className="pf-page-subtitle">
-            Lihat informasi akun, keamanan, dan riwayat aktivitas admin.
+            {translatePhrase(
+              "Lihat informasi akun, keamanan, dan riwayat aktivitas admin.",
+              locale,
+            ) ||
+              "Lihat informasi akun, keamanan, dan riwayat aktivitas admin."}
           </p>
 
           {errorMessage && (

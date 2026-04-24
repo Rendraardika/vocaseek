@@ -2,9 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, SlidersHorizontal, ChevronDown } from "lucide-react";
 import "../../styles/admin/ApplicantsTableMitra.css";
+import { translatePhrase } from "../../i18n/phrases";
+import { getSavedLanguage } from "../../utils/languagePreference";
 
 export default function ApplicantsTable({ data = [] }) {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [statusFilter, setStatusFilter] = React.useState("all");
 
@@ -20,6 +23,17 @@ export default function ApplicantsTable({ data = [] }) {
   const filteredData = data.filter((item) => {
     return statusFilter === "all" ? true : item.status === statusFilter;
   });
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const statusClass = (status) => {
     if (status === "PENDING") return "status-badge pending";
@@ -41,7 +55,8 @@ export default function ApplicantsTable({ data = [] }) {
         <div className="applicants-table__title-wrap">
           <h2 className="applicants-table__title">Recent Applicants</h2>
           <p className="applicants-table__subtitle">
-            Candidates waiting for initial review
+            {translatePhrase("Candidates waiting for initial review", locale) ||
+              "Candidates waiting for initial review"}
           </p>
         </div>
 
@@ -53,7 +68,7 @@ export default function ApplicantsTable({ data = [] }) {
               onClick={() => setFilterOpen((prev) => !prev)}
             >
               <SlidersHorizontal size={16} />
-              <span>Filter</span>
+              <span>{translatePhrase("Filter", locale) || "Filter"}</span>
               <ChevronDown
                 size={16}
                 className={`applicants-table__filter-chevron ${filterOpen ? "open" : ""}`}
@@ -64,7 +79,7 @@ export default function ApplicantsTable({ data = [] }) {
               <div className="applicants-table__filter-dropdown">
                 <div className="applicants-table__filter-group">
                   <label className="applicants-table__filter-label">
-                    Status Kandidat
+                    {translatePhrase("Status Kandidat", locale) || "Status Kandidat"}
                   </label>
                   <select
                     className="applicants-table__filter-select"
@@ -73,7 +88,7 @@ export default function ApplicantsTable({ data = [] }) {
                   >
                     {STATUS_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {translatePhrase(option.label, locale) || option.label}
                       </option>
                     ))}
                   </select>
@@ -85,7 +100,7 @@ export default function ApplicantsTable({ data = [] }) {
                     className="applicants-table__filter-reset"
                     onClick={() => setStatusFilter("all")}
                   >
-                    Reset
+                    {translatePhrase("Reset", locale) || "Reset"}
                   </button>
 
                   <button
@@ -93,7 +108,7 @@ export default function ApplicantsTable({ data = [] }) {
                     className="applicants-table__filter-apply"
                     onClick={() => setFilterOpen(false)}
                   >
-                    Terapkan
+                    {translatePhrase("Terapkan", locale) || "Terapkan"}
                   </button>
                 </div>
               </div>
@@ -107,10 +122,10 @@ export default function ApplicantsTable({ data = [] }) {
         <table className="applicants-table__table">
           <thead>
             <tr>
-              <th>Candidate</th>
-              <th>Applied Position</th>
-              <th>Applied Date</th>
-              <th>Status</th>
+              <th>{translatePhrase("Candidate", locale) || "Candidate"}</th>
+              <th>{translatePhrase("Applied Position", locale) || "Applied Position"}</th>
+              <th>{translatePhrase("Applied Date", locale) || "Applied Date"}</th>
+              <th>{translatePhrase("Status", locale) || "Status"}</th>
               <th></th>
             </tr>
           </thead>
@@ -152,7 +167,8 @@ export default function ApplicantsTable({ data = [] }) {
             ) : (
               <tr>
                 <td colSpan={5} className="muted" style={{ textAlign: "center", padding: "32px 16px" }}>
-                  Belum ada pelamar terbaru.
+                  {translatePhrase("Belum ada pelamar terbaru.", locale) ||
+                    "Belum ada pelamar terbaru."}
                 </td>
               </tr>
             )}
@@ -189,17 +205,23 @@ export default function ApplicantsTable({ data = [] }) {
 
               <div className="applicant-card__body">
                 <div className="applicant-card__row">
-                  <span className="label">Position</span>
+                  <span className="label">
+                    {translatePhrase("Position", locale) || "Position"}
+                  </span>
                   <span className="value">{item.position}</span>
                 </div>
 
                 <div className="applicant-card__row">
-                  <span className="label">Applied Date</span>
+                  <span className="label">
+                    {translatePhrase("Applied Date", locale) || "Applied Date"}
+                  </span>
                   <span className="value muted">{item.date}</span>
                 </div>
 
                 <div className="applicant-card__row">
-                  <span className="label">Status</span>
+                  <span className="label">
+                    {translatePhrase("Status", locale) || "Status"}
+                  </span>
                   <span className={statusClass(item.status)}>{item.status}</span>
                 </div>
               </div>
@@ -207,8 +229,13 @@ export default function ApplicantsTable({ data = [] }) {
           ))
         ) : (
           <div className="applicant-card">
-            <h3 className="applicant-card__name">Belum ada pelamar</h3>
-            <p className="value muted">Data pelamar terbaru akan muncul di sini.</p>
+            <h3 className="applicant-card__name">
+              {translatePhrase("Belum ada pelamar", locale) || "Belum ada pelamar"}
+            </h3>
+            <p className="value muted">
+              {translatePhrase("Data pelamar terbaru akan muncul di sini.", locale) ||
+                "Data pelamar terbaru akan muncul di sini."}
+            </p>
           </div>
         )}
       </div>

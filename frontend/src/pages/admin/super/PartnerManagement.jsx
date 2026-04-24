@@ -18,6 +18,8 @@ import {
   getPaginationMeta,
   paginateItems,
 } from "../../../utils/pagination";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
@@ -34,6 +36,7 @@ function getStatusLabel(status) {
 
 export default function PartnerManagement() {
   const navigate = useNavigate();
+  const [locale, setLocale] = React.useState(getSavedLanguage());
   const [partners, setPartners] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [pageError, setPageError] = React.useState("");
@@ -42,6 +45,17 @@ export default function PartnerManagement() {
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [businessFilter, setBusinessFilter] = React.useState("all");
   const [currentPage, setCurrentPage] = React.useState(1);
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const loadPartners = React.useCallback(async () => {
     setLoading(true);
@@ -110,7 +124,7 @@ export default function PartnerManagement() {
         iconClass: "pm-summary-icon yellow",
         title: "Total Partner",
         value: String(totalPartners),
-        badge: `${totalPartners} terdaftar`,
+        badge: `${totalPartners} ${translatePhrase("terdaftar", locale) || "terdaftar"}`,
         badgeClass: "green",
       },
       {
@@ -118,7 +132,7 @@ export default function PartnerManagement() {
         iconClass: "pm-summary-icon blue",
         title: "Kolaborasi Aktif",
         value: String(activePartners),
-        badge: `${activePartners} aktif`,
+        badge: `${activePartners} ${translatePhrase("aktif", locale) || "aktif"}`,
         badgeClass: "green",
       },
       {
@@ -126,11 +140,11 @@ export default function PartnerManagement() {
         iconClass: "pm-summary-icon red",
         title: "Butuh Review",
         value: String(reviewPartners),
-        badge: `${reviewPartners} menunggu`,
+        badge: `${reviewPartners} ${translatePhrase("menunggu", locale) || "menunggu"}`,
         badgeClass: reviewPartners > 0 ? "red" : "green",
       },
     ];
-  }, [partners]);
+  }, [locale, partners]);
 
   return (
     <div className="pm-layout">

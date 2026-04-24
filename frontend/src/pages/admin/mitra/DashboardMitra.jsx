@@ -14,6 +14,8 @@ import {
 } from "../../../services/companyTalent";
 import { pickFirstMediaValue } from "../../../utils/media";
 import { mapTalentDetailPayload } from "../../../utils/talentProfile";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 
 function extractCandidateCollection(payload) {
   if (Array.isArray(payload)) return payload;
@@ -62,6 +64,7 @@ function resolveCandidatePhoto(source = {}) {
 }
 
 export default function DashboardMitra() {
+  const [locale, setLocale] = useState(getSavedLanguage());
   const [dashboardData, setDashboardData] = useState({
     totalApplicants: 0,
     activeJobs: 0,
@@ -69,6 +72,17 @@ export default function DashboardMitra() {
     recentApplicants: [],
   });
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -198,27 +212,37 @@ export default function DashboardMitra() {
         value: dashboardData.totalApplicants,
         subtitle:
           dashboardData.totalApplicants > 0
-            ? `${dashboardData.totalApplicants} pelamar pada company ini`
-            : "Belum ada pelamar",
+            ? `${dashboardData.totalApplicants} ${
+                translatePhrase("pelamar pada company ini", locale) ||
+                "pelamar pada company ini"
+              }`
+            : translatePhrase("Belum ada pelamar", locale) || "Belum ada pelamar",
       },
       {
         title: "ACTIVE JOB POSTS",
         value: dashboardData.activeJobs,
         subtitle:
           dashboardData.activeJobs > 0
-            ? `${dashboardData.activeJobs} lowongan aktif`
-            : "Belum ada lowongan aktif",
+            ? `${dashboardData.activeJobs} ${
+                translatePhrase("lowongan aktif", locale) || "lowongan aktif"
+              }`
+            : translatePhrase("Belum ada lowongan aktif", locale) ||
+              "Belum ada lowongan aktif",
       },
       {
         title: "SHORTLISTED",
         value: dashboardData.shortlisted,
         subtitle:
           dashboardData.shortlisted > 0
-            ? `${dashboardData.shortlisted} kandidat shortlisted`
-            : "Belum ada kandidat direview",
+            ? `${dashboardData.shortlisted} ${
+                translatePhrase("kandidat shortlisted", locale) ||
+                "kandidat shortlisted"
+              }`
+            : translatePhrase("Belum ada kandidat direview", locale) ||
+              "Belum ada kandidat direview",
       },
     ],
-    [dashboardData],
+    [dashboardData, locale],
   );
 
   return (
@@ -234,7 +258,9 @@ export default function DashboardMitra() {
             </span>
           </p>
 
-          <h1 className="dashboard-mitra__title">Company Overview</h1>
+          <h1 className="dashboard-mitra__title">
+            {translatePhrase("Company Overview", locale) || "Company Overview"}
+          </h1>
           {errorMessage ? (
             <div className="dashboard-mitra__error">{errorMessage}</div>
           ) : null}
@@ -243,7 +269,7 @@ export default function DashboardMitra() {
             {statCards.map((card) => (
               <StatCard
                 key={card.title}
-                title={card.title}
+                title={translatePhrase(card.title, locale) || card.title}
                 value={card.value}
                 subtitle={card.subtitle}
               />
