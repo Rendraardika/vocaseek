@@ -49,7 +49,11 @@ function FileItem({ document, color = "orange" }) {
 
   return (
     <div
-      onClick={available ? () => window.open(url, "_blank", "noopener,noreferrer") : undefined}
+      onClick={
+        available
+          ? () => window.open(url, "_blank", "noopener,noreferrer")
+          : undefined
+      }
       className={`detail-file-item ${available ? "clickable" : "empty"}`}
     >
       <div className="detail-file-left">
@@ -65,7 +69,9 @@ function FileItem({ document, color = "orange" }) {
           <div className={`detail-file-title ${available ? "" : "empty"}`}>
             {title}
           </div>
-          {subtitle ? <div className="detail-file-subtitle">{subtitle}</div> : null}
+          {subtitle ? (
+            <div className="detail-file-subtitle">{subtitle}</div>
+          ) : null}
         </div>
       </div>
 
@@ -90,11 +96,7 @@ function extractTalentCollection(payload) {
 
 function extractResolvedTalentId(item) {
   return String(
-    item?.user_id ||
-    item?.id ||
-    item?.user?.user_id ||
-    item?.user?.id ||
-    "",
+    item?.user_id || item?.id || item?.user?.user_id || item?.user?.id || "",
   );
 }
 
@@ -133,7 +135,8 @@ export default function TalentDetail() {
 
         try {
           const detailResponse = await getAdminTalent(id);
-          matchedItem = detailResponse?.data?.data || detailResponse?.data || null;
+          matchedItem =
+            detailResponse?.data?.data || detailResponse?.data || null;
         } catch (detailError) {
           const status = detailError?.response?.status;
 
@@ -144,8 +147,10 @@ export default function TalentDetail() {
           const response = await getAdminTalents();
           const payload = response?.data?.data || response?.data || {};
           const collection = extractTalentCollection(payload);
-          listMatchedItem = collection.find((item) =>
-            String(item?.user_id || item?.id || item?.user?.user_id || "") === String(id),
+          listMatchedItem = collection.find(
+            (item) =>
+              String(item?.user_id || item?.id || item?.user?.user_id || "") ===
+              String(id),
           );
           matchedItem = listMatchedItem;
         }
@@ -155,8 +160,11 @@ export default function TalentDetail() {
             const response = await getAdminTalents();
             const payload = response?.data?.data || response?.data || {};
             const collection = extractTalentCollection(payload);
-            listMatchedItem = collection.find((item) =>
-              String(item?.user_id || item?.id || item?.user?.user_id || "") === String(id),
+            listMatchedItem = collection.find(
+              (item) =>
+                String(
+                  item?.user_id || item?.id || item?.user?.user_id || "",
+                ) === String(id),
             );
           } catch {
             listMatchedItem = null;
@@ -164,14 +172,24 @@ export default function TalentDetail() {
         }
 
         const resolvedTalentId = extractResolvedTalentId(listMatchedItem);
-        const hasBirthDateInPrimary = Boolean(mapTalentDetailPayload(matchedItem || {}).birthDate);
+        const hasBirthDateInPrimary = Boolean(
+          mapTalentDetailPayload(matchedItem || {}).birthDate,
+        );
 
-        if (resolvedTalentId && resolvedTalentId !== String(id) && !hasBirthDateInPrimary) {
+        if (
+          resolvedTalentId &&
+          resolvedTalentId !== String(id) &&
+          !hasBirthDateInPrimary
+        ) {
           try {
             const resolvedResponse = await getAdminTalent(resolvedTalentId);
-            const resolvedItem = resolvedResponse?.data?.data || resolvedResponse?.data || null;
+            const resolvedItem =
+              resolvedResponse?.data?.data || resolvedResponse?.data || null;
 
-            if (scoreTalentPayload(resolvedItem) >= scoreTalentPayload(matchedItem)) {
+            if (
+              scoreTalentPayload(resolvedItem) >=
+              scoreTalentPayload(matchedItem)
+            ) {
               matchedItem = resolvedItem;
             }
           } catch {
@@ -198,7 +216,9 @@ export default function TalentDetail() {
       } catch (error) {
         if (!isMounted) return;
         setTalent(null);
-        setErrorMessage(getApiErrorMessage(error, "Gagal memuat detail talent."));
+        setErrorMessage(
+          getApiErrorMessage(error, "Gagal memuat detail talent."),
+        );
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -221,6 +241,7 @@ export default function TalentDetail() {
   const documents = talent?.documents || {};
   const experiences = talent?.experiences || [];
   const certifications = talent?.certifications || [];
+
   const openDocument = (url) => {
     if (!url) return;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -231,7 +252,6 @@ export default function TalentDetail() {
       <Sidebar />
 
       <main className="detail-talent-main">
-
         <section className="detail-talent-content">
           <div className="detail-breadcrumb">
             <span>ADMIN</span>
@@ -259,7 +279,11 @@ export default function TalentDetail() {
                 type="button"
                 onClick={() => {
                   if (documents.cv?.available) {
-                    window.open(documents.cv.url, "_blank", "noopener,noreferrer");
+                    window.open(
+                      documents.cv.url,
+                      "_blank",
+                      "noopener,noreferrer",
+                    );
                   }
                 }}
               >
@@ -270,7 +294,9 @@ export default function TalentDetail() {
           </div>
 
           {errorMessage && (
-            <div style={{ marginBottom: 16, color: "#d93025", fontWeight: 500 }}>
+            <div
+              style={{ marginBottom: 16, color: "#d93025", fontWeight: 500 }}
+            >
               {errorMessage}
             </div>
           )}
@@ -284,7 +310,11 @@ export default function TalentDetail() {
 
               <div className="detail-profile-section">
                 <div className="detail-avatar-wrapper">
-                  <div className={`detail-avatar-frame ${profileImage ? "" : "detail-avatar-empty"}`}>
+                  <div
+                    className={`detail-avatar-frame ${
+                      profileImage ? "" : "detail-avatar-empty"
+                    }`}
+                  >
                     {profileImage ? (
                       <img
                         src={profileImage}
@@ -303,18 +333,27 @@ export default function TalentDetail() {
                   {isLoading ? "Memuat..." : talent?.name || "-"}
                 </div>
                 <div className="detail-profile-role">
-                  {isLoading ? "Memuat data posisi..." : talent?.position || "-"}
+                  {isLoading
+                    ? "Memuat data posisi..."
+                    : talent?.position || "-"}
                 </div>
               </div>
 
               <div className="detail-biodata-box">
                 <div className="detail-box-label">Biodata</div>
-                <p>{isLoading ? "Memuat biodata..." : talent?.about || "Belum ada biodata dari backend."}</p>
+                <p>
+                  {isLoading
+                    ? "Memuat biodata..."
+                    : talent?.about || "Belum ada biodata dari backend."}
+                </p>
               </div>
 
               <div className="detail-info-list">
                 <InfoLabel title="Jenis Kelamin" value={talent?.gender} />
-                <InfoLabel title="Tempat, Tanggal Lahir" value={talent?.birthPlaceAndDate} />
+                <InfoLabel
+                  title="Tempat, Tanggal Lahir"
+                  value={talent?.birthPlaceAndDate}
+                />
                 <InfoLabel title="Email" value={talent?.email} />
                 <InfoLabel title="No Handphone" value={talent?.phone} />
                 <InfoLabel title="Alamat Domisili" value={talent?.address} />
@@ -327,7 +366,13 @@ export default function TalentDetail() {
                     className="detail-social-button"
                     type="button"
                     disabled={!talent?.linkedin}
-                    onClick={() => window.open(talent.linkedin, "_blank", "noopener,noreferrer")}
+                    onClick={() =>
+                      window.open(
+                        talent.linkedin,
+                        "_blank",
+                        "noopener,noreferrer",
+                      )
+                    }
                   >
                     <LinkIcon size={16} />
                     LinkedIn
@@ -336,7 +381,13 @@ export default function TalentDetail() {
                     className="detail-social-button"
                     type="button"
                     disabled={!talent?.instagram}
-                    onClick={() => window.open(talent.instagram, "_blank", "noopener,noreferrer")}
+                    onClick={() =>
+                      window.open(
+                        talent.instagram,
+                        "_blank",
+                        "noopener,noreferrer",
+                      )
+                    }
                   >
                     <Camera size={16} />
                     Instagram
@@ -348,7 +399,10 @@ export default function TalentDetail() {
             <div className="detail-middle-column">
               <div className="detail-card">
                 <div className="detail-card-header">
-                  <GraduationCap size={22} className="detail-card-header-icon" />
+                  <GraduationCap
+                    size={22}
+                    className="detail-card-header-icon"
+                  />
                   <h2>Data Akademik</h2>
                 </div>
 
@@ -360,13 +414,19 @@ export default function TalentDetail() {
                         {talent?.university || "Belum ada data pendidikan"}
                       </div>
                       <div className="detail-education-subtitle">
-                        {talent?.major && talent.major !== "-" ? `${talent.major}${talent.ipk ? ` • IPK ${talent.ipk}` : ""}` : "-"}
+                        {talent?.major && talent.major !== "-"
+                          ? `${talent.major}${
+                              talent.ipk ? ` • IPK ${talent.ipk}` : ""
+                            }`
+                          : "-"}
                       </div>
                       {talent?.educationDocument?.available && (
                         <button
                           type="button"
                           className="detail-file-link"
-                          onClick={() => openDocument(talent.educationDocument.url)}
+                          onClick={() =>
+                            openDocument(talent.educationDocument.url)
+                          }
                         >
                           Lihat File
                         </button>
@@ -379,22 +439,36 @@ export default function TalentDetail() {
                   <div className="detail-timeline">
                     {experiences.length > 0 ? (
                       experiences.map((experience, index) => (
-                        <div key={`experience-${index}`} className="detail-timeline-item">
+                        <div
+                          key={`experience-${index}`}
+                          className="detail-timeline-item"
+                        >
                           <div className="detail-timeline-content">
                             <div className="detail-job-title">
-                              {experience?.posisi || experience?.jabatan || experience?.title || "Pengalaman"}
+                              {experience?.posisi ||
+                                experience?.jabatan ||
+                                experience?.title ||
+                                "Pengalaman"}
                             </div>
                             <div className="detail-job-subtitle">
-                              {experience?.subtitle || experience?.perusahaan || experience?.company || experience?.deskripsi || "-"}
+                              {experience?.subtitle ||
+                                experience?.perusahaan ||
+                                experience?.company ||
+                                experience?.deskripsi ||
+                                "-"}
                             </div>
                             {experience?.period && (
-                              <div className="detail-job-subtitle">{experience.period}</div>
+                              <div className="detail-job-subtitle">
+                                {experience.period}
+                              </div>
                             )}
                             {experience?.documentUrl && (
                               <button
                                 type="button"
                                 className="detail-file-link"
-                                onClick={() => openDocument(experience.documentUrl)}
+                                onClick={() =>
+                                  openDocument(experience.documentUrl)
+                                }
                               >
                                 Lihat File
                               </button>
@@ -405,26 +479,38 @@ export default function TalentDetail() {
                     ) : (
                       <div className="detail-timeline-item">
                         <div className="detail-timeline-content">
-                          <div className="detail-job-title">Belum ada pengalaman</div>
+                          <div className="detail-job-title">
+                            Belum ada pengalaman
+                          </div>
                           <div className="detail-job-subtitle">-</div>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="detail-section-title work">Lisensi & Sertifikasi</div>
+                  <div className="detail-section-title work">
+                    Lisensi & Sertifikasi
+                  </div>
                   <div className="detail-certification-list">
                     {certifications.length > 0 ? (
                       certifications.map((certificate, index) => (
-                        <div key={`cert-${index}`} className="detail-certification-item">
+                        <div
+                          key={`cert-${index}`}
+                          className="detail-certification-item"
+                        >
                           <Chip>
-                            {certificate?.title || certificate?.nama || certificate?.sertifikasi || "Sertifikasi"}
+                            {certificate?.title ||
+                              certificate?.nama ||
+                              certificate?.sertifikasi ||
+                              "Sertifikasi"}
                           </Chip>
                           {certificate?.documentUrl && (
                             <button
                               type="button"
                               className="detail-file-link"
-                              onClick={() => openDocument(certificate.documentUrl)}
+                              onClick={() =>
+                                openDocument(certificate.documentUrl)
+                              }
                             >
                               Lihat File
                             </button>
@@ -444,20 +530,26 @@ export default function TalentDetail() {
                     <ShieldCheck size={20} className="detail-assessment-icon" />
                   </div>
                   <div>
-                    <div className="detail-assessment-title">Hasil Online Assessment</div>
+                    <div className="detail-assessment-title">
+                      Hasil Online Assessment
+                    </div>
                     <div className="detail-assessment-subtitle">
-                      {talent?.assessment?.subtitle || "Belum ada hasil assessment"}
+                      {talent?.assessment?.subtitle ||
+                        "Belum ada hasil assessment"}
                     </div>
                   </div>
                 </div>
 
                 <div className="detail-assessment-box">
-                  {talent?.assessment?.summary || "Belum ada hasil assessment untuk ditampilkan."}
+                  {talent?.assessment?.summary ||
+                    "Belum ada hasil assessment untuk ditampilkan."}
                 </div>
 
                 <div className="detail-assessment-footer">
                   <button
-                    onClick={() => navigate(`/admin/talent/${id}/assessment-review`)}
+                    onClick={() =>
+                      navigate(`/admin/talent/${id}/assessment-review`)
+                    }
                     className="detail-review-button"
                     type="button"
                   >
@@ -477,11 +569,56 @@ export default function TalentDetail() {
                 Dokumen yang telah divalidasi dan diunggah oleh kandidat.
               </p>
 
-              <FileItem document={documents.cv || { title: "Curriculum Vitae", subtitle: "Belum ada file", available: false }} color="orange" />
-              <FileItem document={documents.portfolio || { title: "Portfolio", subtitle: "Belum ada file", available: false }} color="blue" />
-              <FileItem document={documents.identity || { title: "KTP / Identitas Diri", subtitle: "Belum ada file", available: false }} color="green" />
-              <FileItem document={documents.recommendation || { title: "Surat Rekomendasi", subtitle: "Belum ada file", available: false }} color="gray" />
-              <FileItem document={documents.transcript || { title: "Transkrip Nilai", subtitle: "Belum ada file", available: false }} color="blue" />
+              <FileItem
+                document={
+                  documents.cv || {
+                    title: "Curriculum Vitae",
+                    subtitle: "Belum ada file",
+                    available: false,
+                  }
+                }
+                color="orange"
+              />
+              <FileItem
+                document={
+                  documents.portfolio || {
+                    title: "Portfolio",
+                    subtitle: "Belum ada file",
+                    available: false,
+                  }
+                }
+                color="blue"
+              />
+              <FileItem
+                document={
+                  documents.identity || {
+                    title: "KTP / Identitas Diri",
+                    subtitle: "Belum ada file",
+                    available: false,
+                  }
+                }
+                color="green"
+              />
+              <FileItem
+                document={
+                  documents.recommendation || {
+                    title: "Surat Rekomendasi",
+                    subtitle: "Belum ada file",
+                    available: false,
+                  }
+                }
+                color="gray"
+              />
+              <FileItem
+                document={
+                  documents.transcript || {
+                    title: "Transkrip Nilai",
+                    subtitle: "Belum ada file",
+                    available: false,
+                  }
+                }
+                color="blue"
+              />
             </div>
           </div>
         </section>

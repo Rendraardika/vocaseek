@@ -1,18 +1,147 @@
 import "../../../styles/admin/AssessmentReview.css";
 import { useMemo, useState } from "react";
 import Sidebar from "../../../components/admin/SidebarMitra";
-import {
-  ArrowLeft,
-  ClipboardCheck,
-  ChevronDown,
-  Check,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ClipboardCheck, ChevronDown, Check } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import { readProfileFromStorage } from "../../../components/user/ProfileStorage";
-import {
-  getPretestReviewList,
-  getPretestSummary,
-} from "../../../utils/pretestAssessment";
+import { PRETEST_QUESTION_BANK } from "../../../utils/pretestAssessment";
+
+function getPretestStorageKeys(talentId) {
+  return [
+    `PRETEST_GLOBAL_ANSWERS_${talentId}`,
+    `PRETEST_ANSWERS_${talentId}`,
+    `pretest_answers_${talentId}`,
+  ];
+}
+
+function normalizeOption(value) {
+  const val = String(value || "").trim().toLowerCase();
+
+  if (val === "iya" || val === "ya") return "iya";
+  if (val === "tidak") return "tidak";
+
+  return "belum dijawab";
+}
+
+function normalizeAnswerValue(value) {
+  const normalized = normalizeOption(value);
+
+  if (normalized === "iya") return "Iya";
+  if (normalized === "tidak") return "Tidak";
+
+  return "Belum dijawab";
+}
+
+const ANSWER_WEIGHTS = {
+  iya: 1,
+  tidak: 0,
+  "belum dijawab": 0,
+};
+
+function getPretestCategory(score) {
+  if (score >= 17) return "Sangat Baik";
+  if (score >= 13) return "Baik";
+  if (score >= 9) return "Cukup";
+  if (score >= 5) return "Kurang";
+  return "Tidak Siap";
+}
+
+function getCategorySummary(category) {
+  if (category === "Sangat Baik") {
+    return "Kandidat menunjukkan kesiapan kerja yang sangat baik. Respons yang diberikan menggambarkan perilaku kerja yang konsisten, proaktif, bertanggung jawab, mampu bekerja sama, serta cukup kuat dalam menghadapi tuntutan dan dinamika pekerjaan.";
+  }
+
+  if (category === "Baik") {
+    return "Kandidat menunjukkan kesiapan kerja yang baik. Secara umum kandidat cukup konsisten dalam tanggung jawab, kerja sama, komunikasi, dan inisiatif, namun masih terdapat beberapa area pengembangan ringan agar adaptasi dan ketahanan kerja semakin optimal.";
+  }
+
+  if (category === "Cukup") {
+    return "Kandidat menunjukkan potensi dasar dalam kesiapan kerja. Beberapa perilaku positif sudah terlihat, namun kandidat masih membutuhkan pembinaan pada aspek tanggung jawab, komunikasi, inisiatif, adaptasi, atau ketahanan dalam menyelesaikan pekerjaan.";
+  }
+
+  if (category === "Kurang") {
+    return "Kandidat masih membutuhkan pendampingan dan penguatan kesiapan kerja. Respons yang diberikan menunjukkan perlunya peningkatan pada beberapa aspek perilaku kerja seperti tanggung jawab, kerja sama, komunikasi, inisiatif, dan konsistensi dalam menjalankan tugas.";
+  }
+
+  return "Kandidat belum menunjukkan kesiapan perilaku kerja yang memadai untuk konteks intern. Diperlukan pembinaan lebih lanjut terkait tanggung jawab, adaptasi, komunikasi, kerja sama, inisiatif, dan ketahanan dalam menghadapi pekerjaan.";
+}
+
+function readPretestAnswersByTalent(talentId) {
+  if (!talentId) return [];
+
+  for (const key of getPretestStorageKeys(talentId)) {
+    const stored = localStorage.getItem(key);
+
+    if (!stored) continue;
+
+    try {
+      const parsed = JSON.parse(stored);
+
+      return Array.isArray(parsed)
+        ? parsed
+        : Object.entries(parsed).map(([questionId, value]) => ({
+            question_id: Number(questionId),
+            selected_option: value,
+          }));
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function buildPretestSummary(answersArray = []) {
+  const answeredAnswers = answersArray.filter((item) => {
+    const normalized = normalizeOption(item?.selected_option);
+    return normalized === "iya" || normalized === "tidak";
+  });
+
+  if (answeredAnswers.length === 0) {
+    return null;
+  }
+
+  const totalQuestions = 20;
+
+  const normalizedAnswers = answeredAnswers.map((item) => ({
+    ...item,
+    normalized: normalizeOption(item.selected_option),
+  }));
+
+  const totalScore = normalizedAnswers.reduce(
+    (sum, item) => sum + ANSWER_WEIGHTS[item.normalized],
+    0,
+  );
+
+  const yesCount = normalizedAnswers.filter(
+    (item) => item.normalized === "iya",
+  ).length;
+
+  const noCount = normalizedAnswers.filter(
+    (item) => item.normalized === "tidak",
+  ).length;
+
+  const answeredCount = normalizedAnswers.length;
+  const category = getPretestCategory(totalScore);
+
+  return {
+    answersArray: normalizedAnswers,
+    totalQuestions,
+    answeredCount,
+    yesCount,
+    noCount,
+    totalScore,
+    category,
+    subtitle: `Skor ${totalScore}/${totalQuestions} • ${category}`,
+    summaryText: getCategorySummary(category),
+    strongestTraits: [
+      { key: "responsibility", label: "Tanggung Jawab" },
+      { key: "teamwork", label: "Kerja Sama" },
+      { key: "communication", label: "Komunikasi" },
+      { key: "initiative", label: "Inisiatif" },
+    ],
+  };
+}
 
 function QuestionCard({
   number,
@@ -74,39 +203,66 @@ function QuestionCard({
 
 export default function AssessmentReview() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [showAllQuestions, setShowAllQuestions] = useState(false);
 
   const profile = useMemo(() => readProfileFromStorage(), []);
-  const reviewList = useMemo(() => getPretestReviewList(), []);
-  const summary = useMemo(() => getPretestSummary(reviewList), [reviewList]);
+  const answersArray = useMemo(() => readPretestAnswersByTalent(id), [id]);
+  const summary = useMemo(() => buildPretestSummary(answersArray), [answersArray]);
+
+  const reviewList = useMemo(() => {
+    if (!summary) return [];
+
+    return summary.answersArray
+      .map((item, index) => {
+        const selected = normalizeAnswerValue(item.selected_option);
+
+        const questionId = Number(
+          item.question_id || item.questionId || item.id || index + 1,
+        );
+
+        const questionData = PRETEST_QUESTION_BANK[questionId];
+
+        return {
+          number: questionId,
+          question:
+            questionData?.titleId ||
+            questionData?.titleEn ||
+            `Pertanyaan ${questionId}`,
+          selected,
+          other: selected === "Iya" ? "Tidak" : "Iya",
+          rawAnswer: item.selected_option,
+          isAnswered: selected === "Iya" || selected === "Tidak",
+        };
+      })
+      .filter((item) => item.isAnswered)
+      .sort((first, second) => first.number - second.number);
+  }, [summary]);
 
   const visibleQuestions = showAllQuestions
     ? reviewList
     : reviewList.slice(0, 4);
 
+  const candidateName = profile.fullName || "Kandidat Vocaseek";
+  const candidateRole = "Candidate Assessment Result";
+  const remainingQuestions = Math.max(
+    reviewList.length - visibleQuestions.length,
+    0,
+  );
+
   const strongestTraitsText =
-    summary.strongestTraits.length > 0
+    summary?.strongestTraits?.length > 0
       ? summary.strongestTraits
           .slice(0, 3)
           .map((item) => item.label)
           .join(", ")
-      : "belum terbaca";
-
-  const candidateName = profile.fullName || "Kandidat Vocaseek";
-  const candidateRole = "Candidate Assessment Result";
-  const remainingQuestions = Math.max(reviewList.length - visibleQuestions.length, 0);
-
-  const isAnswered = (value) => {
-    const normalized = String(value || "").trim().toLowerCase();
-    return normalized === "iya" || normalized === "ya" || normalized === "tidak";
-  };
+      : "Belum ada hasil pre-test";
 
   return (
     <div className="assessment-review">
       <Sidebar />
 
       <main className="assessment-review__main">
-
         <section className="assessment-review__section">
           <div className="assessment-review__breadcrumb">
             <span className="assessment-review__breadcrumb-muted">ADMIN</span>
@@ -126,7 +282,7 @@ export default function AssessmentReview() {
 
           <div className="assessment-review__header">
             <button
-              onClick={() => navigate("/admin/mitra/talent/kdt-001")}
+              onClick={() => navigate(`/admin/mitra/talent/${id}`)}
               className="assessment-review__back-btn"
               type="button"
             >
@@ -171,21 +327,30 @@ export default function AssessmentReview() {
 
               <div className="assessment-review__stats-grid">
                 <div className="assessment-review__stat-box">
-                  <span className="assessment-review__stat-label">Terjawab</span>
+                  <span className="assessment-review__stat-label">
+                    Terjawab
+                  </span>
                   <strong className="assessment-review__stat-value">
-                    {summary.answeredCount}/{summary.totalQuestions}
+                    {summary ? summary.answeredCount : 0}/
+                    {summary ? summary.totalQuestions : 20}
                   </strong>
                 </div>
+
                 <div className="assessment-review__stat-box">
-                  <span className="assessment-review__stat-label">Jawaban Iya</span>
+                  <span className="assessment-review__stat-label">
+                    Jawaban Iya
+                  </span>
                   <strong className="assessment-review__stat-value">
-                    {summary.yesCount}
+                    {summary ? summary.yesCount : 0}
                   </strong>
                 </div>
+
                 <div className="assessment-review__stat-box">
-                  <span className="assessment-review__stat-label">Jawaban Tidak</span>
+                  <span className="assessment-review__stat-label">
+                    Jawaban Tidak
+                  </span>
                   <strong className="assessment-review__stat-value">
-                    {summary.noCount}
+                    {summary ? summary.noCount : 0}
                   </strong>
                 </div>
               </div>
@@ -196,9 +361,20 @@ export default function AssessmentReview() {
                 </div>
 
                 <div className="assessment-review__summary-box">
-                  <p className="assessment-review__summary-text">
-                    {summary.summaryText}
-                  </p>
+                  {summary ? (
+                    <>
+                      <p className="assessment-review__summary-text">
+                        {summary.subtitle}
+                      </p>
+                      <p className="assessment-review__summary-text">
+                        {summary.summaryText}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="assessment-review__summary-text">
+                      Belum ada hasil pre-test untuk kandidat ini.
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -208,7 +384,7 @@ export default function AssessmentReview() {
                 </div>
 
                 <div className="assessment-review__trait-pill-wrap">
-                  {summary.strongestTraits.length > 0 ? (
+                  {summary?.strongestTraits?.length > 0 ? (
                     summary.strongestTraits.slice(0, 4).map((item) => (
                       <span
                         key={item.key}
@@ -240,7 +416,8 @@ export default function AssessmentReview() {
                     Review Jawaban
                   </h2>
                   <p className="assessment-review__content-subtitle">
-                    Detail tanggapan yang diambil langsung dari hasil pre-test kandidat
+                    Detail tanggapan yang diambil langsung dari hasil pre-test
+                    kandidat
                   </p>
                 </div>
               </div>
@@ -255,7 +432,7 @@ export default function AssessmentReview() {
                         question={item.question}
                         selected={item.selected}
                         other={item.other}
-                        isAnswered={isAnswered(item.rawAnswer)}
+                        isAnswered={item.isAnswered}
                       />
                     ))}
                   </div>
@@ -275,7 +452,7 @@ export default function AssessmentReview() {
                 </>
               ) : (
                 <div className="assessment-review__empty-state">
-                  Belum ada jawaban pre-test yang tersimpan dari sisi kandidat.
+                  Belum ada jawaban pre-test yang tersimpan dari kandidat ini.
                 </div>
               )}
             </div>
