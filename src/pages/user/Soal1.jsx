@@ -73,7 +73,10 @@ export default function Soal1() {
     return firstQuestionId;
   });
 
-  const activeIndex = useMemo(() => questionIds.indexOf(activeNo), [questionIds, activeNo]);
+  const activeIndex = useMemo(
+    () => questionIds.indexOf(activeNo),
+    [questionIds, activeNo],
+  );
   const currentQuestion = questions[activeNo];
   const currentAnswer = answers[activeNo] || "";
   const currentQuestionText = getPretestQuestionText(currentQuestion, language);
@@ -100,12 +103,16 @@ export default function Soal1() {
         })),
       });
 
+      localStorage.removeItem("PRETEST_GLOBAL_ANSWERS");
+
       setScopedItem(PRETEST_STORAGE_KEYS.completed, "true");
       setScopedItem(PRETEST_STORAGE_KEYS.answers, JSON.stringify(answers));
       setScopedItem(PRETEST_STORAGE_KEYS.questions, JSON.stringify(questions));
       navigate("/selesai-test");
     } catch (error) {
-      window.alert(getApiErrorMessage(error, t("Gagal mengirim jawaban pre-test.")));
+      window.alert(
+        getApiErrorMessage(error, t("Gagal mengirim jawaban pre-test.")),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -230,14 +237,18 @@ export default function Soal1() {
         <aside className="assessAside" aria-label={t("Navigasi Soal")}>
           <div className="assessAsideInner">
             <div className="assessAsideLabel">{t("KATEGORI SOAL")}</div>
-            <div className="assessAsideTitle">Cognitive &amp; Problem Solving</div>
+            <div className="assessAsideTitle">
+              Cognitive &amp; Problem Solving
+            </div>
 
             <div className="assessAsideDivider" />
 
             <div className="assessNumGrid">
               {questionIds.map((questionId, index) => {
                 const isActiveBtn = questionId === activeNo;
-                const isAnswered = ["Ya", "Tidak"].includes(answers[questionId]);
+                const isAnswered = ["Ya", "Tidak"].includes(
+                  answers[questionId],
+                );
 
                 return (
                   <button
@@ -302,7 +313,8 @@ export default function Soal1() {
                 onClick={handleNext}
                 disabled={isSubmitting || !isAnsweredCurrent}
               >
-                {hasNextUnanswered ? t("Selanjutnya") : t("Selesai")} <span>›</span>
+                {hasNextUnanswered ? t("Selanjutnya") : t("Selesai")}{" "}
+                <span>›</span>
               </button>
             </div>
           </div>

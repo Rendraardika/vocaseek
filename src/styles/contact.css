@@ -75,7 +75,8 @@
 
 /* ================= CARD ================= */
 .contact-card {
-  width: 420px;
+  width: 500px;
+  height: 460px;
   background: #fbbf24;
   padding: 40px;
   border-radius: 8px;
@@ -127,15 +128,23 @@
   margin-bottom: 8px;
 }
 
-.card-info p {
-  font-size: 14px;
-  line-height: 22px;
-  opacity: 0.9;
+.card-info {
+  display: flex;
+  gap: 32px;
+}
+
+.card-info > div:first-child {
+  flex: 1;
+}
+
+.card-info > div:last-child {
+  width: 120px;
+  flex-shrink: 0;
 }
 
 /* ================= MAP ================= */
 .contact-map {
-  margin-top: 80px;
+  margin-top: 150px;
   border-top: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -380,4 +389,40 @@
 .contact-page .contact-card {
   position: relative;
   z-index: 1;
+}
+
+/* =========================================
+   GLOBAL FOOTER MENTOK KE BAWAH
+   ========================================= */
+
+html,
+body,
+#root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.contact-page {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #fffaf0 !important;
+  overflow: visible !important;
+}
+
+.contact-page .header,
+.contact-page .contact-hero,
+.contact-page .contact-map {
+  flex-shrink: 0 !important;
+}
+
+.contact-page .footer,
+.footer {
+  margin-top: auto !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
 }
