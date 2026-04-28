@@ -22,17 +22,16 @@
 }
 
 .tm-breadcrumb {
- display: flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #9ca3af;;
+  color: #9ca3af;
   margin-bottom: 12px;
   flex-wrap: wrap;
   letter-spacing: 0.02em;
-  font-weight: 550; /* ini yang penting */
+  font-weight: 550;
 }
-
 
 .tm-breadcrumb .active {
   color: #d3a51a;
@@ -48,7 +47,7 @@
 
 .tm-stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 300px));
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-bottom: 16px;
 }
@@ -138,11 +137,13 @@
 .tm-table-wrap {
   width: 100%;
   overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tm-table {
   width: 100%;
-  min-width: 1080px;
+  min-width: 100%;
   border-collapse: collapse;
 }
 
@@ -190,7 +191,8 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  min-width: 240px;
+  min-width: 200px;
+  flex: 1;
 }
 
 .tm-table-avatar {
@@ -215,18 +217,25 @@
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tm-table-email {
   color: #94a3b8;
   font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tm-university-cell {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 130px;
+  min-width: 120px;
+  flex: 1;
 }
 
 .tm-uni-badge {
@@ -241,13 +250,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .tm-university-name {
   color: #334155;
   font-size: 13px;
   line-height: 1.35;
-  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
 .tm-major-badge {
@@ -260,6 +273,11 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 1.15;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .tm-major-badge.purple {
@@ -286,6 +304,7 @@
   white-space: nowrap;
   color: #64748b;
   line-height: 1.4;
+  font-size: 13px;
 }
 
 .tm-status-badge {
@@ -298,6 +317,7 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .tm-status-badge.accepted {
@@ -319,6 +339,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .tm-edit-status {
@@ -616,7 +638,7 @@
 /* RESPONSIVE */
 @media (max-width: 1200px) {
   .tm-stats-grid {
-    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -631,10 +653,39 @@
 
   .tm-stats-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .tm-table thead th {
+    padding: 14px 10px;
+    font-size: 11px;
+  }
+
+  .tm-table tbody td {
+    padding: 14px 10px;
+    font-size: 13px;
+  }
+
+  .tm-table-name {
+    font-size: 13px;
+  }
+
+  .tm-table-email {
+    font-size: 12px;
   }
 
   .tm-page-footer {
     margin-top: 72px;
+  }
+
+  .tm-table-wrap {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tm-table {
+    min-width: 700px;
   }
 }
 
@@ -645,24 +696,197 @@
 
   .tm-main {
     width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .tm-content {
+    padding: 18px 14px;
   }
 
   .tm-page-title {
-    font-size: 24px;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .tm-breadcrumb {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .tm-stats-grid {
+    gap: 12px;
+    margin-bottom: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .tm-stat-card {
+    padding: 18px 16px 14px;
+    border-radius: 14px;
+    min-height: auto;
+  }
+
+  .tm-stat-value {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .tm-stat-title {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .tm-stat-change {
+    font-size: 12px;
+    padding: 0 10px;
+    min-width: 60px;
+    height: 24px;
+  }
+
+  .tm-stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .tm-table-card {
+    border-radius: 16px;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    min-height: auto;
+  }
+
+  .tm-table-wrap {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: visible;
+    min-height: 0;
+  }
+
+  .tm-table {
+    width: 100%;
+    min-width: 600px;
+    display: table;
+  }
+
+  .tm-table thead th {
+    padding: 12px 8px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    background: #fbfcff;
+  }
+
+  .tm-table tbody td {
+    padding: 12px 8px;
+    font-size: 12px;
+    border-bottom: 1px solid #edf1f7;
+  }
+
+  .tm-talent-cell {
+    min-width: 150px;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .tm-table-avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .tm-table-name {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .tm-table-email {
+    font-size: 11px;
+  }
+
+  .tm-university-cell {
+    min-width: 100px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  .tm-uni-badge {
+    min-width: 26px;
+    height: 22px;
+    font-size: 10px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  .tm-university-name {
+    font-size: 11px;
+  }
+
+  .tm-major-badge {
+    font-size: 11px;
+    padding: 5px 10px;
+    min-height: 26px;
+  }
+
+  .tm-date-cell {
+    font-size: 11px;
+    min-width: 80px;
+    white-space: nowrap;
+  }
+
+  .tm-status-badge {
+    font-size: 10px;
+    min-width: 70px;
+    height: 24px;
+    padding: 0 10px;
+  }
+
+  .tm-action-group {
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .tm-icon-btn {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
   }
 
   .tm-footer-row {
     align-items: flex-start;
     flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .tm-footer-text {
+    width: 100%;
+    font-size: 12px;
   }
 
   .tm-pagination {
     flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tm-page-btn,
+  .tm-page-dots {
+    min-width: 32px;
+    height: 32px;
+    font-size: 13px;
   }
 
   .tm-modal {
     max-width: 100%;
     border-radius: 20px;
+    margin: 0 16px;
   }
 
   .tm-modal-header,
@@ -679,5 +903,282 @@
   .tm-btn-cancel,
   .tm-btn-save {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tm-content {
+    padding: 14px 12px;
+  }
+
+  .tm-page-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .tm-breadcrumb {
+    font-size: 11px;
+  }
+
+  .tm-stat-card {
+    padding: 14px 12px 10px;
+  }
+
+  .tm-stat-value {
+    font-size: 24px;
+  }
+
+  .tm-stat-title {
+    font-size: 12px;
+  }
+
+  .tm-table thead th {
+    padding: 10px 6px;
+    font-size: 9px;
+  }
+
+  .tm-table tbody td {
+    padding: 10px 6px;
+  }
+
+  .tm-talent-cell {
+    min-width: 120px;
+  }
+
+  .tm-table-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tm-table-name {
+    font-size: 11px;
+  }
+
+  .tm-table-email {
+    font-size: 10px;
+  }
+
+  .tm-major-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .tm-date-cell {
+    font-size: 10px;
+    min-width: 70px;
+  }
+
+  .tm-status-badge {
+    font-size: 9px;
+    min-width: 60px;
+  }
+
+  .tm-action-group {
+    gap: 6px;
+  }
+
+  .tm-icon-btn {
+    width: 22px;
+    height: 22px;
+  }
+
+  .tm-footer-text {
+    font-size: 11px;
+  }
+
+  .tm-page-btn,
+  .tm-page-dots {
+    min-width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+/* FIX RESPONSIVE TALENT MANAGEMENT - MOBILE/TABLET */
+@media (max-width: 768px) {
+  html,
+  body,
+  #root,
+  .tm-layout,
+  .tm-main,
+  .tm-page,
+  .tm-content,
+  .tm-content-grid,
+  .tm-table-card,
+  .tm-table-wrap {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .tm-layout {
+    display: block !important;
+    min-height: 100vh;
+  }
+
+  .tm-main {
+    display: block !important;
+    flex: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    min-height: 100vh;
+  }
+
+  .tm-main > :first-child {
+    display: block !important;
+  }
+
+  .tm-page,
+  .tm-content {
+    display: block !important;
+    padding: 16px 12px !important;
+    margin: 0 !important;
+  }
+
+  .tm-content-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .tm-sidebar-panel-wrap,
+  .tm-filter-panel,
+  .tm-talent-pool-card,
+  .tm-table-card {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .tm-header,
+  .tm-table-toolbar,
+  .tm-table-footer,
+  .tm-pagination-bar,
+  .tm-footer-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .tm-table-toolbar__left,
+  .tm-table-toolbar__actions,
+  .tm-action-group,
+  .tm-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .tm-table-card {
+    overflow: hidden !important;
+    border-radius: 16px !important;
+  }
+
+  .tm-table-wrap {
+    display: block !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tm-table {
+    display: table !important;
+    width: 100% !important;
+    min-width: 650px !important;
+    border-collapse: collapse;
+  }
+
+  .tm-table thead {
+    display: table-header-group !important;
+  }
+
+  .tm-table tbody {
+    display: table-row-group !important;
+  }
+
+  .tm-table tr {
+    display: table-row !important;
+  }
+
+  .tm-table th,
+  .tm-table td {
+    display: table-cell !important;
+    white-space: nowrap;
+  }
+
+  .tm-table thead th {
+    padding: 12px 8px !important;
+    font-size: 10px !important;
+  }
+
+  .tm-table tbody td {
+    padding: 12px 8px !important;
+    font-size: 12px !important;
+  }
+
+  .tm-mobile-list {
+    display: none !important;
+  }
+
+  .tm-page__title,
+  .tm-page-title {
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+    margin-bottom: 14px !important;
+  }
+
+  .tm-stats-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .tm-stat-card {
+    min-height: auto !important;
+    padding: 16px !important;
+  }
+
+  .tm-pagination {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .tm-btn--primary,
+  .tm-btn--gold,
+  .tm-btn--invite,
+  .tm-btn--neutral,
+  .tm-btn--danger-soft,
+  .tm-btn-cancel,
+  .tm-btn-save {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tm-page,
+  .tm-content {
+    padding: 14px 10px !important;
+  }
+
+  .tm-table {
+    min-width: 600px !important;
+  }
+
+  .tm-page__title,
+  .tm-page-title {
+    font-size: 20px !important;
+  }
+
+  .tm-table thead th {
+    font-size: 9px !important;
+    padding: 10px 6px !important;
+  }
+
+  .tm-table tbody td {
+    font-size: 11px !important;
+    padding: 10px 6px !important;
   }
 }

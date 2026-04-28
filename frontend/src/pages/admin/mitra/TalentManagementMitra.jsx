@@ -701,61 +701,7 @@ export default function TalentManagement({ mode = "all" }) {
 
           {errorMessage && <div className="tm-alert tm-alert--error">{errorMessage}</div>}
 
-          {topSummary && (
-            <div className="tm-pagination-bar">
-              <div className="tm-pagination-bar__text">{topSummary}</div>
-              {filteredCandidates.length > 0 && (
-                <div className="tm-pagination">
-                  <button
-                    type="button"
-                    className="tm-pagination__btn tm-pagination__btn--edge"
-                    disabled={paginationMeta.currentPage === 1}
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  >
-                    ‹
-                  </button>
-                  {pageNumbers.map((pageNumber, index) =>
-                    pageNumber === "ellipsis" ? (
-                      <button
-                        key={`top-ellipsis-${index}`}
-                        type="button"
-                        className="tm-pagination__btn"
-                        disabled
-                      >
-                        ...
-                      </button>
-                    ) : (
-                      <button
-                        key={`top-page-${pageNumber}`}
-                        type="button"
-                        className={`tm-pagination__btn ${
-                          pageNumber === paginationMeta.currentPage
-                            ? "tm-pagination__btn--active"
-                            : ""
-                        }`}
-                        onClick={() => setCurrentPage(pageNumber)}
-                      >
-                        {pageNumber}
-                      </button>
-                    )
-                  )}
-                  <button
-                    type="button"
-                    className="tm-pagination__btn tm-pagination__btn--edge"
-                    disabled={paginationMeta.currentPage === paginationMeta.totalPages}
-                    onClick={() =>
-                      setCurrentPage((prev) =>
-                        Math.min(prev + 1, paginationMeta.totalPages)
-                      )
-                    }
-                  >
-                    ›
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
+ 
           <div className="tm-stats-grid">
             <StatCard
               title={translatePhrase("Total Diterima", locale) || "Total Diterima"}
