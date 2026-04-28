@@ -426,6 +426,8 @@ textarea {
   display: flex;
   align-items: center;
   gap: 14px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .cv-company-icon {
@@ -460,12 +462,20 @@ textarea {
   font-weight: 700;
   line-height: 1.35;
   color: #253046;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
 .cv-company-city {
   font-size: 13px;
   color: #7f8ba0;
   margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cv-business-badge,
@@ -479,6 +489,9 @@ textarea {
   font-size: 12px;
   font-weight: 600;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cv-business-badge.purple {
@@ -519,6 +532,8 @@ textarea {
 .cv-date-cell {
   color: #2f3b52;
   font-weight: 500;
+  white-space: nowrap;
+  font-size: 13px;
 }
 
 .cv-action-group {
@@ -527,6 +542,7 @@ textarea {
   gap: 12px;
   min-width: 140px;
   flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .cv-edit-status {
@@ -541,12 +557,19 @@ textarea {
   line-height: 1.2;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.cv-edit-status:hover {
+  opacity: 0.8;
 }
 
 .cv-action-divider {
   width: 1px;
   height: 24px;
   background: #e2e7f0;
+  flex-shrink: 0;
 }
 
 .cv-icon-btn {
@@ -560,6 +583,11 @@ textarea {
   justify-content: center;
   cursor: pointer;
   padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cv-icon-btn:hover {
+  opacity: 0.8;
 }
 
 .cv-table-footer {
@@ -835,6 +863,119 @@ textarea {
   .cv-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
+
+  .cv-table {
+    min-width: 700px;
+  }
+
+  .cv-table th,
+  .cv-table td {
+    padding: 14px 12px;
+    font-size: 12px;
+  }
+
+  .cv-content {
+    padding: 20px 16px 24px;
+  }
+
+  .cv-page-title {
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  .cv-table-topbar {
+    padding: 16px 16px 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cv-table-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cv-table-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .cv-search-box {
+    width: auto;
+    min-width: 220px;
+    height: 40px;
+  }
+
+  .cv-filter-wrap {
+    position: relative;
+  }
+
+  .cv-filter-btn {
+    height: 40px;
+    padding: 0 14px;
+  }
+
+  .cv-company-name {
+    font-size: 13px;
+  }
+
+  .cv-company-city {
+    font-size: 12px;
+  }
+
+  .cv-business-badge,
+  .cv-status-badge {
+    font-size: 11px;
+    padding: 5px 10px;
+    min-height: 26px;
+  }
+
+  .cv-date-cell {
+    font-size: 12px;
+  }
+
+  .cv-edit-status {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .cv-icon-btn {
+    width: 22px;
+    height: 22px;
+  }
+
+  .cv-action-divider {
+    height: 20px;
+  }
+
+  .cv-company-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .cv-table-footer {
+    padding: 14px 16px 16px;
+    gap: 12px;
+  }
+
+  .cv-table-footer p {
+    font-size: 12px;
+  }
+
+  .cv-page-btn {
+    min-width: 36px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .cv-page-btn.wide {
+    min-width: 80px;
+  }
 }
 
 /* mobile */
@@ -845,27 +986,577 @@ textarea {
 }
 
 @media (max-width: 768px) {
+  .cv-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .cv-main {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
   .cv-content {
-    padding: 20px 16px 24px;
+    padding: 18px 14px 20px;
+    min-height: auto;
+    display: block;
   }
 
   .cv-filter-dropdown {
     right: 0;
     left: auto;
-    width: min(290px, calc(100vw - 32px));
+    width: min(290px, calc(100vw - 28px));
   }
 
   .cv-page-title {
-    font-size: 24px;
+    font-size: 22px;
+    margin-bottom: 4px;
+  }
+
+  .cv-page-subtitle {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .cv-summary-grid {
+    gap: 14px;
+    margin-bottom: 14px;
+    grid-template-columns: 1fr;
+  }
+
+  .cv-summary-card {
+    padding: 16px 14px 12px;
+    min-height: 120px;
+  }
+
+  .cv-summary-content h3 {
+    font-size: 22px;
+  }
+
+  .cv-summary-content p {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .cv-summary-circle {
+    width: 90px;
+    height: 90px;
+    right: -18px;
+    top: -12px;
+  }
+
+  .cv-table-card {
+    border-radius: 16px;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+  }
+
+  .cv-table-topbar {
+    padding: 14px 12px 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    border-bottom: 1px solid #edf1f6;
+    justify-content: flex-start;
+  }
+
+  .cv-table-title-wrap {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .cv-table-title-wrap h2 {
+    font-size: 16px;
+  }
+
+  .cv-total-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .cv-table-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .cv-search-box {
+    width: 100%;
+    height: 38px;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .cv-search-box input {
+    font-size: 13px;
+  }
+
+  .cv-filter-wrap {
+    width: 100%;
+    position: relative;
+  }
+
+  .cv-filter-btn {
+    width: 100%;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .cv-table-wrap {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: visible;
+    min-height: 0;
   }
 
   .cv-table {
-    min-width: 680px;
+    min-width: 600px;
+    width: 100%;
+    display: table;
   }
 
   .cv-table th,
   .cv-table td {
-    padding: 12px 10px;
+    padding: 12px 8px;
+    font-size: 11px;
+  }
+
+  .cv-table thead th {
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    background: #f7f9fc;
+  }
+
+  .cv-col-id {
+    width: 15%;
+    min-width: 80px;
+  }
+
+  .cv-col-name {
+    width: 35%;
+    min-width: 160px;
+  }
+
+  .cv-col-business {
+    width: 15%;
+    min-width: 110px;
+  }
+
+  .cv-col-date {
+    width: 15%;
+    min-width: 100px;
+  }
+
+  .cv-col-status {
+    width: 12%;
+    min-width: 100px;
+  }
+
+  .cv-col-action {
+    width: 8%;
+    min-width: 80px;
+  }
+
+  .cv-company-name {
     font-size: 12px;
+  }
+
+  .cv-company-city {
+    font-size: 11px;
+  }
+
+  .cv-company-cell {
+    min-width: 140px;
+    flex: 1;
+  }
+
+  .cv-company-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .cv-business-badge,
+  .cv-status-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+    min-height: 24px;
+  }
+
+  .cv-date-cell {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .cv-action-group {
+    flex-direction: row;
+    justify-content: center;
+    min-width: 80px;
+    gap: 4px;
+  }
+
+  .cv-edit-status {
+    font-size: 10px;
+    gap: 2px;
+  }
+
+  .cv-icon-btn {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cv-action-divider {
+    height: 18px;
+  }
+
+  .cv-table-footer {
+    padding: 12px 12px 14px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cv-table-footer p {
+    font-size: 11px;
+    text-align: center;
+    margin: 0;
+  }
+
+  .cv-pagination {
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .cv-page-btn {
+    min-width: 32px;
+    height: 30px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .cv-page-btn.wide {
+    min-width: 70px;
+  }
+
+  .cv-modal {
+    max-width: 100%;
+    margin: 0 12px;
+    border-radius: 20px;
+  }
+
+  .cv-modal-header,
+  .cv-modal-body {
+    padding: 16px;
+  }
+
+  .cv-modal-title {
+    font-size: 16px;
+  }
+
+  .cv-field-label {
+    font-size: 13px;
+  }
+
+  .cv-select {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .cv-modal-footer {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px 16px;
+  }
+
+  .cv-btn-cancel,
+  .cv-btn-save {
+    width: 100%;
+  }
+}
+
+  .cv-col-action {
+    width: 8%;
+    min-width: 90px;
+  }
+
+  .cv-company-cell {
+    gap: 10px;
+    min-width: 160px;
+  }
+
+  .cv-company-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .cv-company-name {
+    font-size: 12px;
+  }
+
+  .cv-company-city {
+    font-size: 11px;
+    margin-top: 1px;
+  }
+
+  .cv-business-badge,
+  .cv-status-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+    min-height: 24px;
+  }
+
+  .cv-date-cell {
+    font-size: 11px;
+    min-width: 90px;
+  }
+
+  .cv-id-cell {
+    font-size: 11px;
+  }
+
+  .cv-action-group {
+    gap: 8px;
+    min-width: 90px;
+  }
+
+  .cv-edit-status {
+    font-size: 10px;
+    gap: 3px;
+    padding: 2px;
+  }
+
+  .cv-edit-status br {
+    display: none;
+  }
+
+  .cv-icon-btn {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cv-action-divider {
+    height: 18px;
+  }
+
+  .cv-table-footer {
+    padding: 12px 12px 14px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cv-table-footer p {
+    font-size: 11px;
+  }
+
+  .cv-pagination {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cv-page-btn {
+    min-width: 32px;
+    height: 30px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .cv-page-btn.wide {
+    min-width: 70px;
+    font-size: 11px;
+  }
+
+  .cv-modal {
+    max-width: 95%;
+    border-radius: 18px;
+  }
+
+  .cv-modal-header {
+    padding: 18px 16px 14px;
+  }
+
+  .cv-modal-body {
+    padding: 16px 16px 18px;
+  }
+
+  .cv-modal-footer {
+    padding: 16px 16px 18px;
+  }
+
+  .cv-modal-title {
+    font-size: 16px;
+  }
+
+  .cv-partner-box {
+    padding: 14px 12px;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .cv-partner-name {
+    font-size: 14px;
+  }
+
+  .cv-partner-role {
+    font-size: 12px;
+  }
+
+  .cv-field-group {
+    margin-bottom: 16px;
+  }
+
+  .cv-field-label {
+    font-size: 13px;
+  }
+
+  .cv-select {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .cv-btn-cancel,
+  .cv-btn-save {
+    min-width: auto;
+    height: 38px;
+    font-size: 14px;
+  }
+
+
+@media (max-width: 480px) {
+  .cv-content {
+    padding: 14px 12px 16px;
+  }
+
+  .cv-page-title {
+    font-size: 20px;
+  }
+
+  .cv-page-subtitle {
+    font-size: 12px;
+  }
+
+  .cv-summary-card {
+    padding: 14px 12px 10px;
+    min-height: 110px;
+  }
+
+  .cv-summary-content h3 {
+    font-size: 20px;
+  }
+
+  .cv-table-topbar {
+    padding: 12px 10px 8px;
+  }
+
+  .cv-table-title-wrap h2 {
+    font-size: 15px;
+  }
+
+  .cv-table {
+    min-width: 550px;
+  }
+
+  .cv-table th,
+  .cv-table td {
+    padding: 10px 6px;
+    font-size: 10px;
+  }
+
+  .cv-col-id {
+    width: 16%;
+    min-width: 70px;
+  }
+
+  .cv-col-name {
+    width: 36%;
+    min-width: 150px;
+  }
+
+  .cv-col-business {
+    width: 14%;
+    min-width: 100px;
+  }
+
+  .cv-col-date {
+    width: 14%;
+    min-width: 90px;
+  }
+
+  .cv-col-status {
+    width: 12%;
+    min-width: 90px;
+  }
+
+  .cv-col-action {
+    width: 8%;
+    min-width: 80px;
+  }
+
+  .cv-company-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cv-company-name {
+    font-size: 11px;
+  }
+
+  .cv-company-city {
+    font-size: 10px;
+  }
+
+  .cv-business-badge,
+  .cv-status-badge {
+    font-size: 9px;
+    padding: 3px 6px;
+    min-height: 20px;
+  }
+
+  .cv-date-cell {
+    font-size: 10px;
+  }
+
+  .cv-action-group {
+    gap: 6px;
+  }
+
+  .cv-edit-status {
+    font-size: 9px;
+  }
+
+  .cv-icon-btn {
+    width: 18px;
+    height: 18px;
+  }
+
+  .cv-page-btn {
+    min-width: 28px;
+    height: 28px;
+  }
+
+  .cv-page-btn.wide {
+    min-width: 60px;
+  }
+
+  .cv-modal-title {
+    font-size: 15px;
+  }
+
+  .cv-partner-name {
+    font-size: 13px;
+  }
+
+  .cv-btn-cancel,
+  .cv-btn-save {
+    height: 36px;
+    font-size: 13px;
   }
 }
