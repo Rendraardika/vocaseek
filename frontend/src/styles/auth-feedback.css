@@ -38,6 +38,11 @@
   grid-template-columns: minmax(280px, 1fr);
 }
 
+.auth-feedback-shell--reset {
+  max-width: 560px;
+  grid-template-columns: minmax(280px, 1fr);
+}
+
 .auth-feedback-panel {
   position: relative;
   overflow: hidden;

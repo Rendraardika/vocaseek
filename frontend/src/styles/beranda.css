@@ -1085,6 +1085,21 @@ section h2 {
   background: #ec4899;
 }
 
+.company-logo.has-image {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  padding: 6px;
+}
+
+.company-logo.has-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #ffffff;
+}
+
 .job-info h4 {
   font-size: 16px;
   font-weight: 600;

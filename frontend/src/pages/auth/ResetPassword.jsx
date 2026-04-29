@@ -128,43 +128,7 @@ export default function ResetPassword() {
 
   return (
     <div className="auth-feedback-page">
-      <div className="auth-feedback-shell">
-        <section className="auth-feedback-panel">
-          <div className="auth-feedback-brand">
-            <img
-              src="/vocaseeklogo.png"
-              alt="Vocaseek"
-              className="auth-feedback-logo"
-            />
-            <div className="auth-feedback-kicker">
-              <FiKey />
-              Password Baru
-            </div>
-            <h1>Ubah kata sandi dengan langkah yang lebih nyaman dibaca.</h1>
-            <p>
-              Kami cek dulu validitas tautannya, lalu kamu bisa langsung membuat
-              password baru dengan aman.
-            </p>
-          </div>
-
-          <div className="auth-feedback-stats">
-            <div className="auth-feedback-stat">
-              <strong>Status tautan</strong>
-              <span>
-                {tokenStatus === "checking"
-                  ? "Sedang memeriksa tautan reset password."
-                  : tokenStatus === "valid"
-                    ? "Tautan valid dan siap dipakai."
-                    : "Tautan tidak valid atau sudah kedaluwarsa."}
-              </span>
-            </div>
-            <div className="auth-feedback-stat">
-              <strong>Email tujuan</strong>
-              <span>{email || "Email tidak ditemukan pada tautan reset."}</span>
-            </div>
-          </div>
-        </section>
-
+      <div className="auth-feedback-shell auth-feedback-shell--reset">
         <section className="auth-feedback-card">
           <div className="auth-feedback-card-header">
             <div
