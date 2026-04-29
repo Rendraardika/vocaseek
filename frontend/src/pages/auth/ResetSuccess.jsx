@@ -1,51 +1,38 @@
 import "../../styles/auth-feedback.css";
 import { Link } from "react-router-dom";
-import { FiArrowLeft, FiCheckCircle, FiLock } from "react-icons/fi";
+import { FiArrowLeft, FiCheckCircle, FiShield } from "react-icons/fi";
 
 export default function ResetSuccess() {
   return (
     <div className="auth-feedback-page">
-      <div className="auth-feedback-shell">
-        <section className="auth-feedback-panel">
-          <div className="auth-feedback-brand">
+      <div className="auth-feedback-shell auth-feedback-shell--success">
+        <section className="auth-feedback-card auth-feedback-card--success">
+          <div className="auth-feedback-brand auth-feedback-brand--card">
             <img
               src="/vocaseeklogo.png"
               alt="Vocaseek"
               className="auth-feedback-logo"
             />
-            <div className="auth-feedback-kicker">
-              <FiLock />
-              Password Diperbarui
-            </div>
-            <h1>Password baru sudah tersimpan dan akunmu siap dipakai lagi.</h1>
-            <p>
-              Sekarang kamu bisa masuk kembali menggunakan kata sandi terbaru
-              tanpa perlu mengulang proses reset.
-            </p>
           </div>
 
-          <div className="auth-feedback-stats">
-            <div className="auth-feedback-stat">
-              <strong>Status keamanan</strong>
-              <span>
-                Password lama tidak lagi dipakai. Lanjut login dengan password
-                yang baru.
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="auth-feedback-card">
-          <div className="auth-feedback-card-header">
+          <div className="auth-feedback-card-header auth-feedback-card-header--success">
             <div className="auth-feedback-icon is-success">
-              <FiCheckCircle size={28} />
+              <FiCheckCircle size={34} />
             </div>
             <div>
               <h2>Kata Sandi Berhasil Diperbarui</h2>
               <p className="auth-feedback-description">
-                Kata sandi berhasil diubah. Anda dapat masuk menggunakan kata
-                sandi baru.
+                Password baru sudah tersimpan. Anda dapat masuk kembali ke
+                Vocaseek menggunakan kata sandi terbaru.
               </p>
+            </div>
+          </div>
+
+          <div className="auth-feedback-success-note">
+            <FiShield />
+            <div>
+              <strong>Status keamanan aman</strong>
+              <span>Password lama tidak lagi berlaku untuk akun Anda.</span>
             </div>
           </div>
 
@@ -61,7 +48,7 @@ export default function ResetSuccess() {
           </div>
 
           <div className="auth-feedback-footer">
-            © 2026 VOCASEEK INC. ALL RIGHTS RESERVED.
+            (c) 2026 VOCASEEK INC. Semua hak dilindungi.
           </div>
         </section>
       </div>
