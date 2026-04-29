@@ -23,6 +23,7 @@ import {
   FaVideo,
 } from "react-icons/fa";
 import { getLandingStats, getPublicJobs } from "../../services/jobs";
+import { pickFirstMediaValue } from "../../utils/media";
 
 const CATEGORY_ICONS = [
   FaPaintBrush,
@@ -73,6 +74,59 @@ function getCompanyInitials(name) {
     .map((word) => word[0])
     .join("")
     .toUpperCase();
+}
+
+function getCompanyProfile(job) {
+  return job?.company_profile || job?.companyProfile || {};
+}
+
+function getCompanyName(job) {
+  const companyProfile = getCompanyProfile(job);
+
+  return (
+    companyProfile?.nama_perusahaan ||
+    companyProfile?.name ||
+    companyProfile?.company_name ||
+    job?.nama_perusahaan ||
+    "Perusahaan"
+  );
+}
+
+function getCompanyLogoUrl(job) {
+  const companyProfile = getCompanyProfile(job);
+
+  return pickFirstMediaValue(
+    companyProfile?.logo_url,
+    companyProfile?.logo,
+    companyProfile?.logo_perusahaan,
+    companyProfile?.company_logo,
+    companyProfile?.display?.image,
+    job?.logo_url,
+    job?.logo,
+    job?.company_logo,
+  );
+}
+
+function CompanyLogo({ job, index }) {
+  const [hasImageError, setHasImageError] = useState(false);
+  const companyName = getCompanyName(job);
+  const logoUrl = getCompanyLogoUrl(job);
+  const canShowLogo = logoUrl && !hasImageError;
+  const fallbackClass = index === 0 ? "green" : index === 1 ? "dark" : "pink";
+
+  return (
+    <div className={`company-logo ${canShowLogo ? "has-image" : fallbackClass}`}>
+      {canShowLogo ? (
+        <img
+          src={logoUrl}
+          alt={`${companyName} logo`}
+          onError={() => setHasImageError(true)}
+        />
+      ) : (
+        getCompanyInitials(companyName)
+      )}
+    </div>
+  );
 }
 
 function getBadgeClass(job, index) {
@@ -396,7 +450,7 @@ export default function App() {
                 <FaBriefcase />
               </div>
               <h3>Belum ada kategori aktif</h3>
-              <p>Kategori akan tampil otomatis dari database lowongan.</p>
+
             </div>
           )}
         </div>
@@ -404,7 +458,7 @@ export default function App() {
 
       <section className="featured-section">
         <div className="featured-header">
-          <h2>Featured Job</h2>
+          <h2>Lowongan Terbaru</h2>
           <Link to="/login" className="view-all">
             View All →
           </Link>
@@ -415,16 +469,7 @@ export default function App() {
             featuredJobs.map((job, index) => (
               <div className="job-card" key={job.id || `${job.judul_posisi}-${index}`}>
                 <div className="job-left">
-                  <div
-                    className={`company-logo ${
-                      index === 0 ? "green" : index === 1 ? "dark" : "pink"
-                    }`}
-                  >
-                    {getCompanyInitials(
-                      job?.companyProfile?.nama_perusahaan ||
-                        job?.company_profile?.nama_perusahaan,
-                    )}
-                  </div>
+                  <CompanyLogo job={job} index={index} />
 
                   <div className="job-info">
                     <div className="job-title-row">

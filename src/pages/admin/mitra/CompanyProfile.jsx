@@ -38,10 +38,18 @@ function EmptyValue({ children = "Belum diisi" }) {
 }
 
 function CompanyLogo({ src, name, className = "" }) {
+  const [hasImageError, setHasImageError] = useState(false);
   const fallback = getCompanyFallbackLogo(name);
 
-  if (src) {
-    return <img src={src} alt={name} className={className} />;
+  if (src && !hasImageError) {
+    return (
+      <img
+        src={src}
+        alt={name}
+        className={className}
+        onError={() => setHasImageError(true)}
+      />
+    );
   }
 
   return <span className="company-profile__logo-fallback">{fallback}</span>;

@@ -281,7 +281,7 @@ const entries = [
   { sources: ["Lamar pekerjaan dengan mudah.", "Apply for jobs easily."], id: "Lamar pekerjaan dengan mudah.", en: "Apply for jobs easily." },
   { sources: ["Bidang Kategori", "Category"], id: "Bidang Kategori", en: "Category" },
   { sources: ["Tampilkan semua →", "View All →"], id: "Tampilkan semua →", en: "View All →" },
-  { sources: ["Featured Job"], id: "Lowongan Unggulan", en: "Featured Job" },
+  { sources: ["Featured Job", "Lowongan Terbaru", "Latest Jobs"], id: "Lowongan Terbaru", en: "Latest Jobs" },
   { sources: ["View All →"], id: "Lihat Semua →", en: "View All →" },
   { sources: ["Gabung Sekarang! →", "Join Now! →"], id: "Gabung Sekarang! →", en: "Join Now! →" },
   { sources: ["Gabung sekarang! →"], id: "Gabung sekarang! →", en: "Join now! →" },
