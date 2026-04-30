@@ -301,6 +301,7 @@ export function mapPublicJob(job) {
       ),
     },
     companyProfile: {
+      id: companyProfile?.id || job?.company_profile_id || null,
       name: companyName,
       industry: cleanText(
         companyProfile?.industri || companyProfile?.sektor_industri,

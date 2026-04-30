@@ -63,9 +63,7 @@ function buildPartnerDirectoryFromJobs(jobs) {
         industry: companyProfile?.industry || "Industri belum diisi",
         location:
           companyProfile?.address || normalizedJob.location || "Lokasi belum diisi",
-        description:
-          companyProfile?.description ||
-          "Profil perusahaan belum dilengkapi oleh perusahaan.",
+        description: companyProfile?.description || "",
         vision: companyProfile?.vision || "",
         mission: companyProfile?.mission || "",
         rating: "4.8",
@@ -79,8 +77,18 @@ function buildPartnerDirectoryFromJobs(jobs) {
     partnerMap.get(partnerKey).jobs.push({
       id: normalizedJob.id,
       title: normalizedJob.title,
+      company: normalizedJob.company,
       location: normalizedJob.location,
+      type: normalizedJob.type,
+      duration: normalizedJob.duration,
       work: normalizedJob.work,
+      description: normalizedJob.description,
+      qualifications: normalizedJob.qualifications || [],
+      benefits: normalizedJob.benefits || [],
+      education: normalizedJob.education || {},
+      documents: normalizedJob.documents || [],
+      dates: normalizedJob.dates || {},
+      companyProfile: normalizedJob.companyProfile || {},
     });
   });
 
@@ -476,7 +484,7 @@ export default function SearchMitra() {
                     <span className="searchmitra-desc-label">
                       DESKRIPSI MITRA
                     </span>
-                    <p>{mitra.description}</p>
+                    <p>{mitra.description || "Belum diisi"}</p>
                   </div>
 
                   <button

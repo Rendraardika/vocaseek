@@ -4,6 +4,7 @@ import mitraData from "../../components/user/MitraData";
 import "../../styles/mitradetail.css";
 import {
   getScopedItem,
+  setScopedItem,
   USER_STORAGE_KEYS,
 } from "../../utils/userScopedStorage";
 import { translatePhrase } from "../../i18n/phrases";
@@ -44,6 +45,27 @@ function parseMissionItems(mission) {
 
 function translateDynamicText(text, locale) {
   return translatePhrase(text, locale) || text;
+}
+
+function hasValue(value) {
+  return String(value || "").trim().length > 0;
+}
+
+function isPlaceholderText(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+
+  return [
+    "profil perusahaan belum dilengkapi oleh perusahaan.",
+    "profil perusahaan belum dilengkapi oleh perusahaan",
+  ].includes(normalized);
+}
+
+function displayText(value, locale) {
+  if (!hasValue(value) || isPlaceholderText(value)) {
+    return translatePhrase("Belum diisi", locale) || "Belum diisi";
+  }
+
+  return translateDynamicText(value, locale);
 }
 
 export default function MitraDetail() {
@@ -91,14 +113,54 @@ export default function MitraDetail() {
     );
   }
 
-  const activeJobs = mitra.jobs?.length
-    ? mitra.jobs
-    : ["Software Engineer", "Data Analyst", "UI/UX Designer"];
+  const activeJobs = Array.isArray(mitra.jobs) ? mitra.jobs : [];
   const missionItems = parseMissionItems(mitra.mission || mitra.misi);
-  const visionText =
-    mitra.vision ||
-    mitra.visi ||
-    `Menjadi perusahaan terdepan di bidang ${mitra.industry} yang berdaya saing global.`;
+  const descriptionText = mitra.description || mitra.deskripsi;
+  const visionText = mitra.vision || mitra.visi;
+
+  const handleApply = (job) => {
+    if (!job || typeof job === "string" || !job.id) {
+      navigate("/searchlowongan");
+      return;
+    }
+
+    const companyProfile = job.companyProfile || {};
+    const applicationDraft = {
+      id: job.id,
+      title: job.title,
+      company: job.company || mitra.name,
+      location: job.location || mitra.location,
+      type: job.type || "",
+      duration: job.duration || "",
+      work: job.work || "",
+      description: job.description || "",
+      qualifications: job.qualifications || [],
+      benefits: job.benefits || [],
+      education: job.education || {},
+      documents: job.documents || [],
+      dates: job.dates || {},
+      companyProfile: {
+        name: companyProfile.name || mitra.name,
+        industry: companyProfile.industry || mitra.industry,
+        size: companyProfile.size || mitra.size,
+        website: companyProfile.website || mitra.website,
+        description: companyProfile.description || descriptionText || "",
+        vision: companyProfile.vision || visionText || "",
+        mission: companyProfile.mission || mitra.mission || mitra.misi || "",
+        address: companyProfile.address || mitra.location,
+        phone: companyProfile.phone || mitra.phone,
+        status: companyProfile.status || mitra.status,
+        logoUrl: companyProfile.logoUrl || mitra.logoUrl,
+      },
+      motivation: "",
+    };
+
+    setScopedItem(
+      USER_STORAGE_KEYS.applicationDraft,
+      JSON.stringify(applicationDraft),
+    );
+    navigate("/daftar-magang");
+  };
 
   return (
     <div className="mitra-detail-page">
@@ -123,20 +185,13 @@ export default function MitraDetail() {
               {translatePhrase("Tentang Perusahaan", locale) ||
                 "Tentang Perusahaan"}
             </h2>
-            <p>{translateDynamicText(mitra.description, locale)}</p>
-            <p>
-              {translatePhrase(
-                "Perusahaan ini berkomitmen menghadirkan inovasi berkelanjutan dan menciptakan dampak positif bagi masyarakat serta industri nasional.",
-                locale
-              ) ||
-                "Perusahaan ini berkomitmen menghadirkan inovasi berkelanjutan dan menciptakan dampak positif bagi masyarakat serta industri nasional."}
-            </p>
+            <p>{displayText(descriptionText, locale)}</p>
           </div>
 
           <div className="mitra-vision-mission">
             <div className="mitra-card-box">
               <h3>{translatePhrase("Visi", locale) || "Visi"}</h3>
-              <p>{translateDynamicText(visionText, locale)}</p>
+              <p>{displayText(visionText, locale)}</p>
             </div>
 
             <div className="mitra-card-box">
@@ -151,8 +206,7 @@ export default function MitraDetail() {
                 </ul>
               ) : (
                 <p>
-                  {translatePhrase("Misi perusahaan belum diisi.", locale) ||
-                    "Misi perusahaan belum diisi."}
+                  {translatePhrase("Belum diisi", locale) || "Belum diisi"}
                 </p>
               )}
             </div>
@@ -163,26 +217,37 @@ export default function MitraDetail() {
               {translatePhrase("Lowongan Aktif", locale) || "Lowongan Aktif"}
             </h3>
 
-            {activeJobs.map((job, i) => (
-              <div
-                className="mitra-job-item"
-                key={typeof job === "string" ? `${job}-${i}` : job.id || i}
-              >
-                <div>
-                  <strong>{typeof job === "string" ? job : job.title}</strong>
-                  <br />
-                  <span>
-                    {translateDynamicText(
-                      typeof job === "string" ? mitra.location : job.location,
-                      locale
-                    )}
-                  </span>
+            {activeJobs.length > 0 ? (
+              activeJobs.map((job, i) => (
+                <div
+                  className="mitra-job-item"
+                  key={typeof job === "string" ? `${job}-${i}` : job.id || i}
+                >
+                  <div>
+                    <strong>{typeof job === "string" ? job : job.title}</strong>
+                    <br />
+                    <span>
+                      {translateDynamicText(
+                        typeof job === "string" ? mitra.location : job.location,
+                        locale
+                      )}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="mitra-apply-btn"
+                    onClick={() => handleApply(job)}
+                  >
+                    {translatePhrase("Lamar", locale) || "Lamar"}
+                  </button>
                 </div>
-                <button className="mitra-apply-btn">
-                  {translatePhrase("Lamar", locale) || "Lamar"}
-                </button>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>
+                {translatePhrase("Belum ada lowongan aktif", locale) ||
+                  "Belum ada lowongan aktif"}
+              </p>
+            )}
           </div>
         </div>
 
