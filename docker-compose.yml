@@ -1,0 +1,58 @@
+services:
+  # Service untuk Laravel
+  backend:
+    build:
+      context: ./backend
+    container_name: laravel_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+      - backend_vendor:/var/www/vendor
+    depends_on:
+      - mysql_db
+
+  # Service untuk memproses queue Laravel (email verifikasi, reset password, dll.)
+  queue:
+    build:
+      context: ./backend
+    container_name: laravel_queue
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    volumes:
+      - ./backend:/var/www
+      - backend_vendor:/var/www/vendor
+    depends_on:
+      - backend
+      - mysql_db
+
+  # Service untuk React
+  frontend:
+    build:
+      context: ./frontend
+    container_name: react_app
+    ports:
+      - "5173:5173" # Sesuaikan jika menggunakan Vite (biasanya 5173) atau 3000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
+  # Service untuk Database
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: vocaseek
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
+  backend_vendor:
+    external: true
+    name: vocaseek_backend_vendor

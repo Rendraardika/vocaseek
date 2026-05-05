@@ -13,6 +13,7 @@ import {
   FiDollarSign,
 } from "react-icons/fi";
 import { getApiErrorMessage, logoutUser } from "../../services/auth";
+import { getInternApplications } from "../../services/intern";
 import { getPublicJobs, mapPublicJob } from "../../services/jobs";
 import { clearAuthSession, isAuthenticated } from "../../utils/authStorage";
 import { readProfileFromStorage } from "../../components/user/ProfileStorage";
@@ -64,6 +65,7 @@ export default function SearchLowongan() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [userData, setUserData] = useState(defaultUserData);
+  const [appliedJobIds, setAppliedJobIds] = useState(() => new Set());
 
   const handleLogout = async () => {
     try {
@@ -119,6 +121,33 @@ export default function SearchLowongan() {
 
     loadJobs();
   }, [locale]);
+
+  useEffect(() => {
+    const loadApplications = async () => {
+      if (!isLoggedIn) {
+        setAppliedJobIds(new Set());
+        return;
+      }
+
+      try {
+        const response = await getInternApplications();
+        const applications = response?.data?.data || response?.data?.applications || [];
+        setAppliedJobIds(
+          new Set(
+            applications
+              .map((application) => application?.job_id || application?.job?.id)
+              .filter((jobId) => jobId !== undefined && jobId !== null)
+              .map((jobId) => String(jobId)),
+          ),
+        );
+      } catch (error) {
+        console.error("Gagal memuat status lamaran:", error);
+        setAppliedJobIds(new Set());
+      }
+    };
+
+    loadApplications();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     const syncLanguage = () => {
@@ -194,6 +223,10 @@ export default function SearchLowongan() {
       return;
     }
 
+    if (appliedJobIds.has(String(selectedJob.id))) {
+      return;
+    }
+
     const applicationDraft = {
       id: selectedJob.id,
       title: selectedJob.title,
@@ -218,6 +251,10 @@ export default function SearchLowongan() {
     );
     navigate("/daftar-magang");
   };
+
+  const selectedJobAlreadyApplied = selectedJob
+    ? appliedJobIds.has(String(selectedJob.id))
+    : false;
 
   return (
     <div className="searchlowongan-page">
@@ -497,8 +534,12 @@ export default function SearchLowongan() {
                   </div>
 
                   <div className="job-actions">
-                    <button className="apply-btn" onClick={handleApply}>
-                      Daftar Sekarang →
+                    <button
+                      className={`apply-btn ${selectedJobAlreadyApplied ? "applied" : ""}`}
+                      onClick={handleApply}
+                      disabled={selectedJobAlreadyApplied}
+                    >
+                      {selectedJobAlreadyApplied ? "Sudah Melamar" : "Daftar Sekarang ->"}
                     </button>
                   </div>
                 </div>
