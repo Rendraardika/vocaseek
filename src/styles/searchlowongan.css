@@ -488,6 +488,18 @@
   background: #b88b12;
 }
 
+.apply-btn:disabled,
+.apply-btn.applied {
+  background: #e5e7eb;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.apply-btn:disabled:hover,
+.apply-btn.applied:hover {
+  background: #e5e7eb;
+}
+
 .job-icon {
   font-size: 20px;
   color: #6b7280;

@@ -2,7 +2,7 @@ import "../../styles/reviewlamaran.css";
 import React, { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FiCheckCircle } from "react-icons/fi";
-import { applyInternJob, getInternProfile } from "../../services/intern";
+import { applyInternJob, getInternApplications, getInternProfile } from "../../services/intern";
 import { getApiErrorMessage, logoutUser } from "../../services/auth";
 import { getPublicJobs, mapPublicJob } from "../../services/jobs";
 import { clearAuthSession, isAuthenticated } from "../../utils/authStorage";
@@ -33,6 +33,7 @@ export default function ReviewLamaran() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alreadyApplied, setAlreadyApplied] = useState(false);
   const [job, setJob] = useState(() => readDraftJob());
   const [userData, setUserData] = useState({
     name: "",
@@ -68,9 +69,10 @@ export default function ReviewLamaran() {
       }
 
       try {
-        const [profileResponse, jobsResponse] = await Promise.all([
+        const [profileResponse, jobsResponse, applicationsResponse] = await Promise.all([
           getInternProfile(),
           getPublicJobs(),
+          getInternApplications(),
         ]);
 
         const profile = profileResponse?.data?.data || {};
@@ -82,6 +84,17 @@ export default function ReviewLamaran() {
         const latestJob = publicJobs.find(
           (item) => String(item.id) === String(draftJob.id),
         );
+        const applications =
+          applicationsResponse?.data?.data ||
+          applicationsResponse?.data?.applications ||
+          [];
+        const hasApplied = applications.some(
+          (application) =>
+            String(application?.job_id || application?.job?.id) ===
+            String(draftJob.id),
+        );
+
+        setAlreadyApplied(hasApplied);
 
         setUserData({
           name: normalizedProfile.name || savedProfile.fullName || "",
@@ -154,6 +167,23 @@ export default function ReviewLamaran() {
 
     try {
       setIsSubmitting(true);
+
+      const applicationsResponse = await getInternApplications();
+      const applications =
+        applicationsResponse?.data?.data ||
+        applicationsResponse?.data?.applications ||
+        [];
+      const hasApplied = applications.some(
+        (application) =>
+          String(application?.job_id || application?.job?.id) === String(job.id),
+      );
+
+      if (hasApplied) {
+        setAlreadyApplied(true);
+        alert("Anda sudah melamar di lowongan ini.");
+        navigate("/searchlowongan");
+        return;
+      }
 
       await applyInternJob({
         job_id: Number(job.id),
@@ -436,9 +466,13 @@ export default function ReviewLamaran() {
           <button
             className="rl-submit"
             onClick={handleSubmitApplication}
-            disabled={isSubmitting}
+            disabled={isSubmitting || alreadyApplied}
           >
-            {isSubmitting ? "Mengirim Lamaran..." : "Daftar Lowongan"}
+            {alreadyApplied
+              ? "Sudah Melamar"
+              : isSubmitting
+                ? "Mengirim Lamaran..."
+                : "Daftar Lowongan"}
           </button>
         </div>
       </main>

@@ -166,6 +166,10 @@ export function getApiErrorMessage(error, fallbackMessage) {
     return "Akun ini sedang dinonaktifkan. Silakan hubungi administrator.";
   }
 
+  if (errorCode === "already_applied") {
+    return "Anda sudah melamar di lowongan ini.";
+  }
+
   if (error?.response?.status === 401 && requestUrl.endsWith("/login")) {
     return message || fallbackMessage || "Email atau Password salah.";
   }

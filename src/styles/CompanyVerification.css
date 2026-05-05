@@ -648,15 +648,15 @@ textarea {
 
 .cv-modal {
   width: 100%;
-  max-width: 525px;
+  max-width: 420px;
   background: #ffffff;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.28);
 }
 
 .cv-modal-header {
-  padding: 22px 24px 18px;
+  padding: 18px 20px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -675,7 +675,7 @@ textarea {
 
 .cv-modal-title {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #253567;
 }
@@ -689,17 +689,17 @@ textarea {
 }
 
 .cv-modal-body {
-  padding: 22px 24px 26px;
+  padding: 18px 20px 20px;
 }
 
 .cv-partner-box {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   background: #f5f7fb;
-  border-radius: 14px;
-  padding: 18px 16px;
-  margin-bottom: 24px;
+  border-radius: 12px;
+  padding: 14px 14px;
+  margin-bottom: 18px;
 }
 
 .cv-partner-avatar {
@@ -722,7 +722,7 @@ textarea {
 }
 
 .cv-field-group {
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .cv-field-label {
@@ -739,8 +739,8 @@ textarea {
 
 .cv-select {
   width: 100%;
-  height: 50px;
-  border-radius: 13px;
+  height: 46px;
+  border-radius: 12px;
   border: 1px solid #d8deea;
   padding: 0 44px 0 16px;
   font-size: 15px;
@@ -809,14 +809,14 @@ textarea {
 .cv-modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 14px;
-  padding: 22px 24px;
+  gap: 10px;
+  padding: 16px 20px;
   background: #f7f8fb;
 }
 
 .cv-btn-cancel {
-  min-width: 110px;
-  height: 40px;
+  min-width: 88px;
+  height: 38px;
   border: none;
   background: transparent;
   color: #495369;
@@ -826,8 +826,8 @@ textarea {
 }
 
 .cv-btn-save {
-  min-width: 180px;
-  height: 40px;
+  min-width: 158px;
+  height: 38px;
   border: none;
   border-radius: 12px;
   background: #f6c400;
@@ -1248,7 +1248,7 @@ textarea {
   }
 
   .cv-modal {
-    max-width: 100%;
+    max-width: 420px;
     margin: 0 12px;
     border-radius: 20px;
   }
@@ -1375,7 +1375,7 @@ textarea {
   }
 
   .cv-modal {
-    max-width: 95%;
+    max-width: 420px;
     border-radius: 18px;
   }
 

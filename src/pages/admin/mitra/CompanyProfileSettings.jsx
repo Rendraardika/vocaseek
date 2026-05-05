@@ -77,7 +77,7 @@ function Input({
 const emptyForm = {
   nama_perusahaan: "",
   industri: "",
-  ukuran_perusahaan: "",
+  jumlah_karyawan: "",
   website_url: "",
   deskripsi: "",
   visi: "",
