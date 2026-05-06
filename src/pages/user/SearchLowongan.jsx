@@ -1,6 +1,7 @@
 import "../../styles/searchlowongan.css";
 import { useNavigate, NavLink } from "react-router-dom";
 import React, { useState, useEffect, useMemo } from "react";
+import FooterSocialIcons from "../../components/common/FooterSocialIcons";
 import {
   FiSearch,
   FiMapPin,
@@ -11,6 +12,7 @@ import {
   FiCalendar,
   FiCheckCircle,
   FiDollarSign,
+  FiGift,
 } from "react-icons/fi";
 import { getApiErrorMessage, logoutUser } from "../../services/auth";
 import { getInternApplications } from "../../services/intern";
@@ -49,6 +51,15 @@ function CompanyLogo({ name, logoUrl, fallbackIcon = <FiBriefcase /> }) {
   }
 
   return fallback.length > 0 ? <span>{fallback}</span> : fallbackIcon;
+}
+
+function DetailSectionTitle({ icon, children }) {
+  return (
+    <div className="searchlowongan-section-title">
+      <span className="searchlowongan-section-icon">{icon}</span>
+      <h3>{children}</h3>
+    </div>
+  );
 }
 
 export default function SearchLowongan() {
@@ -609,53 +620,56 @@ export default function SearchLowongan() {
                     {(hasValue(selectedJob.dates?.deadline) ||
                       hasValue(selectedJob.dates?.start)) && (
                       <div className="searchlowongan-section">
-                        <h3>
-                          <FiCalendar style={{ marginRight: "6px" }} />
+                        <DetailSectionTitle icon={<FiCalendar />}>
                           Tanggal Penting
-                        </h3>
+                        </DetailSectionTitle>
 
-                        <ul>
+                        <div className="searchlowongan-date-grid">
                           {hasValue(selectedJob.dates?.deadline) && (
-                            <li>
-                              <b>Deadline:</b> {selectedJob.dates.deadline}
-                            </li>
+                            <div className="searchlowongan-date-card">
+                              <span>Deadline</span>
+                              <strong>{selectedJob.dates.deadline}</strong>
+                            </div>
                           )}
 
                           {hasValue(selectedJob.dates?.start) && (
-                            <li>
-                              <b>Mulai:</b> {selectedJob.dates.start}
-                            </li>
+                            <div className="searchlowongan-date-card">
+                              <span>Mulai</span>
+                              <strong>{selectedJob.dates.start}</strong>
+                            </div>
                           )}
-                        </ul>
+                        </div>
                       </div>
                     )}
 
                     {selectedJob.qualifications.length > 0 && (
                       <div className="searchlowongan-section">
-                        <h3>
-                          <FiCheckCircle style={{ marginRight: "6px" }} />
+                        <DetailSectionTitle icon={<FiCheckCircle />}>
                           Kualifikasi
-                        </h3>
+                        </DetailSectionTitle>
 
-                        <ul>
+                        <div className="searchlowongan-check-list">
                           {selectedJob.qualifications.map((item, index) => (
-                            <li key={index}>{item}</li>
+                            <div className="searchlowongan-check-item" key={index}>
+                              <FiCheckCircle />
+                              <span>{item}</span>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
                     )}
 
                     {selectedJob.benefits.length > 0 && (
                       <div className="searchlowongan-section">
-                        <h3>
-                          <FiDollarSign style={{ marginRight: "6px" }} />
+                        <DetailSectionTitle icon={<FiGift />}>
                           Benefit
-                        </h3>
+                        </DetailSectionTitle>
 
                         <div className="searchlowongan-benefits">
                           {selectedJob.benefits.map((item, index) => (
                             <div className="searchlowongan-benefit" key={index}>
-                              {item}
+                              <FiDollarSign />
+                              <span>{item}</span>
                             </div>
                           ))}
                         </div>
@@ -810,54 +824,7 @@ export default function SearchLowongan() {
               <li>admin@vocaseek.id</li>
             </ul>
 
-            <div className="footer-social">
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill={"currentColor"}
-                  viewBox={"0 0 24 24"}
-                >
-                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 2v.51l-8 6.22-8-6.22V6zM4 18V9.04l7.39 5.74c.18.14.4.21.61.21s.43-.07.61-.21L20 9.03v8.96H4Z"></path>
-                </svg>
-              </span>
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill={"currentColor"}
-                  viewBox={"0 0 24 24"}
-                >
-                  <path d="M11.999 7.377a4.623 4.623 0 1 0 0 9.248 4.623 4.623 0 0 0 0-9.248m0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008M16.806 6.129a1.078 1.078 0 1 0 0 2.156 1.078 1.078 0 1 0 0-2.156" />
-                  <path d="M20.533 6.111A4.6 4.6 0 0 0 17.9 3.479a6.6 6.6 0 0 0-2.186-.42c-.963-.042-1.268-.054-3.71-.054s-2.755 0-3.71.054a6.6 6.6 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.6 6.6 0 0 0-.419 2.186c-.043.962-.056 1.267-.056 3.71s0 2.753.056 3.71c.015.748.156 1.486.419 2.187a4.6 4.6 0 0 0 2.634 2.632 6.6 6.6 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.6 6.6 0 0 0 2.186-.419 4.61 4.61 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.6 6.6 0 0 0-.421-2.217m-1.218 9.532a5 5 0 0 1-.311 1.688 2.99 2.99 0 0 1-1.712 1.711 5 5 0 0 1-1.67.311c-.95.044-1.218.055-3.654.055-2.438 0-2.687 0-3.655-.055a5 5 0 0 1-1.669-.311 2.99 2.99 0 0 1-1.719-1.711 5.1 5.1 0 0 1-.311-1.669c-.043-.95-.053-1.218-.053-3.654s0-2.686.053-3.655a5 5 0 0 1 .311-1.687c.305-.789.93-1.41 1.719-1.712a5 5 0 0 1 1.669-.311c.951-.043 1.218-.055 3.655-.055s2.687 0 3.654.055a5 5 0 0 1 1.67.311 3 3 0 0 1 1.712 1.712 5.1 5.1 0 0 1 .311 1.669c.043.951.054 1.218.054 3.655s0 2.698-.043 3.654z" />
-                </svg>
-              </span>
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill={"currentColor"}
-                  viewBox={"0 0 24 24"}
-                >
-                  <path d="M12 6.81c-2.86 0-5.19 2.33-5.19 5.19s2.33 5.19 5.19 5.19 5.19-2.33 5.19-5.19S14.86 6.81 12 6.81m-1.93 8.15V9.05L15.18 12l-5.11 2.95Z" />
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 15.92c-3.27 0-5.92-2.65-5.92-5.92S8.73 6.08 12 6.08s5.92 2.65 5.92 5.92-2.65 5.92-5.92 5.92" />
-                </svg>
-              </span>
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={24}
-                  height={24}
-                  fill={"currentColor"}
-                  viewBox={"0 0 24 24"}
-                >
-                  <path d="M19.633 7.997c.013.175.013.349.013.523 0 5.325-4.053 11.461-11.46 11.461-2.282 0-4.402-.661-6.186-1.809.324.037.636.05.973.05a8.07 8.07 0 0 0 5.001-1.721 4.04 4.04 0 0 1-3.767-2.793c.249.037.499.062.761.062.361 0 .724-.05 1.061-.137a4.03 4.03 0 0 1-3.23-3.953v-.05c.537.299 1.16.486 1.82.511a4.02 4.02 0 0 1-1.796-3.354c0-.748.199-1.434.548-2.032a11.46 11.46 0 0 0 8.306 4.215c-.062-.3-.1-.611-.1-.923a4.026 4.026 0 0 1 4.028-4.028c1.16 0 2.207.486 2.943 1.272a8 8 0 0 0 2.556-.973 4.02 4.02 0 0 1-1.771 2.22 8 8 0 0 0 2.319-.624 8.7 8.7 0 0 1-2.019 2.083" />
-                </svg>
-              </span>
-            </div>
+            <FooterSocialIcons />
           </div>
         </div>
 
@@ -868,3 +835,4 @@ export default function SearchLowongan() {
     </div>
   );
 }
+
