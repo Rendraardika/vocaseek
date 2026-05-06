@@ -348,3 +348,55 @@
     font-size: 14px;
   }
 }
+
+/* Keep the visual side identical across auth pages on desktop. */
+@media (min-width: 1025px) {
+  .login-page {
+    overflow: hidden;
+  }
+
+  .login-left {
+    flex: 0 0 56.5vw;
+    width: 56.5vw;
+    max-width: 56.5vw;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .login-overlay {
+    padding: 80px;
+  }
+
+  .login-overlay h1 {
+    font-size: 64px;
+    line-height: 70px;
+    font-weight: 500;
+    max-width: 500px;
+    letter-spacing: -0.5px;
+  }
+
+  .login-overlay h1 span {
+    font-weight: 600;
+  }
+
+  .login-overlay p {
+    max-width: 420px;
+    margin-top: 26px;
+    margin-bottom: 0;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .login-left-footer {
+    bottom: 40px;
+    left: 70px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .login-right {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
