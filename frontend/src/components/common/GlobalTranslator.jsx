@@ -5,6 +5,15 @@ import { normalizeTranslatableText, translatePhrase } from "../../i18n/phrases";
 const textNodeOriginalMap = new WeakMap();
 const attributeOriginalMap = new WeakMap();
 const untranslatedTexts = new Set();
+const NON_TRANSLATABLE_EXACT_TEXTS = new Set([
+  "id",
+  "en",
+  "google",
+  "vocaseek",
+  "vokaseek",
+  "vokasik",
+  "est. 2026",
+]);
 
 function shouldSkipNode(parentElement) {
   if (!parentElement) {
@@ -41,14 +50,43 @@ function resolveTextSource(currentText) {
   return knownTranslations.includes(normalizedVisible) ? storedText : visibleText;
 }
 
-function reportMissingTranslation(text) {
+function isLikelyDynamicText(normalizedText) {
+  const lowerText = normalizedText.toLowerCase();
+
+  return (
+    NON_TRANSLATABLE_EXACT_TEXTS.has(lowerText) ||
+    normalizedText.includes("@") ||
+    /^https?:\/\//i.test(normalizedText) ||
+    /^[+\d\s().-]+$/.test(normalizedText) ||
+    /^[\d\s.,:/-]+$/.test(normalizedText) ||
+    /^[\u2022*]+$/.test(normalizedText) ||
+    /^[a-z]{2}$/i.test(normalizedText) ||
+    /(?:\u00a9|\(c\)|all rights reserved)/i.test(normalizedText)
+  );
+}
+
+function shouldReportMissingTranslation(text, context = {}) {
+  const normalized = normalizeTranslatableText(text);
+
+  if (!normalized || untranslatedTexts.has(normalized)) {
+    return false;
+  }
+
+  if (context.attributeName === "value" && context.element?.tagName === "INPUT") {
+    return false;
+  }
+
+  return !isLikelyDynamicText(normalized);
+}
+
+function reportMissingTranslation(text, context) {
   if (!import.meta.env.DEV) {
     return;
   }
 
   const normalized = normalizeTranslatableText(text);
 
-  if (!normalized || untranslatedTexts.has(normalized)) {
+  if (!shouldReportMissingTranslation(normalized, context)) {
     return;
   }
 
@@ -118,7 +156,10 @@ function translateAttributes(root, locale) {
 
       const translatedText = translatePhrase(originalAttributes[attributeName], locale);
       if (!translatedText) {
-        reportMissingTranslation(originalAttributes[attributeName]);
+        reportMissingTranslation(originalAttributes[attributeName], {
+          attributeName,
+          element,
+        });
       }
       element.setAttribute(attributeName, translatedText || originalAttributes[attributeName]);
     });
