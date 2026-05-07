@@ -186,7 +186,7 @@ export default function Histori() {
       title: "Pending",
       active: currentStage === "Pending",
       content:
-        "Lamaran kamu sedang diproses oleh perusahaan. Pastikan data diri dan dokumen yang kamu kirim sudah benar.",
+        "Lamaran Anda sedang dalam proses peninjauan oleh perusahaan.Cek website secara berkala untuk melihat pembaruan",
     },
     {
       no: 2,
