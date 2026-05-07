@@ -345,7 +345,7 @@ export default function ProfilLayout() {
             </div>
 
             <div className="mainInner">
-              {!isTampilanProfil && !pathname.includes("/profil/data-akademik/simpan") && (
+              {!isTampilanProfil && !pathname.includes("/profil/data-akademik/simpan") && !isDokumen && (
                 <p className="hintText">
                   Pastikan data pribadi benar untuk mempermudah proses
                   pendaftaran program Vocaseek.

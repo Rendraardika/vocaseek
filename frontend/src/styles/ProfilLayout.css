@@ -470,12 +470,12 @@ body {
 }
 
 .mainInner {
-  padding: 18px 24px 24px;
+  padding: 24px 28px 28px;
   background: #ffffff;
 }
 
 .hintText {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   padding: 0;
   font-size: 12px;
   color: var(--muted);
@@ -499,8 +499,11 @@ body {
 }
 
 .mainInner > .tpWrap,
-.mainInner > .dpWrap {
+.mainInner > .dpWrap,
+.mainInner > .dcm-wrap,
+.mainInner > .sa-wrap {
   width: 100%;
+  max-width: 100%;
   background: transparent;
   border: none;
   border-radius: 0;

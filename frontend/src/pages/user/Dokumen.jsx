@@ -606,34 +606,37 @@ export default function Dokumen() {
 
   return (
     <section className="dcm-wrap">
-      <div className="dcm-head">
-        <h2 className="dcm-title">Dokumen Pendukung</h2>
-        <p className="dcm-subtitle">
-          Unggah dokumen yang dibutuhkan dalam format PDF agar profil siap
-          diverifikasi.
-        </p>
-        {completed && (
-          <p className="dcm-status dcm-statusSuccess">
-            Semua dokumen utama sudah lengkap.
+      <div className="dcm-headerRow">
+        <div>
+          <h2 className="dcm-title">Dokumen Pendukung</h2>
+          <p className="dcm-subtitle">
+            Unggah dokumen pendukung dalam format PDF untuk proses verifikasi profil.
           </p>
-        )}
-        {hasUnsavedChanges && (
-          <p className="dcm-status dcm-statusWarning">
-            Ada perubahan yang belum disimpan.
-          </p>
-        )}
-        {saveMessage && (
-          <p
-            className={`dcm-status ${
-              saveMessage.includes("berhasil")
-                ? "dcm-statusSuccess"
-                : "dcm-statusError"
-            }`}
-          >
-            {saveMessage}
-          </p>
-        )}
+          {completed && (
+            <div className="dcm-status dcm-statusSuccess">
+              ✓ Semua dokumen utama sudah lengkap.
+            </div>
+          )}
+          {hasUnsavedChanges && (
+            <div className="dcm-status dcm-statusWarning">
+              Ada perubahan yang belum disimpan.
+            </div>
+          )}
+          {saveMessage && (
+            <div
+              className={`dcm-status ${
+                saveMessage.includes("berhasil")
+                  ? "dcm-statusSuccess"
+                  : "dcm-statusError"
+              }`}
+            >
+              {saveMessage}
+            </div>
+          )}
+        </div>
       </div>
+
+      <div className="dcm-divider" />
 
       <div className="dcm-list">
         {docs.map((d) => {

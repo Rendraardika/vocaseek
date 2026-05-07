@@ -1,4 +1,3 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
 .tpWrap,
@@ -15,12 +14,12 @@
 
 .tpWrap {
   width: 100%;
-  background: #ffffff !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 30px 0 0 !important;
-  margin: 0 !important;
-  box-shadow: none !important;
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  padding: 6px 0 0;
+  margin: 0;
+  box-shadow: none;
   color: #2f3d52;
 }
 
@@ -39,12 +38,12 @@
    HEADER
 ========================= */
 .tpWrap .tpHeader {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: flex-start !important;
-  gap: 20px !important;
-  padding: 0 32px !important;
-  margin: 0 0 22px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0;
+  margin: 0 0 20px;
 }
 
 .tpWrap .tpHeader > div:first-child {
@@ -52,277 +51,249 @@
 }
 
 .tpWrap .tpTitle {
-  font-size: 17px !important;
-  line-height: 1.15 !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  color: #2f3b52 !important;
-  margin: 0 0 4px !important;
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #2f3b52;
+  margin: 0 0 4px;
 }
 
 .tpWrap .tpSubtitle {
-  margin: 0 !important;
-  font-size: 10px !important;
-  line-height: 1.45 !important;
-  font-weight: 400 !important;
-  color: #9aa7bb !important;
-  max-width: 440px !important;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #9aa7bb;
+  max-width: 100%;
 }
 
 .tpWrap .tpEditBtn {
-  width: 24px !important;
-  height: 24px !important;
-  border: none !important;
-  background: transparent !important;
-  color: #a7b3c4 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border-radius: 6px !important;
-  flex-shrink: 0 !important;
-  margin-top: 2px !important;
-  padding: 0 !important;
-  box-shadow: none !important;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #a7b3c4;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  padding: 0;
+  box-shadow: none;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .tpWrap .tpEditBtn:hover {
-  background: #f6f8fb !important;
-  color: #73849a !important;
+  background: #f4f6fa;
+  color: #73849a;
 }
 
 /* =========================
    SECTION
 ========================= */
 .tpWrap .tpSection {
-  width: 100% !important;
-  padding: 0 32px 30px !important;
+  width: 100%;
+  padding: 0 0 8px;
 }
 
 .tpWrap .tpSectionLabel {
-  margin: 0 0 5px !important;
-  font-size: 10px !important;
-  line-height: 1.2 !important;
-  letter-spacing: 0.16em !important;
-  font-weight: 700 !important;
-  color: #a2aec0 !important;
-  text-transform: uppercase !important;
+  margin: 0 0 6px;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: #a2aec0;
+  text-transform: uppercase;
 }
 
 .tpWrap .tpSectionLabelBottom {
-  margin-bottom: 12px !important;
+  margin-bottom: 14px;
 }
 
 /* =========================
    BLOCK
 ========================= */
 .tpWrap .tpBlock {
-  width: 100% !important;
+  width: 100%;
 }
 
 .tpWrap .tpBlockTitle {
-  margin: 0 0 10px !important;
-  font-size: 12px !important;
-  line-height: 1.25 !important;
-  font-weight: 700 !important;
-  color: #556882 !important;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #4b5d77;
 }
 
 /* =========================
    ABOUT CARD
 ========================= */
 .tpWrap .tpAboutCard {
-  width: 100% !important;
-  background: #f4f6fa !important;
-  border: none !important;
-  border-radius: 8px !important;
-  padding: 13px 14px !important;
-  margin: 0 0 18px !important;
-  box-shadow: none !important;
+  width: 100%;
+  background: #f4f6fa;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 0 0 20px;
+  box-shadow: none;
 }
 
 .tpWrap .tpAboutText {
-  font-size: 10px !important;
-  line-height: 2 !important;
-  font-weight: 400 !important;
-  color: #4b5d77 !important;
+  font-size: 12px;
+  line-height: 1.8;
+  font-weight: 400;
+  color: #4b5d77;
 }
 
 /* =========================
    GRID BIODATA
 ========================= */
 .tpWrap .tpGrid {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-  column-gap: 92px !important;
-  row-gap: 18px !important;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 48px;
+  row-gap: 22px;
 }
 
 .tpWrap .tpField {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 4px !important;
-  min-width: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
 }
 
 .tpWrap .tpFieldFull {
-  grid-column: 1 / -1 !important;
+  grid-column: 1 / -1;
 }
 
 .tpWrap .tpFieldLabel {
-  margin: 0 !important;
-  font-size: 9px !important;
-  line-height: 1.2 !important;
-  letter-spacing: 0.08em !important;
-  font-weight: 700 !important;
-  color: #9eacbe !important;
-  text-transform: uppercase !important;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: #9eacbe;
+  text-transform: uppercase;
 }
 
 .tpWrap .tpFieldValue {
-  margin: 0 !important;
-  font-size: 10px !important;
-  line-height: 1.45 !important;
-  font-weight: 500 !important;
-  color: #2f3d52 !important;
-  word-break: break-word !important;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #2f3d52;
+  word-break: break-word;
 }
 
 /* =========================
    DIVIDER
 ========================= */
 .tpWrap .tpDivider {
-  width: 100% !important;
-  height: 1px !important;
-  background: #edf1f5 !important;
-  margin: 16px 0 10px !important;
+  width: 100%;
+  height: 1px;
+  background: #edf1f5;
+  margin: 20px 0 14px;
 }
 
 /* =========================
    SOCIAL
 ========================= */
 .tpWrap .tpSocialRow {
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  gap: 10px !important;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .tpWrap .tpSocialBtn {
-  height: 30px !important;
-  min-width: 86px !important;
-  padding: 0 12px 0 10px !important;
-  border: 1px solid #d9e2ec !important;
-  border-radius: 8px !important;
-  background: #ffffff !important;
-  color: #334155 !important;
-  font-size: 9px !important;
-  font-weight: 600 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 7px !important;
-  cursor: pointer !important;
-  box-shadow: none !important;
+  height: 34px;
+  min-width: 100px;
+  padding: 0 14px 0 10px;
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .tpWrap .tpSocialBtn:hover {
-  background: #f8fafc !important;
-  border-color: #cfd8e3 !important;
+  background: #f8fafc;
+  border-color: #cfd8e3;
 }
 
 .tpWrap .tpSocialIcon {
-  width: 14px !important;
-  height: 14px !important;
-  border-radius: 8px !important;
-  background: #0f172a !important;
-  color: #ffffff !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 7px !important;
-  line-height: 1 !important;
-  font-weight: 700 !important;
-  text-transform: lowercase !important;
-  flex-shrink: 0 !important;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: #0f172a;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: lowercase;
+  flex-shrink: 0;
 }
 
 .tpWrap .tpSocialIcon.ig {
-  font-size: 8px !important;
+  font-size: 9px;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
 @media (max-width: 1024px) {
-  .tpWrap .tpHeader {
-    padding: 0 24px !important;
-  }
-
-  .tpWrap .tpSection {
-    padding: 0 24px 24px !important;
-  }
-
   .tpWrap .tpGrid {
-    column-gap: 44px !important;
+    column-gap: 36px;
   }
 }
 
 @media (max-width: 900px) {
-  .tpWrap {
-    padding-top: 22px !important;
-  }
-
-  .tpWrap .tpHeader {
-    padding: 0 20px !important;
-    margin-bottom: 18px !important;
-  }
-
-  .tpWrap .tpSection {
-    padding: 0 20px 22px !important;
-  }
-
   .tpWrap .tpGrid {
-    grid-template-columns: 1fr !important;
-    column-gap: 0 !important;
-    row-gap: 16px !important;
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: 18px;
   }
 
   .tpWrap .tpFieldFull {
-    grid-column: auto !important;
+    grid-column: auto;
   }
 }
 
 @media (max-width: 600px) {
-  .tpWrap {
-    padding-top: 18px !important;
-  }
-
   .tpWrap .tpHeader {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-    padding: 0 16px !important;
-  }
-
-  .tpWrap .tpSection {
-    padding: 0 16px 20px !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 
   .tpWrap .tpEditBtn {
-    align-self: flex-end !important;
+    align-self: flex-end;
   }
 
   .tpWrap .tpTitle {
-    font-size: 16px !important;
+    font-size: 16px;
   }
 
   .tpWrap .tpSubtitle {
-    max-width: 100% !important;
+    max-width: 100%;
   }
 
   .tpWrap .tpSocialBtn {
-    min-width: 84px !important;
+    min-width: 90px;
   }
 }

@@ -9,127 +9,141 @@
 
 .sa-wrap {
   width: 100%;
+  max-width: 100%;
+  padding: 0;
 }
 
 .sa-card {
   width: 100%;
-  max-width: 900px;
-  margin: 0;              /* HAPUS center */
-  padding: 6px 0 4px;    /* hilangkan padding kiri kanan */
-}
-
-.sa-wrap {
-  width: 100%;
-  padding: 0 24px; /* samakan dengan layout atas */
-}
-
-.sa-headerRow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  text-align: left; /* penting */
-}
-
-.sa-title {
-  text-align: left;
-}
-
-.sa-desc {
-  text-align: left;
-}
-
-.sa-card {
-  width: 100%;
+  max-width: 100%;
   background: transparent;
   border: none;
   border-radius: 0;
   box-shadow: none;
-  padding: 6px 4px 4px;
+  padding: 6px 0 0;
 }
 
+/* =========================
+   HEADER
+========================= */
 .sa-headerRow {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid #eef0f3;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #edf1f5;
+  width: 100%;
+}
+
+.sa-headerRow > div:first-child {
+  min-width: 0;
+  flex: 1 1 0%;
 }
 
 .sa-title {
-  margin: 0;
-  font-size: 28px;
+  margin: 0 0 4px;
+  font-size: 17px;
   line-height: 1.2;
-  font-weight: 500;
-  color: #2b2b2b;
-  letter-spacing: -0.2px;
+  font-weight: 700;
+  color: #2f3b52;
+  letter-spacing: -0.01em;
   font-family: "Poppins", sans-serif;
+  text-align: left;
 }
 
 .sa-desc {
-  margin: 22px 0 0;
-  max-width: 720px;
-  font-size: 14px;
-  line-height: 1.75;
-  color: #6b7280;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #9aa7bb;
   font-weight: 400;
+  text-align: left;
 }
 
 .sa-editBtn {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   border: none;
   background: transparent;
-  color: #98a2b3;
-  border-radius: 10px;
+  color: #a7b3c4;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 2px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .sa-editBtn:hover {
-  background: rgba(15, 23, 42, 0.04);
-  color: #667085;
+  background: #f4f6fa;
+  color: #73849a;
 }
 
 .sa-editIcon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   display: block;
 }
 
+/* =========================
+   GRID
+========================= */
 .sa-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 26px 40px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
   padding-top: 22px;
+  width: 100%;
 }
 
 .sa-item {
-  padding: 0 0 10px;
-  border-bottom: 1px solid #eef0f3;
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: #f8f9fb;
+  border: 1px solid #eef0f3;
+  text-align: left;
+  min-width: 0;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sa-item:hover {
+  border-color: #dde3ea;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .sa-label {
-  margin-bottom: 10px;
-  font-size: 11px;
-  line-height: 1.4;
-  letter-spacing: 1.4px;
+  margin-bottom: 8px;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #b0b7c3;
+  color: #9eacbe;
   font-weight: 700;
+  text-align: left;
 }
 
 .sa-value {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.5;
-  color: #1f2937;
-  font-weight: 500;
+  color: #2f3d52;
+  font-weight: 600;
+  word-break: break-word;
+  text-align: left;
 }
 
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 768px) {
   .sa-headerRow {
     flex-direction: column;
@@ -142,10 +156,14 @@
 
   .sa-grid {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 12px;
   }
 
   .sa-title {
-    font-size: 24px;
+    font-size: 16px;
+  }
+
+  .sa-item {
+    padding: 16px 18px;
   }
 }
