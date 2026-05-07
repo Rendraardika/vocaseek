@@ -73,9 +73,7 @@ export default function SimpanAkademik() {
           <div>
             <h1 className="sa-title">Informasi Akademik</h1>
             <p className="sa-desc">
-              Pastikan informasi akademik terisi dengan benar untuk mempermudah
-              proses pendaftaran dan verifikasi profil Anda oleh mitra
-              perusahaan kami.
+              Pastikan informasi akademik terisi dengan benar.
             </p>
           </div>
 
