@@ -4,6 +4,7 @@ import ProcessSection from "../../components/common/ProcessSection";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 import {
   FaBriefcase,
   FaPaintBrush,
@@ -336,7 +337,7 @@ function App() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 

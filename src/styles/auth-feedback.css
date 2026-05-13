@@ -97,7 +97,7 @@
 }
 
 .auth-feedback-logo {
-  width: 128px;
+  width: 148px;
   max-width: 100%;
   margin-bottom: 0;
 }
@@ -388,6 +388,11 @@
   color: #2563eb;
 }
 
+.auth-feedback-approval-note {
+  margin-top: 14px;
+  text-align: left;
+}
+
 .auth-feedback-meta {
   display: inline-flex;
   align-items: center;
@@ -512,7 +517,7 @@
   }
 
   .auth-feedback-logo {
-    width: 118px;
+    width: 132px;
   }
 
   .auth-feedback-icon {

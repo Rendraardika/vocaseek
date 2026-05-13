@@ -2,6 +2,7 @@ import "../../styles/searchlowongan.css";
 import { useNavigate, NavLink } from "react-router-dom";
 import React, { useState, useEffect, useMemo } from "react";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 import {
   FiSearch,
   FiMapPin,
@@ -810,7 +811,7 @@ export default function SearchLowongan() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 

@@ -101,3 +101,21 @@ label {
   height: 18px;
   display: block;
 }
+
+.footer-brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.footer-brand-logo img {
+  width: 36px;
+  height: auto;
+  display: block;
+}
