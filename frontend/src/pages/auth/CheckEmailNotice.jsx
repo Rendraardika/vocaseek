@@ -29,6 +29,7 @@ export default function CheckEmailNotice() {
     [location.state],
   );
   const loginPath = location.state?.loginPath || "/login";
+  const isCompanyRegistration = loginPath === "/login-company";
   const [email, setEmail] = useState(initialEmail);
   const [statusMessage, setStatusMessage] = useState(
     location.state?.message ||
@@ -69,7 +70,16 @@ export default function CheckEmailNotice() {
           <div className="auth-feedback-card-header">
             <div>
               <h2>Cek Email Anda</h2>
-              <p className="auth-feedback-description">{statusMessage}</p>
+              {!isCompanyRegistration ? (
+                <p className="auth-feedback-description">{statusMessage}</p>
+              ) : null}
+              {isCompanyRegistration ? (
+                <div className="auth-feedback-message auth-feedback-approval-note is-info">
+                  Setelah email berhasil diverifikasi, akun perusahaan Anda
+                  masih menunggu persetujuan admin. Silakan cek email dan
+                  halaman login secara berkala untuk mengetahui status akun.
+                </div>
+              ) : null}
             </div>
           </div>
 

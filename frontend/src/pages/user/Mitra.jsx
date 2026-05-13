@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 import {
   FaCheckCircle,
   FaUserTie,
@@ -254,7 +255,7 @@ export default function Mitra() {
 
           <div className="testimonial-user">
             <div className="avatar" />
-            <h4>Fitri Maulana</h4>
+            <h4>Bapak Ageng Permadi</h4>
             <span>{testimonialRole}</span>
           </div>
         </div>
@@ -298,7 +299,7 @@ export default function Mitra() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 

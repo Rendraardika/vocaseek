@@ -5,6 +5,7 @@ import { logoutUser } from "../../services/auth";
 import { clearAuthSession, isAuthenticated } from "../../utils/authStorage";
 import { readProfileFromStorage } from "../../components/user/ProfileStorage";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 
 const defaultUserData = {
   name: "",
@@ -315,7 +316,7 @@ export default function Contact() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 

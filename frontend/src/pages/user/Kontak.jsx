@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 
 export default function Kontak() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -152,7 +153,7 @@ export default function Kontak() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 

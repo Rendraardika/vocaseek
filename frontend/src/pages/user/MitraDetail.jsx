@@ -9,6 +9,7 @@ import {
 } from "../../utils/userScopedStorage";
 import { translatePhrase } from "../../i18n/phrases";
 import { getSavedLanguage } from "../../utils/languagePreference";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 
 function MitraHeroLogo({ name, logoUrl }) {
   const [hasError, setHasError] = useState(false);
@@ -300,7 +301,7 @@ export default function MitraDetail() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 

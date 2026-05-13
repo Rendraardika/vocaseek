@@ -1358,7 +1358,7 @@ section h2 {
   max-width: 420px;
 }
 
-.footer-logo img {
+.footer-logo > img {
   margin-top: 20px;
   width: 40px;
 }

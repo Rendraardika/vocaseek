@@ -472,7 +472,7 @@ export default function ReviewLamaran() {
               ? "Sudah Melamar"
               : isSubmitting
                 ? "Mengirim Lamaran..."
-                : "Daftar Lowongan"}
+                : "Kirim Lamaran"}
           </button>
         </div>
       </main>

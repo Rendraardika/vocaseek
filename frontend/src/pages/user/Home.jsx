@@ -2,6 +2,7 @@ import "../../styles/home.css";
 import PerjalananKarirmu from "../../components/user/JourneyStepCard";
 import { useNavigate, NavLink } from "react-router-dom";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
+import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 import {
   FaRocket,
   FaSearch,
@@ -627,7 +628,7 @@ export default function Home() {
             </p>
 
             <div className="footer-logo">
-              <img src="/logovocaseek2.png" alt="Vocaseek" />
+              <FooterBrandLogo />
             </div>
           </div>
 
