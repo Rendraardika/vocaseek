@@ -1,37 +1,77 @@
-# Pocaseek Workspace
+# Vocaseek Workspace
 
-Struktur project sudah dipisah menjadi:
+Vocaseek terdiri dari:
 
 - `frontend/` untuk aplikasi React + Vite
 - `backend/` untuk aplikasi Laravel API
-- `archive/` untuk folder lama yang disisihkan agar workspace utama tetap rapi
+- `docker-compose.yml` untuk menjalankan frontend, backend, queue, dan database Docker opsional
 
-## Menjalankan Frontend
+## Setup Docker + Laragon MySQL
 
-```powershell
-cd C:\laragon\www\pocaseek\frontend
-npm install
-npm run dev
+Setup utama saat ini adalah:
+
+```txt
+React Docker -> Laravel Docker -> MySQL Laragon Windows
 ```
 
-Frontend memakai `.env` di folder `frontend` dan default API base URL ke `http://127.0.0.1:8000/api`.
-Untuk tes dari HP di jaringan yang sama, jalankan frontend di host LAN (`VITE_DEV_SERVER_HOST=0.0.0.0`)
-dan gunakan IP laptop pada `FRONTEND_URL`, `PUBLIC_FRONTEND_URL`, dan `VITE_API_BASE_URL`.
+Backend Docker memakai port host `8001` agar tidak bentrok dengan project lain yang memakai `8000`.
 
-## Menjalankan Backend
+1. Salin konfigurasi root:
 
-```powershell
-cd C:\laragon\www\pocaseek\backend
-composer install
-php artisan migrate
-php artisan serve
+```bash
+cp .env.example .env
 ```
 
-Backend sudah memiliki file `.env`, key aplikasi, dan `database/database.sqlite` sebagai database lokal default.
+2. Jika menjalankan Docker dari WSL, ambil IP Windows host:
 
-## Catatan
+```bash
+ip route | awk '/default/ {print $3}'
+```
 
-- Jika ingin memakai MySQL, ubah konfigurasi `DB_*` di `backend/.env`.
-- Jika frontend dijalankan di port selain `5173`, sesuaikan `FRONTEND_URL`, `SANCTUM_STATEFUL_DOMAINS`, dan `CORS_ALLOWED_ORIGINS` di `backend/.env`.
-- Jika link email ingin bisa dibuka di device lain, jangan gunakan `localhost` untuk `PUBLIC_FRONTEND_URL`;
-  gunakan IP LAN laptop seperti `http://192.168.100.160:5173`.
+3. Isi `.env` root:
+
+```env
+DOCKER_DB_HOST=172.x.x.x
+DOCKER_DB_PORT=3306
+DOCKER_DB_DATABASE=vocaseek
+DOCKER_DB_USERNAME=vocaseek_user
+DOCKER_DB_PASSWORD=vocaseek_pass
+BACKEND_PORT=8001
+```
+
+4. Buat user MySQL di Laragon/HeidiSQL:
+
+```sql
+CREATE DATABASE IF NOT EXISTS vocaseek;
+CREATE USER IF NOT EXISTS 'vocaseek_user'@'%' IDENTIFIED BY 'vocaseek_pass';
+GRANT ALL PRIVILEGES ON vocaseek.* TO 'vocaseek_user'@'%';
+FLUSH PRIVILEGES;
+```
+
+5. Jalankan aplikasi:
+
+```bash
+docker compose up --build -d
+docker exec laravel_api php artisan migrate
+```
+
+URL lokal:
+
+- Frontend: `http://localhost:5173`
+- Backend/API: `http://localhost:8001/api`
+
+## Database Docker Opsional
+
+Jika ingin memakai MySQL dari Docker, aktifkan profile `docker-db`:
+
+```bash
+docker compose --profile docker-db up -d
+```
+
+Untuk setup ini, arahkan `DOCKER_DB_HOST=mysql_db` di `.env`.
+
+## Catatan Performa WSL
+
+Jika Docker dijalankan dari WSL, project akan lebih cepat jika folder project berada di filesystem WSL, misalnya `~/vocaseek`, bukan di `/mnt/c` atau `/mnt/e`.
+
+Database tetap bisa memakai Laragon Windows dengan `DOCKER_DB_HOST` berisi IP Windows dari command `ip route`.
