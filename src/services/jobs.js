@@ -14,7 +14,7 @@ function normalizeAssetUrl(value) {
   if (/^https?:\/\//i.test(raw) || raw.startsWith("data:")) return raw;
 
   const apiBase =
-    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001/api";
 
   try {
     const apiUrl = new URL(apiBase, window.location.origin);

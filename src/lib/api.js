@@ -10,7 +10,7 @@ const DEFAULT_LANGUAGE = "id";
 
 function normalizeConfiguredApiBaseUrl() {
   return String(
-    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api",
+    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8001/api",
   ).trim();
 }
 
@@ -27,7 +27,7 @@ export function resolveApiBaseUrl() {
   }
 
   const currentHostname = window.location.hostname;
-  const fallbackBaseUrl = `${window.location.protocol}//${currentHostname}:8000/api`;
+  const fallbackBaseUrl = `${window.location.protocol}//${currentHostname}:8001/api`;
 
   const isLocalOrPrivateHost = (hostname = "") => {
     const normalized = String(hostname || "").trim().toLowerCase();
@@ -64,7 +64,7 @@ export function resolveApiBaseUrl() {
       configuredUrl.hostname = currentHostname;
 
       if (!configuredUrl.port) {
-        configuredUrl.port = "8000";
+        configuredUrl.port = "8001";
       }
     } else if (isLocalFrontend && !["localhost", "127.0.0.1"].includes(configuredHostname)) {
       return fallbackBaseUrl;
