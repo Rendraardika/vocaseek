@@ -37,8 +37,8 @@ export default function Mitra() {
     "Vocaseek sangat membantu! Proses rekrutmen kami menjadi 70% lebih efisien sejak menggunakan platform ini. Talenta yang kami dapatkan benar-benar siap pakai dan memiliki kompetensi yang sesuai dengan kebutuhan industri digital saat ini.";
 
   const testimonialRole =
-    translatePhrase("HR Manager - Tech Giant Indonesia", locale) ||
-    "HR Manager - Tech Giant Indonesia";
+    translatePhrase("CEO - Empat Beruang Perkasa", locale) ||
+    "CEO - Empat Beruang Perkasa";
 
   return (
     <div className="mitra-page user-nav-shell">
@@ -174,21 +174,33 @@ export default function Mitra() {
 
         <div className="benefit-grid">
           <div className="benefit-card card-1">
+            <div className="benefit-icon">
+              <FaUserTie />
+            </div>
             <h4>Talenta Siap Kerja</h4>
             <p>Kandidat sesuai kebutuhan industri</p>
           </div>
 
           <div className="benefit-card card-2">
+            <div className="benefit-icon">
+              <FaHandshake />
+            </div>
             <h4>Proses Cepat</h4>
             <p>Rekrutmen efisien dan terverifikasi</p>
           </div>
 
           <div className="benefit-card card-3">
+            <div className="benefit-icon">
+              <FaFileAlt />
+            </div>
             <h4>Employer Branding</h4>
             <p>Tingkatkan citra perusahaan</p>
           </div>
 
           <div className="benefit-card card-4">
+            <div className="benefit-icon">
+              <FaCheckCircle />
+            </div>
             <h4>Terverifikasi</h4>
             <p>Seleksi kandidat ketat</p>
           </div>
