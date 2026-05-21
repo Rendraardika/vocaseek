@@ -349,43 +349,9 @@ export function finalizeVerification(id, payload) {
 
 export async function getPartners() {
   const response = await api.get(PARTNERS_BASE);
-  const mappedPartners = extractCollection(response.data).map((item, index) =>
+  return extractCollection(response.data).map((item, index) =>
     mapCompanyRecord(item, index, "partner"),
   );
-
-  const partnersMissingLogo = mappedPartners.filter(
-    (partner) => !partner.logoUrl && (partner.companyProfileId || partner.id),
-  );
-
-  if (!partnersMissingLogo.length) {
-    return mappedPartners;
-  }
-
-  const detailPairs = await Promise.all(
-    partnersMissingLogo.map(async (partner) => {
-      try {
-        const detail = await getPartnerDetail(partner.companyProfileId || partner.id);
-        return [String(partner.companyProfileId || partner.id), detail];
-      } catch {
-        return [String(partner.companyProfileId || partner.id), null];
-      }
-    }),
-  );
-
-  const detailMap = new Map(detailPairs);
-
-  return mappedPartners.map((partner) => {
-    const detail = detailMap.get(String(partner.companyProfileId || partner.id));
-
-    if (!detail?.logoUrl) {
-      return partner;
-    }
-
-    return {
-      ...partner,
-      logoUrl: detail.logoUrl,
-    };
-  });
 }
 
 export async function getPartnerDetail(id) {

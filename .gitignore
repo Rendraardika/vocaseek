@@ -1,4 +1,5 @@
 backend/.env
+/.env
 backend/vendor/
 backend/node_modules/
 backend/public/build/

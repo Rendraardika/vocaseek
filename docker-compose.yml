@@ -4,13 +4,20 @@ services:
     build:
       context: ./backend
     container_name: laravel_api
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: ${DOCKER_DB_HOST:-host.docker.internal}
+      DB_PORT: ${DOCKER_DB_PORT:-3306}
+      DB_DATABASE: ${DOCKER_DB_DATABASE:-vocaseek}
+      DB_USERNAME: ${DOCKER_DB_USERNAME:-root}
+      DB_PASSWORD: ${DOCKER_DB_PASSWORD-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8001}:8000"
     volumes:
       - ./backend:/var/www
       - backend_vendor:/var/www/vendor
-    depends_on:
-      - mysql_db
 
   # Service untuk memproses queue Laravel (email verifikasi, reset password, dll.)
   queue:
@@ -18,12 +25,20 @@ services:
       context: ./backend
     container_name: laravel_queue
     command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: ${DOCKER_DB_HOST:-host.docker.internal}
+      DB_PORT: ${DOCKER_DB_PORT:-3306}
+      DB_DATABASE: ${DOCKER_DB_DATABASE:-vocaseek}
+      DB_USERNAME: ${DOCKER_DB_USERNAME:-root}
+      DB_PASSWORD: ${DOCKER_DB_PASSWORD-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend:/var/www
       - backend_vendor:/var/www/vendor
     depends_on:
       - backend
-      - mysql_db
 
   # Service untuk React
   frontend:
@@ -39,9 +54,13 @@ services:
     tty: true
 
   # Service untuk Database
+  # Opsional: aktifkan hanya kalau ingin database ikut Docker:
+  # docker compose --profile docker-db up -d
   mysql_db:
     image: mysql:8.0
     container_name: mysql_db
+    profiles:
+      - docker-db
     restart: always
     environment:
       MYSQL_DATABASE: vocaseek
@@ -54,5 +73,3 @@ services:
 volumes:
   db_data:
   backend_vendor:
-    external: true
-    name: vocaseek_backend_vendor
