@@ -589,6 +589,202 @@
   color: #64748b;
 }
 
+/* BENEFIT POLISH */
+.mitra-page .mitra-benefit {
+  position: relative;
+  overflow: hidden;
+  padding: 88px 20px 96px;
+  background: #fffef9;
+  isolation: isolate;
+}
+
+.mitra-page .mitra-benefit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(30, 58, 138, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 58, 138, 0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.mitra-page .mitra-benefit::after {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  right: -78px;
+  top: 96px;
+  z-index: -1;
+  border-radius: 42px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  transform: rotate(18deg);
+}
+
+.mitra-page .benefit-header {
+  max-width: 900px;
+  margin: 0 auto 58px;
+  text-align: center;
+}
+
+.mitra-page .benefit-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff7d6;
+  color: #b77900;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.04);
+}
+
+.mitra-page .benefit-header h2 {
+  max-width: 980px;
+  margin: 24px auto 0;
+  color: #1e3a8a;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.mitra-page .benefit-header p {
+  max-width: 790px;
+  margin: 24px auto 0;
+  color: #475569;
+  font-size: 18px;
+  line-height: 1.75;
+}
+
+.mitra-page .benefit-grid {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.mitra-page .benefit-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 194px;
+  padding: 30px 32px;
+  border-radius: 26px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-top: 4px solid #fbbf24;
+  background: #ffffff;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.07);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 22px;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.mitra-page .benefit-card::before {
+  content: "";
+  position: absolute;
+  inset: auto -46px -62px auto;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(30, 58, 138, 0.06);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.mitra-page .benefit-card:hover {
+  transform: translateY(-8px);
+  border-top-color: #1e3a8a;
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.12);
+}
+
+.mitra-page .benefit-card:hover::before {
+  transform: scale(1.18);
+  background: rgba(30, 58, 138, 0.1);
+}
+
+.mitra-page .benefit-icon {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff7d6;
+  color: #1e3a8a;
+  font-size: 24px;
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.28);
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+  grid-row: span 2;
+}
+
+.mitra-page .benefit-card:hover .benefit-icon {
+  transform: translateY(-4px) scale(1.07);
+  background: #1e3a8a;
+  color: #ffffff;
+}
+
+.mitra-page .benefit-card h4 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.mitra-page .benefit-card p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+  .mitra-page .mitra-benefit {
+    padding: 66px 16px 72px;
+  }
+
+  .mitra-page .benefit-header {
+    margin-bottom: 34px;
+  }
+
+  .mitra-page .benefit-header h2 {
+    font-size: 34px;
+  }
+
+  .mitra-page .benefit-header p {
+    font-size: 15px;
+  }
+
+  .mitra-page .benefit-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mitra-page .benefit-card {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    padding: 26px 22px;
+  }
+
+  .mitra-page .benefit-icon {
+    grid-row: auto;
+    margin-bottom: 16px;
+  }
+}
+
 /* STEP / CARA BERGABUNG */
 .mitra-steps {
   padding: 96px 24px;

@@ -5,6 +5,7 @@ import FooterSocialIcons from "../../components/common/FooterSocialIcons";
 import FooterBrandLogo from "../../components/common/FooterBrandLogo";
 import {
   FaBolt,
+  FaArrowRight,
   FaBrain,
   FaBriefcase,
   FaBuilding,
@@ -93,7 +94,6 @@ function getCompanyName(job) {
     "Perusahaan"
   );
 }
-
 function getCompanyLogoUrl(job) {
   const companyProfile = getCompanyProfile(job);
 
@@ -108,7 +108,6 @@ function getCompanyLogoUrl(job) {
     job?.company_logo,
   );
 }
-
 function CompanyLogo({ job, index }) {
   const [hasImageError, setHasImageError] = useState(false);
   const companyName = getCompanyName(job);
@@ -304,8 +303,16 @@ export default function App() {
       </header>
 
       <section className="hero">
+        <div className="hero-bg-mark hero-bg-mark--one"></div>
+        <div className="hero-bg-mark hero-bg-mark--two"></div>
+        <div className="hero-bg-dots"></div>
+
         <div className="hero-container">
           <div className="hero-left">
+            <span className="hero-kicker">
+              <FaBolt /> Platform karier vokasi
+            </span>
+
             <h1>
               Temukan pekerjaan <br />
               sesuai <span>skill kalian!</span>
@@ -315,11 +322,48 @@ export default function App() {
               Platform pencarian kerja modern untuk membantu kamu mendapatkan
               pekerjaan impian lebih cepat.
             </p>
+
+            <div className="hero-actions">
+              <Link to="/login" className="hero-primary-btn">
+                Mulai Cari Kerja <FaArrowRight />
+              </Link>
+              <Link to="/lowongan" className="hero-secondary-btn">
+                Lihat Lowongan
+              </Link>
+            </div>
+
+            <div className="hero-highlights">
+              <span>
+                <FaBriefcase /> Lowongan terkurasi
+              </span>
+              <span>
+                <FaBuilding /> Mitra terpercaya
+              </span>
+              <span>
+                <FaBolt /> Proses cepat
+              </span>
+            </div>
           </div>
 
           <div className="hero-right">
             <div className="hero-img-wrapper">
+              <div className="hero-float-card hero-float-card--top">
+                <FaSearch />
+                <div>
+                  <strong>Cari sesuai skill</strong>
+                  <span>Temukan posisi cocok</span>
+                </div>
+              </div>
+
               <img src="beranda1.webp" alt="Hero" />
+
+              <div className="hero-float-card hero-float-card--bottom">
+                <FaUsers />
+                <div>
+                  <strong>Siap daftar</strong>
+                  <span>Bangun profil kariermu</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -362,25 +406,59 @@ export default function App() {
       </section>
 
       <section className="popular">
-        <h2>Lowongan Paling Populer</h2>
-
-        <div className="popular-grid">
-          {popularVacancies.length > 0 ? (
-            popularVacancies.map((item, index) => (
-              <div
-                key={`${item.title}-${index}`}
-                className={`popular-item ${index === 0 ? "active" : ""}`}
-              >
-                <h4>{item.title}</h4>
-                <p>{formatCompactNumber(item.count)} Posisi Terbuka</p>
-              </div>
-            ))
-          ) : (
-            <div className="popular-item active">
-              <h4>Belum ada lowongan aktif</h4>
-              <p>Data populer akan tampil otomatis dari database.</p>
+        <div className="popular-shell">
+          <div className="popular-header">
+            <div>
+              <h2>Lowongan Terbuka</h2>
+              <p>
+                Pilihan posisi terbaru yang siap kamu jelajahi.
+              </p>
             </div>
-          )}
+
+            <Link to="/login" className="popular-cta">
+              Lihat lowongan <FaArrowRight />
+            </Link>
+          </div>
+
+          <div className="popular-grid">
+            {popularVacancies.length > 0 ? (
+              popularVacancies.map((item, index) => (
+                <div
+                  key={`${item.title}-${index}`}
+                  className={`popular-item ${index === 0 ? "active" : ""}`}
+                >
+                  <div className="popular-card-top">
+                    <span className="popular-icon">
+                      <FaBriefcase />
+                    </span>
+                    <span className="popular-rank">
+                      #{String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h4>{item.title}</h4>
+                  <p>{formatCompactNumber(item.count)} posisi terbuka</p>
+                  <span className="popular-card-link">
+                    Detail role <FaArrowRight />
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="popular-empty">
+                <div className="popular-empty-icon">
+                  <FaBriefcase />
+                </div>
+                <div>
+                  <h4>Belum ada lowongan aktif</h4>
+                  <p>
+                    Tenang, peluang baru dari mitra akan otomatis tampil di sini.
+                  </p>
+                </div>
+                <Link to="/login" className="popular-empty-action">
+                  Pantau lowongan <FaArrowRight />
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -426,9 +504,12 @@ export default function App() {
 
       <section className="category-section">
         <div className="category-header">
-          <h2>Bidang Kategori</h2>
+          <div>
+            <span className="section-eyebrow">Eksplor bidang</span>
+            <h2>Bidang Kategori</h2>
+          </div>
           <Link to="/login" className="view-all">
-            Tampilkan semua →
+            Tampilkan semua <FaArrowRight />
           </Link>
         </div>
 
@@ -447,12 +528,12 @@ export default function App() {
               );
             })
           ) : (
-            <div className="category-card active">
+            <div className="category-empty">
               <div className="category-icon">
                 <FaBriefcase />
               </div>
               <h3>Belum ada kategori aktif</h3>
-
+              <p>Kategori akan muncul otomatis saat lowongan mitra tersedia.</p>
             </div>
           )}
         </div>
@@ -460,9 +541,12 @@ export default function App() {
 
       <section className="featured-section">
         <div className="featured-header">
-          <h2>Lowongan Terbaru</h2>
+          <div>
+            <span className="section-eyebrow">Update terbaru</span>
+            <h2>Lowongan Terbaru</h2>
+          </div>
           <Link to="/login" className="view-all">
-            View All →
+            Tampilkan semua <FaArrowRight />
           </Link>
         </div>
 
@@ -496,12 +580,12 @@ export default function App() {
                 </div>
 
                 <Link to="/login">
-                  <button className="apply-btn">Gabung Sekarang! →</button>
+                  <button className="apply-btn">Gabung Sekarang! <FaArrowRight /></button>
                 </Link>
               </div>
             ))
           ) : (
-            <div className="job-card">
+            <div className="job-card job-card-empty">
               <div className="job-left">
                 <div className="company-logo dark">VS</div>
 
@@ -513,11 +597,14 @@ export default function App() {
 
                   <div className="job-meta">
                     <span>
-                      <FaMapMarkerAlt /> Data lowongan akan muncul dari database
+                      <FaMapMarkerAlt /> Data lowongan akan muncul setelah mitra membuat lowongan
                     </span>
                   </div>
                 </div>
               </div>
+              <Link to="/login">
+                <button className="apply-btn">Pantau Lowongan <FaArrowRight /></button>
+              </Link>
             </div>
           )}
         </div>
@@ -586,4 +673,3 @@ export default function App() {
     </div>
   );
 }
-

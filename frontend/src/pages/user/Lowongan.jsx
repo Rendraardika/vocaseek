@@ -82,6 +82,15 @@ function App() {
               teknologi global untuk membuka peluang karier tanpa batas.
             </p>
 
+            <div className="hero-points">
+              <span>
+                <FaStar /> Mitra terpercaya
+              </span>
+              <span>
+                <FaStar /> Posisi terkurasi
+              </span>
+            </div>
+
             <Link to="/login" className="hero-btn">
               Cari Magang Sekarang 
             </Link>
@@ -150,7 +159,7 @@ function App() {
             <p>Strategi HR, Operasional</p>
 
             <Link to="/login" className="kategori-link">
-              Lihat →
+              Lihat &gt;
             </Link>
           </div>
 
@@ -161,7 +170,7 @@ function App() {
             <h3>Kreatif & Media</h3>
             <p>Design, Konten, UI/UX</p>
             <Link to="/login" className="kategori-link">
-              Lihat →
+              Lihat &gt;
             </Link>
           </div>
 
@@ -172,7 +181,7 @@ function App() {
             <h3>Teknologi & IT</h3>
             <p>Web App, Data Science</p>
             <Link to="/login" className="kategori-link">
-              Lihat →
+              Lihat &gt;
             </Link>
           </div>
 
@@ -183,7 +192,7 @@ function App() {
             <h3>Sumber Daya Manusia</h3>
             <p>Recruitment, Talent Dev</p>
             <Link to="/login" className="kategori-link">
-              Lihat →
+              Lihat &gt;
             </Link>
           </div>
 
@@ -194,7 +203,7 @@ function App() {
             <h3>Perhotelan & Kuliner</h3>
             <p>Tourism, F&B Service</p>
             <Link to="/login" className="kategori-link">
-              Lihat →
+              Lihat &gt;
             </Link>
           </div>
         </div>
@@ -282,7 +291,7 @@ function App() {
             <img src="/lowongan3.webp" />
             <h3>Teknologi & Digital</h3>
             <Link to="/login" className="lihat-lowongan">
-              Lihat Lowongan →
+              Lihat &gt;
             </Link>
           </div>
 
@@ -290,7 +299,7 @@ function App() {
             <img src="/lowongan4.webp" />
             <h3>Bisnis & Manajemen</h3>
             <Link to="/login" className="lihat-lowongan">
-              Lihat Lowongan →
+              Lihat &gt;
             </Link>
           </div>
 
@@ -298,7 +307,7 @@ function App() {
             <img src="/lowongan5.webp" />
             <h3>Layanan Kesehatan</h3>
             <Link to="/login" className="lihat-lowongan">
-              Lihat Lowongan →
+              Lihat &gt;
             </Link>
           </div>
         </div>
