@@ -587,19 +587,15 @@ export default function App() {
           ) : (
             <div className="job-card job-card-empty">
               <div className="job-left">
-                <div className="company-logo dark">VS</div>
+                <div className="company-logo dark" aria-hidden="true">
+                  <FaBriefcase />
+                </div>
 
                 <div className="job-info">
                   <div className="job-title-row">
-                    <h3>Belum ada featured job</h3>
-                    <span className="badge contract">Menunggu data</span>
+                    <h3>Belum ada lowongan terbaru</h3>
                   </div>
 
-                  <div className="job-meta">
-                    <span>
-                      <FaMapMarkerAlt /> Data lowongan akan muncul setelah mitra membuat lowongan
-                    </span>
-                  </div>
                 </div>
               </div>
               <Link to="/login">

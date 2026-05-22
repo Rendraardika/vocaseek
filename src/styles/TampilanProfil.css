@@ -250,7 +250,19 @@
 }
 
 .tpWrap .tpSocialIcon.ig {
-  font-size: 9px;
+  display: none;
+}
+
+.tpWrap .tpSocialIconLinkedin {
+  background: #0a66c2;
+  color: #ffffff;
+  padding: 3px;
+}
+
+.tpWrap .tpSocialIconInstagram {
+  background: #e4405f;
+  color: #ffffff;
+  padding: 3px;
 }
 
 /* =========================

@@ -1,4 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  FaFileAlt,
+  FaFolderOpen,
+  FaEnvelopeOpenText,
+  FaIdCard,
+  FaGraduationCap,
+} from "react-icons/fa";
 import "../../styles/Dokumen.css";
 import {
   getScopedItem,
@@ -177,9 +184,25 @@ function IconTrash() {
 }
 
 function FileIconByType(label) {
-  if (label.toLowerCase().includes("portofolio")) return <IconFolder />;
-  if (label.toLowerCase().includes("surat")) return <IconCloud />;
-  return <IconPdf />;
+  const normalizedLabel = label.toLowerCase();
+
+  if (normalizedLabel.includes("portofolio")) {
+    return <FaFolderOpen className="dcm-docIcon" aria-hidden="true" />;
+  }
+
+  if (normalizedLabel.includes("surat")) {
+    return <FaEnvelopeOpenText className="dcm-docIcon" aria-hidden="true" />;
+  }
+
+  if (normalizedLabel.includes("ktp") || normalizedLabel.includes("identitas")) {
+    return <FaIdCard className="dcm-docIcon" aria-hidden="true" />;
+  }
+
+  if (normalizedLabel.includes("transkrip")) {
+    return <FaGraduationCap className="dcm-docIcon" aria-hidden="true" />;
+  }
+
+  return <FaFileAlt className="dcm-docIcon" aria-hidden="true" />;
 }
 
 function getNowLabel() {

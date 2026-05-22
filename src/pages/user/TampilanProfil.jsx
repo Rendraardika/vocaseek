@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../../styles/TampilanProfil.css";
 import { getInternProfile } from "../../services/intern";
@@ -257,9 +258,7 @@ export default function TampilanProfil() {
               type="button"
               onClick={() => profile.linkedin && window.open(profile.linkedin, "_blank")}
             >
-              <span className="tpSocialIcon" aria-hidden="true">
-                in
-              </span>
+              <FaLinkedinIn className="tpSocialIcon tpSocialIconLinkedin" aria-hidden="true" />
               <span>{profile.linkedin ? "LinkedIn" : "LinkedIn kosong"}</span>
             </button>
 
@@ -268,6 +267,7 @@ export default function TampilanProfil() {
               type="button"
               onClick={() => profile.instagram && window.open(profile.instagram, "_blank")}
             >
+              <FaInstagram className="tpSocialIcon tpSocialIconInstagram" aria-hidden="true" />
               <span className="tpSocialIcon ig" aria-hidden="true">
                 ⦿
               </span>
