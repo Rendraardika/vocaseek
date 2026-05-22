@@ -233,7 +233,7 @@ export default function Contact() {
           <div className="contact-desc">
             <span className="line"></span>
             <p>
-              Vokasik membantu perusahaan terhubung dengan talenta potensial
+              Vocaseek membantu perusahaan terhubung dengan talenta potensial
               melalui program magang yang terkurasi dan relevan dengan kebutuhan
               industri.
             </p>

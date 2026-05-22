@@ -164,7 +164,7 @@ export default function RegisterCompany() {
             membangun pengalaman dan kesiapan kerja.
           </p>
 
-          <div className="rc-left-footer">© VOKASIK EST. 2026</div>
+          <div className="rc-left-footer">© VOCASEEK EST. 2026</div>
         </div>
       </div>
 

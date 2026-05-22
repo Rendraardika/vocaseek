@@ -415,7 +415,7 @@ export default function AddCompany() {
             </div>
           </form>
 
-          <footer className="ac-footer">© 2026 VOKASIK ACADEMY</footer>
+          <footer className="ac-footer">© 2026 VOCASEEK ACADEMY</footer>
         </section>
       </main>
 
