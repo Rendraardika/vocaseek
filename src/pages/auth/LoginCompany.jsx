@@ -79,7 +79,7 @@ function Login() {
           </p>
 
           <div className="lc-login-left-footer">
-            © VOKASIK <span>EST. 2026</span>
+            © VOCASEEK <span>EST. 2026</span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ function Login() {
         </div>
 
         <div className="lc-login-form">
-          <h2>Masuk ke Akun Vokasik</h2>
+          <h2>Masuk ke Akun Vocaseek</h2>
 
           <p className="lc-login-desc">
             Masuk untuk melanjutkan pencarian dan pengelolaan lamaran magangmu.
@@ -149,7 +149,7 @@ function Login() {
         </div>
 
         <div className="lc-login-copyright">
-          © 2026 VOKASIK INC. ALL RIGHTS RESERVED.
+          © 2026 VOCASEEK INC. ALL RIGHTS RESERVED.
         </div>
       </div>
     </div>

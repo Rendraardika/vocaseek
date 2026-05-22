@@ -102,7 +102,7 @@ export default function Mitra() {
 
             <h1>
               Jadilah Mitra <br />
-              Strategis <span>Vokasi</span>
+              Strategis <span>Vocaseek</span>
             </h1>
 
             <p>

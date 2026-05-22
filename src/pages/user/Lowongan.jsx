@@ -214,7 +214,7 @@ function App() {
         <div className="process-container">
           {/* LEFT */}
           <div className="process-left">
-            <span className="process-label">PROSES KERJA VOKISIK</span>
+            <span className="process-label">PROSES KERJA VOCASEEK</span>
 
             <h2>
               Bagaimana <span>Vocaseek</span> Bekerja

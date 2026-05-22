@@ -11,7 +11,6 @@ const NON_TRANSLATABLE_EXACT_TEXTS = new Set([
   "google",
   "vocaseek",
   "vokaseek",
-  "vokasik",
   "est. 2026",
 ]);
 
