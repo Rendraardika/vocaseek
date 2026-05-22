@@ -206,7 +206,13 @@
 }
 
 .dcm-leftIconMuted {
-  background: #f3f5f7;
+  background: #eef7ff;
+}
+
+.dcm-docIcon {
+  width: 24px;
+  height: 24px;
+  color: #1e3a8a;
 }
 
 .dcm-info {

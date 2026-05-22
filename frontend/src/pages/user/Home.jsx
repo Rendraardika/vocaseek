@@ -439,8 +439,6 @@ export default function Home() {
               >
                 Mulai Sekarang <FaRocket />
               </button>
-
-              <button className="home-btn-secondary">Tonton Panduan</button>
             </div>
           </div>
 
