@@ -10,7 +10,7 @@ class InternProfile extends Model
     use HasFactory;
 
     protected $table = 'intern_profiles';
-    protected $primaryKey = 'intern_id'; // Sesuai database Abang
+    protected $primaryKey = 'intern_id';
 
     protected $fillable = [
         'user_id',

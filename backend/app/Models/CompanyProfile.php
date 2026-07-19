@@ -10,7 +10,7 @@ class CompanyProfile extends Model
     use HasFactory;
 
     protected $table = 'company_profiles';
-    protected $primaryKey = 'id'; // Sesuai screenshot Abang
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'user_id',

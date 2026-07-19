@@ -29,6 +29,9 @@ RUN { \
     echo "opcache.revalidate_freq=2"; \
     echo "realpath_cache_size=4096K"; \
     echo "realpath_cache_ttl=600"; \
+    echo "upload_max_filesize=10M"; \
+    echo "post_max_size=32M"; \
+    echo "memory_limit=256M"; \
   } > /usr/local/etc/php/conf.d/zz-laravel-performance.ini
 
 # Ambil Composer terbaru dari image resmi

@@ -13,9 +13,7 @@ class RoleCheck
     {
         $user = $request->user();
 
-        // Jika request membawa bearer token, prioritaskan user dari token
-        // dibanding session/cookie browser agar tidak tertukar dengan login
-        // tab lain pada origin yang sama.
+
         if ($request->bearerToken()) {
             $accessToken = PersonalAccessToken::findToken($request->bearerToken());
             $tokenUser = $accessToken?->tokenable;

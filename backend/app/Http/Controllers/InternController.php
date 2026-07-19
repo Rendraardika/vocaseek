@@ -721,21 +721,19 @@ class InternController extends Controller
     public function applyJob(Request $request)
     {
         $request->validate([
-            'job_id' => 'required|integer', // Mengacu ke ID di tabel lowongan
+            'job_id' => 'required|integer',
         ]);
 
         $user = Auth::user();
         $profile = InternProfile::where('user_id', $user->user_id)->first();
 
-        // Validasi: Profil Lengkap & Sudah Test
         if (!$profile->is_profile_complete || !$profile->test_finished_at) {
             return response()->json([
-                'status' => 'error', 
+                'status' => 'error',
                 'message' => 'Selesaikan profil dan tes dulu sebelum melamar!'
             ], 403);
         }
 
-        // Cek apakah sudah pernah melamar di posisi yang sama
         $exists = JobApplication::where('user_id', $user->user_id)
                                 ->where('job_id', $request->job_id)
                                 ->exists();
@@ -747,12 +745,10 @@ class InternController extends Controller
                 'message' => 'Anda sudah melamar di lowongan ini.',
             ], 409);
         }
-
-        // Simpan Lamaran (Sesuai kolom di tabel job_applications Abang)
         JobApplication::create([
             'user_id' => $user->user_id,
             'job_id'  => $request->job_id,
-            'status'  => 'PENDING' // Sesuai default ENUM di gambar DB
+            'status'  => 'PENDING'
         ]);
 
         return response()->json(['status' => 'success', 'message' => 'Lamaran berhasil terkirim!']);

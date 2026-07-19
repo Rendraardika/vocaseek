@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('nama', 100); 
             $table->string('email')->unique();
             $table->string('password');
-            // Role user mencakup akun aplikasi dan admin internal.
             $table->enum('role', ['intern', 'company', 'super_admin', 'staff_admin'])->default('intern');
             $table->string('notelp', 20)->nullable();
             $table->rememberToken();
