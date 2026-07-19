@@ -68,6 +68,7 @@ export default function PartnerDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -109,12 +110,6 @@ export default function PartnerDetail() {
   const handleDeletePartner = async () => {
     if (!partner || deleteLoading) return;
 
-    const confirmed = window.confirm(
-      `Hapus mitra ${partner.name || "ini"} dari sistem? Tindakan ini akan menghapus data partner dari database.`,
-    );
-
-    if (!confirmed) return;
-
     setDeleteLoading(true);
     setError("");
 
@@ -135,6 +130,7 @@ export default function PartnerDetail() {
       );
     } finally {
       setDeleteLoading(false);
+      setIsDeleteModalOpen(false);
     }
   };
 
@@ -168,7 +164,7 @@ export default function PartnerDetail() {
             <button
               className="pd-delete-btn"
               type="button"
-              onClick={handleDeletePartner}
+              onClick={() => setIsDeleteModalOpen(true)}
               disabled={loading || deleteLoading || !partner}
             >
               <Trash2 size={18} />
@@ -318,6 +314,52 @@ export default function PartnerDetail() {
           </div>
         </section>
       </main>
+
+      {isDeleteModalOpen ? (
+        <div
+          className="pd-modal-overlay"
+          onClick={() => {
+            if (!deleteLoading) setIsDeleteModalOpen(false);
+          }}
+        >
+          <div
+            className="pd-confirm-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pd-delete-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="pd-confirm-icon">
+              <Trash2 size={24} />
+            </div>
+
+            <h2 id="pd-delete-title">Hapus Mitra?</h2>
+            <p>
+              Mitra <strong>{partner?.name || "ini"}</strong> akan dihapus dari
+              sistem. Data partner akan terhapus dari database.
+            </p>
+
+            <div className="pd-confirm-actions">
+              <button
+                type="button"
+                className="pd-confirm-btn pd-confirm-btn--ghost"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={deleteLoading}
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                className="pd-confirm-btn pd-confirm-btn--danger"
+                onClick={handleDeletePartner}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? "Menghapus..." : "Hapus Mitra"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -237,7 +237,18 @@ export default function JobPostings() {
     if (!matchesTab) return false;
     if (!keyword) return true;
 
-    return [row.title, row.id, row.dept, row.team]
+    return [
+      row.title,
+      row.id,
+      row.dept,
+      row.team,
+      row.status,
+      row.raw?.lokasi,
+      row.raw?.kategori_pekerjaan,
+      row.raw?.tipe_pekerjaan,
+      row.raw?.deskripsi_pekerjaan,
+      row.raw?.persyaratan,
+    ]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(keyword));
   });
@@ -263,7 +274,7 @@ export default function JobPostings() {
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [activeTab]);
+  }, [activeTab, searchQuery]);
 
   return (
     <div className="job-postings">
@@ -372,7 +383,7 @@ export default function JobPostings() {
                   <Search size={18} className="job-postings__search-icon" />
                   <input
                     type="text"
-                    placeholder="Search jobs..."
+                    placeholder="Cari lowongan..."
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     className="job-postings__search-input"

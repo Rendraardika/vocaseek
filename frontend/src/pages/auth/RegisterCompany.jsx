@@ -1,6 +1,7 @@
 import "../../styles/registercompany.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { getApiErrorMessage, registerCompany } from "../../services/auth";
 import { saveLanguagePreference } from "../../utils/languagePreference";
 
@@ -37,6 +38,17 @@ export default function RegisterCompany() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [visiblePasswordFields, setVisiblePasswordFields] = useState({
+    password: false,
+    passwordConfirmation: false,
+  });
+
+  const togglePasswordVisibility = (fieldName) => {
+    setVisiblePasswordFields((prev) => ({
+      ...prev,
+      [fieldName]: !prev[fieldName],
+    }));
+  };
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -242,13 +254,32 @@ export default function RegisterCompany() {
 
             <div className="rc-group">
               <label>Create Password</label>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
+              <div className="rc-password-field">
+                <input
+                  type={visiblePasswordFields.password ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="rc-password-toggle"
+                  onClick={() => togglePasswordVisibility("password")}
+                  aria-label={
+                    visiblePasswordFields.password
+                      ? "Sembunyikan password"
+                      : "Lihat password"
+                  }
+                >
+                  {visiblePasswordFields.password ? (
+                    <EyeOff size={18} aria-hidden="true" />
+                  ) : (
+                    <Eye size={18} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
               <p style={{ marginTop: 8, fontSize: "0.82rem", color: "#6b7280", lineHeight: 1.5 }}>
                 Minimal 8 karakter, huruf pertama kapital, dan wajib ada karakter unik.
               </p>
@@ -256,13 +287,36 @@ export default function RegisterCompany() {
 
             <div className="rc-group">
               <label>Confirm Password</label>
-              <input
-                type="password"
-                name="passwordConfirmation"
-                value={form.passwordConfirmation}
-                onChange={handleChange}
-                required
-              />
+              <div className="rc-password-field">
+                <input
+                  type={
+                    visiblePasswordFields.passwordConfirmation
+                      ? "text"
+                      : "password"
+                  }
+                  name="passwordConfirmation"
+                  value={form.passwordConfirmation}
+                  onChange={handleChange}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="rc-password-toggle"
+                  onClick={() => togglePasswordVisibility("passwordConfirmation")}
+                  aria-label={
+                    visiblePasswordFields.passwordConfirmation
+                      ? "Sembunyikan konfirmasi password"
+                      : "Lihat konfirmasi password"
+                  }
+                >
+                  {visiblePasswordFields.passwordConfirmation ? (
+                    <EyeOff size={18} aria-hidden="true" />
+                  ) : (
+                    <Eye size={18} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="rc-upload-group">

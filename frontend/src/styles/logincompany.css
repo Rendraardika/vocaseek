@@ -172,6 +172,40 @@ body,
   text-decoration: underline;
 }
 
+.lc-password-field {
+  position: relative;
+}
+
+.lc-password-field input {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.lc-password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #1f3e8f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.lc-password-toggle:hover,
+.lc-password-toggle:focus-visible {
+  border-color: #f2b90d;
+  color: #f0b400;
+  background: #fff8df;
+}
+
 /* REMEMBER */
 .lc-remember {
   margin-top: 4px;

@@ -18,6 +18,7 @@ use App\Http\Controllers\TalentController;
 
 // --- ADMIN CONTROLLERS ---
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminJobController;
 use App\Http\Controllers\Admin\AdminTalentController;
 use App\Http\Controllers\Auth\AdminPartnerController;
 use App\Http\Controllers\Auth\AdminInvitationController;
@@ -121,6 +122,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
     Route::prefix('admin')->group(function () {
+
+        Route::get('/jobs', [AdminJobController::class, 'index'])
+            ->middleware('role:super_admin,staff_admin');
         
         // Area Bersama (Admin & Staff)
         Route::middleware('role:super_admin,staff_admin')->group(function () {
@@ -161,6 +165,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::prefix('invitations')->group(function () {
                 Route::post('/resend', [AdminInvitationController::class, 'resend']);
                 Route::post('/cancel', [AdminInvitationController::class, 'cancel']);
+                Route::delete('/{id}', [AdminInvitationController::class, 'destroy']);
             });
 
             Route::post('/partners', [AdminPartnerController::class, 'store']); 

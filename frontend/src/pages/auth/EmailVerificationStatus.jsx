@@ -8,7 +8,28 @@ const STATUS_CONFIG = {
     kicker: "Verifikasi Berhasil",
     title: "Email berhasil diverifikasi",
     message:
-      "Akun Anda sudah aktif untuk login. Silakan masuk menggunakan email dan password Anda.",
+      "Jika Anda mendaftar sebagai pelamar, akun sudah aktif untuk login. Jika Anda mendaftar sebagai perusahaan, akun masih menunggu persetujuan admin sebelum bisa login sebagai mitra.",
+  },
+  companySuccess: {
+    iconClass: "is-info",
+    kicker: "Verifikasi Berhasil",
+    title: "Email berhasil diverifikasi",
+    message:
+      "Akun perusahaan Anda sudah masuk antrean verifikasi admin. Silakan tunggu persetujuan admin sebelum login sebagai mitra.",
+  },
+  alreadyProcessedCompany: {
+    iconClass: "is-info",
+    kicker: "Sudah Diproses",
+    title: "Pendaftaran perusahaan sudah diproses",
+    message:
+      "Email perusahaan ini sudah diverifikasi sebelumnya. Jika akun belum bisa login, berarti status mitra masih menunggu persetujuan admin.",
+  },
+  alreadyProcessed: {
+    iconClass: "is-success",
+    kicker: "Sudah Diproses",
+    title: "Email sudah diverifikasi",
+    message:
+      "Email ini sudah diproses sebelumnya. Silakan masuk menggunakan email dan password Anda.",
   },
   expired: {
     iconClass: "is-warning",
@@ -30,7 +51,16 @@ export default function EmailVerificationStatus() {
   const [searchParams] = useSearchParams();
   const status = searchParams.get("status") || "invalid";
   const email = searchParams.get("email") || "";
-  const config = STATUS_CONFIG[status] || STATUS_CONFIG.invalid;
+  const role = searchParams.get("role") || "";
+  const isCompany = role === "company";
+  const configKey =
+    status === "success" && isCompany
+      ? "companySuccess"
+      : status === "already-processed" && isCompany
+        ? "alreadyProcessedCompany"
+        : status;
+  const config = STATUS_CONFIG[configKey] || STATUS_CONFIG.invalid;
+  const loginTarget = isCompany ? "/login-company" : "/login";
 
   return (
     <div className="auth-feedback-page">
@@ -61,9 +91,9 @@ export default function EmailVerificationStatus() {
           ) : null}
 
           <div className="auth-feedback-actions" style={{ marginTop: 20 }}>
-            {status === "success" ? (
-              <Link to="/login" className="auth-feedback-link-button">
-                Login Sekarang
+            {status === "success" || status === "already-processed" ? (
+              <Link to={loginTarget} className="auth-feedback-link-button">
+                {isCompany ? "Ke Login Perusahaan" : "Login Sekarang"}
               </Link>
             ) : (
               <Link

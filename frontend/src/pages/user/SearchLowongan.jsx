@@ -205,14 +205,30 @@ export default function SearchLowongan() {
   }, []);
 
   const filteredJobs = useMemo(() => jobs.filter((job) => {
-    const keyword = search.toLowerCase();
+    const keyword = search.trim().toLowerCase();
 
-    return (
-      job.title.toLowerCase().includes(keyword) ||
-      job.company.toLowerCase().includes(keyword) ||
-      job.location.toLowerCase().includes(keyword) ||
-      job.type.toLowerCase().includes(keyword)
-    );
+    if (!keyword) {
+      return true;
+    }
+
+    const searchableText = [
+      job.title,
+      job.company,
+      job.location,
+      job.type,
+      job.work,
+      job.description,
+      job.duration,
+      job.companyProfile?.industry,
+      job.companyProfile?.address,
+      ...(Array.isArray(job.qualifications) ? job.qualifications : []),
+      ...(Array.isArray(job.benefits) ? job.benefits : []),
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(keyword);
   }), [jobs, search]);
 
   useEffect(() => {

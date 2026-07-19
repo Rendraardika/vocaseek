@@ -1,6 +1,7 @@
 import "../../styles/logincompany.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { getApiErrorMessage, loginCompany } from "../../services/auth";
 import { resolveUserHomeRoute, saveAuthSession } from "../../utils/authStorage";
 
@@ -13,6 +14,7 @@ function Login() {
   });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -114,14 +116,30 @@ function Login() {
                 <Link to="/forget-password">Lupa Password?</Link>
               </div>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Masukkan password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
+              <div className="lc-password-field">
+                <input
+                  type={isPasswordVisible ? "text" : "password"}
+                  name="password"
+                  placeholder="Masukkan password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="lc-password-toggle"
+                  onClick={() => setIsPasswordVisible((visible) => !visible)}
+                  aria-label={
+                    isPasswordVisible ? "Sembunyikan password" : "Lihat password"
+                  }
+                >
+                  {isPasswordVisible ? (
+                    <EyeOff size={19} aria-hidden="true" />
+                  ) : (
+                    <Eye size={19} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="lc-remember">

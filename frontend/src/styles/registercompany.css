@@ -205,6 +205,39 @@
   font-size: 14px;
 }
 
+.rc-password-field {
+  position: relative;
+}
+
+.rc-password-field input {
+  width: 100%;
+  padding-right: 46px;
+}
+
+.rc-password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #1f3e8f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.rc-password-toggle:hover {
+  border-color: #f2b90d;
+  color: #f0b400;
+  background: #fff8df;
+}
+
 /* UPLOAD */
 .rc-upload-group {
   margin-bottom: 20px;

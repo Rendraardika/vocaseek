@@ -52,6 +52,11 @@ class Lowongan extends Model
         return $this->belongsTo(CompanyProfile::class, 'company_profile_id', 'id');
     }
 
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, 'job_id', 'id');
+    }
+
     public function getJudulPosisiAttribute($value)
     {
         return $value ?? $this->attributes['judul_pekerjaan'] ?? null;

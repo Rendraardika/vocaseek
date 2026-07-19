@@ -83,6 +83,10 @@
   width: 100%;
 }
 
+.job-postings__stats-grid--admin {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .job-postings__stat-box {
   min-width: 0;
   min-height: 138px;
@@ -334,6 +338,12 @@
 
 .job-postings__table-cell--first {
   padding-left: 2rem;
+}
+
+.job-postings__empty-cell {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #64748b;
 }
 
 .job-postings__job-main {

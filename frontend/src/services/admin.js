@@ -93,3 +93,7 @@ export function resendAdminInvitation(payload) {
 export function cancelAdminInvitation(payload) {
   return api.post(`${ADMIN_BASE}/invitations/cancel`, payload);
 }
+
+export function deleteAdminInvitation(id) {
+  return api.delete(`${ADMIN_BASE}/invitations/${id}`);
+}

@@ -35,9 +35,7 @@ class ApiEmailVerificationController extends Controller
             }
         }
 
-        return redirect()->away(
-            $frontendUrl.'/email-verification?status=success&email='.urlencode($user->email)
-        );
+        return redirect()->away($this->verificationRedirectUrl($frontendUrl, 'success', $user->email, $user->role));
     }
 
     public function verifyPending(Request $request, int $id, string $hash): RedirectResponse
@@ -56,9 +54,7 @@ class ApiEmailVerificationController extends Controller
         $existingUser = User::where('email', $pendingRegistration->email)->first();
 
         if ($existingUser) {
-            return redirect()->away(
-                $frontendUrl.'/email-verification?status=already-processed&email='.urlencode($existingUser->email)
-            );
+            return redirect()->away($this->verificationRedirectUrl($frontendUrl, 'already-processed', $existingUser->email, $existingUser->role));
         }
 
         $user = DB::transaction(function () use ($pendingRegistration) {
@@ -106,9 +102,7 @@ class ApiEmailVerificationController extends Controller
 
         event(new Verified($user));
 
-        return redirect()->away(
-            $frontendUrl.'/email-verification?status=success&email='.urlencode($user->email)
-        );
+        return redirect()->away($this->verificationRedirectUrl($frontendUrl, 'success', $user->email, $user->role));
     }
 
     public function resend(Request $request)
@@ -133,5 +127,16 @@ class ApiEmailVerificationController extends Controller
             'status' => 'success',
             'message' => 'Jika email terdaftar dan belum diverifikasi, link verifikasi baru sudah dikirim.',
         ]);
+    }
+
+    private function verificationRedirectUrl(string $frontendUrl, string $status, string $email, ?string $role = null): string
+    {
+        $query = http_build_query(array_filter([
+            'status' => $status,
+            'email' => $email,
+            'role' => $role,
+        ]));
+
+        return $frontendUrl.'/email-verification?'.$query;
     }
 }

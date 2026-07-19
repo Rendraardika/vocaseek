@@ -2,6 +2,7 @@ import "../../styles/login.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { Eye, EyeOff } from "lucide-react";
 import {
   getApiErrorMessage,
   loginApplicant,
@@ -20,6 +21,7 @@ function Login() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -149,14 +151,30 @@ function Login() {
                   <Link to="/forget-password">Lupa Password?</Link>
                 </div>
 
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Masukkan password"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="login-password-field">
+                  <input
+                    type={isPasswordVisible ? "text" : "password"}
+                    name="password"
+                    placeholder="Masukkan password"
+                    value={form.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="login-password-toggle"
+                    onClick={() => setIsPasswordVisible((visible) => !visible)}
+                    aria-label={
+                      isPasswordVisible ? "Sembunyikan password" : "Lihat password"
+                    }
+                  >
+                    {isPasswordVisible ? (
+                      <EyeOff size={19} aria-hidden="true" />
+                    ) : (
+                      <Eye size={19} aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="remember">

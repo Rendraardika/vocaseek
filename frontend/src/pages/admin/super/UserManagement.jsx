@@ -20,6 +20,7 @@ import {
 import { getApiErrorMessage } from "../../../services/auth";
 import {
   cancelAdminInvitation,
+  deleteAdminInvitation,
   deleteManagedAdminUser,
   getManagedAdminUsers,
   resendAdminInvitation,
@@ -70,8 +71,17 @@ function mapAdminRow(item, index) {
     invitedBy: item?.invited_by || "-",
     invitationExpiresAt: item?.invitation?.expires_at || "",
     actions: item?.actions || {},
+    deleteTarget: item?.actions?.delete_target || (item?.user_id ? "user" : "invitation"),
     avatarClass: ["avatar-one", "avatar-two", "avatar-three"][index % 3],
   };
+}
+
+function isInvitationRow(admin) {
+  return (
+    admin?.deleteTarget === "invitation" ||
+    String(admin?.id || "").startsWith("invitation-") ||
+    (!admin?.raw?.user_id && admin?.invitationId)
+  );
 }
 
 function ActionConfirmModal({
@@ -230,12 +240,32 @@ export default function UserManagement() {
 
   const handleDeleteAdmin = async () => {
     try {
+      if (String(modalState.adminId || "").startsWith("invitation-")) {
+        await deleteAdminInvitation(modalState.invitationId);
+        setSuccessMessage("Undangan admin berhasil dihapus.");
+        closeModal();
+        loadAdmins();
+        return;
+      }
+
       await deleteManagedAdminUser(modalState.adminId);
       setSuccessMessage("Admin berhasil dihapus dari sistem.");
       closeModal();
       loadAdmins();
     } catch (error) {
       setErrorMessage(getApiErrorMessage(error, "Admin gagal dihapus."));
+      closeModal();
+    }
+  };
+
+  const handleDeleteInvitation = async () => {
+    try {
+      await deleteAdminInvitation(modalState.invitationId);
+      setSuccessMessage("Undangan admin berhasil dihapus.");
+      closeModal();
+      loadAdmins();
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error, "Undangan admin gagal dihapus."));
       closeModal();
     }
   };
@@ -454,7 +484,7 @@ export default function UserManagement() {
                               className="um-icon-btn"
                               onClick={() =>
                                 setModalState({
-                                  type: "delete",
+                                  type: isInvitationRow(admin) ? "delete_invitation" : "delete",
                                   adminId: admin.id,
                                   invitationId: admin.invitationId,
                                 })
@@ -580,6 +610,26 @@ export default function UserManagement() {
         locale={locale}
         onClose={closeModal}
         onConfirm={handleCancelInvitation}
+      />
+
+      <ActionConfirmModal
+        open={modalState.type === "delete_invitation"}
+        title={
+          translatePhrase("Hapus Undangan?", locale) || "Hapus Undangan?"
+        }
+        description={
+          translatePhrase(
+            "Undangan admin yang belum digunakan akan dihapus dari daftar. Tautan aktivasi lama tidak dapat dipakai lagi.",
+            locale,
+          ) ||
+          "Undangan admin yang belum digunakan akan dihapus dari daftar. Tautan aktivasi lama tidak dapat dipakai lagi."
+        }
+        confirmLabel={
+          translatePhrase("Hapus Undangan", locale) || "Hapus Undangan"
+        }
+        locale={locale}
+        onClose={closeModal}
+        onConfirm={handleDeleteInvitation}
       />
     </div>
   );

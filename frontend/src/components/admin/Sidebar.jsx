@@ -1,6 +1,7 @@
 import "../../styles/Sidebar.css";
 import {
   LayoutGrid,
+  BriefcaseBusiness,
   Users,
   Handshake,
   UserCog,
@@ -82,6 +83,12 @@ export default function Sidebar() {
       icon: Handshake,
       path: "/admin/partners",
       active: location.pathname.startsWith("/admin/partners"),
+    },
+    {
+      label: "Lowongan",
+      icon: BriefcaseBusiness,
+      path: "/admin/lowongan",
+      active: location.pathname.startsWith("/admin/lowongan"),
     },
     {
       label: "User Management",

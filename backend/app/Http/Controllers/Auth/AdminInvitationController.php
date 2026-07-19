@@ -116,6 +116,25 @@ class AdminInvitationController extends Controller
         ]);
     }
 
+    public function destroy(int $id): JsonResponse
+    {
+        $invitation = AdminInvitation::findOrFail($id);
+
+        if ($invitation->isUsed()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Undangan yang sudah digunakan tidak dapat dihapus.',
+            ], 422);
+        }
+
+        $invitation->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Undangan admin berhasil dihapus.',
+        ]);
+    }
+
     private function buildValidationErrorResponse(ValidationException $exception): JsonResponse
     {
         $errors = $exception->errors();

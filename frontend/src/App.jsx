@@ -74,6 +74,7 @@ import TalentManagement from "./pages/admin/mitra/TalentManagementMitra";
 import DetailTalent from "./pages/admin/mitra/DetailTalent";
 import ReviewDokumen from "./pages/admin/mitra/ReviewDokumenCompany";
 import AssessmentReviewAdmin from "./pages/admin/shared/AssessmentReviewAdmin";
+import AdminJobPostings from "./pages/admin/shared/AdminJobPostings";
 import CompanyProfile from "./pages/admin/mitra/CompanyProfile";
 import CompanyProfileSettings from "./pages/admin/mitra/CompanyProfileSettings";
 
@@ -429,6 +430,14 @@ export default function App() {
           }
         />
         <Route
+          path="/admin/lowongan"
+          element={
+            <ProtectedRoute allowedRoles={["super_admin"]}>
+              <AdminJobPostings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/partners/add-company"
           element={
             <ProtectedRoute allowedRoles={["super_admin"]}>
@@ -710,6 +719,14 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={["staff_admin"]}>
               <PartnerManagementStaff />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/staff/lowongan"
+          element={
+            <ProtectedRoute allowedRoles={["staff_admin"]}>
+              <AdminJobPostings mode="staff" />
             </ProtectedRoute>
           }
         />

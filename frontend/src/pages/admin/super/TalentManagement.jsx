@@ -6,6 +6,7 @@ import {
   UserPlus,
   Eye,
   Trash2,
+  Search,
 } from "lucide-react";
 import Sidebar from "../../../components/admin/Sidebar";
 import "../../../styles/TalentManagement.css";
@@ -180,6 +181,20 @@ function mapTalentRow(item, index) {
     majorClass: ["blue", "purple", "orange"][index % 3],
     date: formatRegisteredDate(registeredAt),
     status,
+    searchText: [
+      name,
+      email,
+      safeUniversity,
+      safeMajor,
+      status,
+      getStatusLabel(status),
+      item?.latest_application?.job_title,
+      item?.latest_application?.company_name,
+      item?.company_name,
+      item?.nama_perusahaan,
+    ]
+      .filter(Boolean)
+      .join(" "),
   };
 }
 
@@ -206,6 +221,7 @@ export default function TalentManagement() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [deletingId, setDeletingId] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   React.useEffect(() => {
     const syncLanguage = () => {
@@ -297,14 +313,26 @@ export default function TalentManagement() {
     ];
   }, [locale, talents]);
 
+  const filteredTalents = React.useMemo(() => {
+    const keyword = searchQuery.trim().toLowerCase();
+
+    if (!keyword) {
+      return talents;
+    }
+
+    return talents.filter((item) =>
+      String(item.searchText || "").toLowerCase().includes(keyword),
+    );
+  }, [searchQuery, talents]);
+
   const { totalPages, pageItems: paginatedTalents } = React.useMemo(
-    () => paginateItems(talents, currentPage, ITEMS_PER_PAGE),
-    [talents, currentPage],
+    () => paginateItems(filteredTalents, currentPage, ITEMS_PER_PAGE),
+    [filteredTalents, currentPage],
   );
 
   const paginationMeta = React.useMemo(
-    () => getPaginationMeta(talents.length, currentPage, ITEMS_PER_PAGE),
-    [talents.length, currentPage],
+    () => getPaginationMeta(filteredTalents.length, currentPage, ITEMS_PER_PAGE),
+    [filteredTalents.length, currentPage],
   );
 
   const pageNumbers = React.useMemo(
@@ -315,6 +343,10 @@ export default function TalentManagement() {
   React.useEffect(() => {
     setCurrentPage((prev) => Math.min(prev, totalPages));
   }, [totalPages]);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   return (
     <div className="tm-layout">
@@ -344,6 +376,25 @@ export default function TalentManagement() {
           </div>
 
           <div className="tm-table-card">
+            <div className="tm-search-panel">
+              <div>
+                <h2 className="tm-search-title">Daftar Talenta</h2>
+                <p className="tm-search-subtitle">
+                  {filteredTalents.length} dari {talents.length} talenta
+                </p>
+              </div>
+
+              <div className="tm-search-box">
+                <Search size={18} className="tm-search-icon" />
+                <input
+                  type="search"
+                  placeholder="Cari nama, email, universitas, jurusan..."
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="tm-table-wrap">
               <table className="tm-table">
                 <thead>
@@ -433,7 +484,9 @@ export default function TalentManagement() {
                         colSpan={6}
                         style={{ padding: "32px 16px", textAlign: "center", color: "#6b7280" }}
                       >
-                        {isLoading ? "Memuat data talenta..." : "Belum ada data talenta."}
+                        {isLoading
+                          ? "Memuat data talenta..."
+                          : "Tidak ada talenta yang sesuai pencarian."}
                       </td>
                     </tr>
                   )}
@@ -444,10 +497,10 @@ export default function TalentManagement() {
 
           <div className="tm-footer-row">
             <div className="tm-footer-text">
-              SHOWING {paginationMeta.start}-{paginationMeta.end} OF {talents.length} TALENTS
+              SHOWING {paginationMeta.start}-{paginationMeta.end} OF {filteredTalents.length} TALENTS
             </div>
 
-            {talents.length > 0 && (
+            {filteredTalents.length > 0 && (
               <div className="tm-pagination tm-pagination--dynamic">
                 <button
                   className="tm-page-btn"

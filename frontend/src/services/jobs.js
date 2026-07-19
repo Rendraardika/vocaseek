@@ -3,6 +3,7 @@ import { pickFirstMediaValue } from "../utils/media";
 import { getSavedLanguage } from "../utils/languagePreference";
 
 const COMPANY_JOBS_ENDPOINT = "/company/jobs";
+const ADMIN_JOBS_ENDPOINT = "/admin/jobs";
 const PUBLIC_JOBS_ENDPOINT = "/popular-vacancies";
 const LANDING_STATS_ENDPOINT = "/landing-stats";
 
@@ -182,6 +183,10 @@ export function getCompanyJobApplicants(jobId) {
   return api.get(`/company/jobs/${jobId}/applicants`);
 }
 
+export function getAdminJobs(params = {}) {
+  return api.get(ADMIN_JOBS_ENDPOINT, { params });
+}
+
 export function updateCompanyApplicationStatus(id, payload) {
   return api.put(`/company/applications/${id}/status`, payload);
 }
@@ -214,6 +219,42 @@ export function mapCompanyJobRow(job) {
     applicantsLabel: "Belum ada pelamar",
     applicantCountBubble: false,
     actions: status === "Closed" ? "restore" : "edit",
+  };
+}
+
+export function mapAdminJobRow(job) {
+  const row = mapCompanyJobRow(job);
+  const companyProfile =
+    job?.company_profile || job?.companyProfile || job?.company || {};
+  const companyName =
+    companyProfile?.nama_perusahaan ||
+    companyProfile?.company_name ||
+    companyProfile?.name ||
+    job?.nama_perusahaan ||
+    job?.company_name ||
+    "-";
+
+  return {
+    ...row,
+    company: companyName,
+    location: cleanText(job?.lokasi),
+    applicantCount:
+      Number(job?.applications_count || job?.applicants_count || 0) || 0,
+    searchText: [
+      row.title,
+      row.id,
+      row.dept,
+      row.team,
+      row.status,
+      companyName,
+      job?.lokasi,
+      job?.kategori_pekerjaan,
+      job?.tipe_pekerjaan,
+      job?.deskripsi_pekerjaan,
+      job?.persyaratan,
+    ]
+      .filter(Boolean)
+      .join(" "),
   };
 }
 

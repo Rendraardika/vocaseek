@@ -126,6 +126,25 @@ class AdminUserController extends Controller
 
     public function destroy($id): JsonResponse
     {
+        if (is_string($id) && str_starts_with($id, 'invitation-')) {
+            $invitationId = (int) str_replace('invitation-', '', $id);
+            $invitation = AdminInvitation::findOrFail($invitationId);
+
+            if ($invitation->isUsed()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Undangan yang sudah digunakan tidak dapat dihapus.',
+                ], 422);
+            }
+
+            $invitation->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Undangan admin berhasil dihapus.',
+            ]);
+        }
+
         $admin = User::findOrFail($id);
 
         if (auth()->id() == $admin->user_id) {
@@ -231,7 +250,8 @@ class AdminUserController extends Controller
                 'can_resend' => in_array($displayStatus, ['pending', 'expired', 'cancelled'], true),
                 'can_cancel' => $displayStatus === 'pending',
                 'can_edit' => false,
-                'can_delete' => false,
+                'can_delete' => in_array($displayStatus, ['expired', 'cancelled'], true),
+                'delete_target' => 'invitation',
             ],
         ];
     }

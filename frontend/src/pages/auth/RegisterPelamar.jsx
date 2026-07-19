@@ -1,6 +1,7 @@
 import "../../styles/registerpelamar.css";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import {
   getApiErrorMessage,
   loginWithGoogleAccessToken,
@@ -37,6 +38,7 @@ function RegisterPelamar() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -205,13 +207,29 @@ function RegisterPelamar() {
               <div className="register-password-label">
                 <label>Create Password</label>
               </div>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
+              <div className="register-password-field">
+                <input
+                  type={isPasswordVisible ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  required
+                />
+                <button
+                  type="button"
+                  className="register-password-toggle"
+                  onClick={() => setIsPasswordVisible((visible) => !visible)}
+                  aria-label={
+                    isPasswordVisible ? "Sembunyikan password" : "Lihat password"
+                  }
+                >
+                  {isPasswordVisible ? (
+                    <EyeOff size={18} aria-hidden="true" />
+                  ) : (
+                    <Eye size={18} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
               <p style={{ marginTop: 8, fontSize: "0.82rem", color: "#6b7280", lineHeight: 1.5 }}>
                 Minimal 8 karakter, huruf pertama kapital, dan wajib ada karakter unik.
               </p>

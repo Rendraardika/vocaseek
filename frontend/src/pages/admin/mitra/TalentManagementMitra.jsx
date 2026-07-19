@@ -29,6 +29,7 @@ import {
   ChevronDown,
   X,
   SquarePen,
+  Search,
 } from "lucide-react";
 
 const STATUS_OPTIONS = [
@@ -162,6 +163,29 @@ function mapCandidate(item, index) {
     status,
     image: resolveCandidatePhoto(item),
     link: `/admin/mitra/talent/${backendId}`,
+    searchText: [
+      name,
+      user?.email,
+      item?.email,
+      item?.posisi,
+      item?.position,
+      item?.lowongan?.judul_posisi,
+      item?.lowongan?.judul_pekerjaan,
+      item?.job?.judul_posisi,
+      item?.job?.judul_pekerjaan,
+      item?.lowongan?.companyProfile?.nama_perusahaan,
+      item?.lowongan?.company_profile?.nama_perusahaan,
+      item?.company_name,
+      item?.nama_perusahaan,
+      item?.level,
+      profile?.jenjang,
+      item?.work_type,
+      item?.tipe_pekerjaan,
+      status,
+      getStatusLabel(status),
+    ]
+      .filter(Boolean)
+      .join(" "),
   };
 }
 
@@ -483,6 +507,7 @@ export default function TalentManagement({ mode = "all" }) {
   const [selectedStatus, setSelectedStatus] = React.useState("PENDING");
   const [isLoading, setIsLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const isShortlistedPage = mode === "shortlisted";
 
@@ -641,7 +666,17 @@ export default function TalentManagement({ mode = "all" }) {
     }
   };
 
-  const filteredCandidates = candidateList;
+  const filteredCandidates = React.useMemo(() => {
+    const keyword = searchQuery.trim().toLowerCase();
+
+    if (!keyword) {
+      return candidateList;
+    }
+
+    return candidateList.filter((candidate) =>
+      String(candidate.searchText || "").toLowerCase().includes(keyword),
+    );
+  }, [candidateList, searchQuery]);
 
   const { totalPages, pageItems: paginatedCandidates } = React.useMemo(
     () => paginateItems(filteredCandidates, currentPage, ITEMS_PER_PAGE),
@@ -664,13 +699,10 @@ export default function TalentManagement({ mode = "all" }) {
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [isShortlistedPage]);
+  }, [isShortlistedPage, searchQuery]);
 
   const pageTitle = isShortlistedPage ? "Kandidat Terpilih" : "Semua Kandidat";
   const pageBreadcrumb = isShortlistedPage ? "KANDIDAT TERPILIH" : "SEMUA KANDIDAT";
-  const topSummary = isShortlistedPage
-    ? null
-    : `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredCandidates.length} results`;
   const bottomSummary =
     locale === "en"
       ? `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredCandidates.length} results`
@@ -700,6 +732,27 @@ export default function TalentManagement({ mode = "all" }) {
           </div>
 
           {errorMessage && <div className="tm-alert tm-alert--error">{errorMessage}</div>}
+
+          <div className="tm-search-panel">
+            <div>
+              <h2 className="tm-search-title">
+                {translatePhrase("Cari Kandidat", locale) || "Cari Kandidat"}
+              </h2>
+              <p className="tm-search-subtitle">
+                {bottomSummary}
+              </p>
+            </div>
+
+            <div className="tm-search-box">
+              <Search size={18} className="tm-search-icon" />
+              <input
+                type="search"
+                placeholder="Cari nama, email, posisi, status..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+              />
+            </div>
+          </div>
 
  
           <div className="tm-stats-grid">
@@ -825,7 +878,7 @@ export default function TalentManagement({ mode = "all" }) {
                               color: "#6b7280",
                             }}
                           >
-                            Belum ada kandidat yang mendaftar.
+                            Tidak ada kandidat yang sesuai pencarian.
                           </div>
                         </td>
                       </tr>
@@ -854,9 +907,9 @@ export default function TalentManagement({ mode = "all" }) {
                   ))
                 ) : (
                   <div className="tm-mobile-card">
-                    <div className="tm-candidate__name">Belum ada kandidat</div>
+                    <div className="tm-candidate__name">Tidak ada kandidat</div>
                     <div className="tm-candidate__email">
-                      Data kandidat akan muncul di sini setelah ada pendaftar.
+                      Coba gunakan kata kunci lain.
                     </div>
                   </div>
                 )}
