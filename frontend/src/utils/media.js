@@ -1,8 +1,12 @@
 export function normalizeAssetUrl(value) {
   if (!value) return "";
 
-  const raw = String(value).trim();
+  let raw = String(value).trim();
   if (!raw) return "";
+
+  if (/^http:\/\//i.test(raw) && typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    raw = raw.replace(/^http:\/\//i, 'https://');
+  }
 
   if (/^https?:\/\//i.test(raw) || raw.startsWith("data:") || raw.startsWith("blob:")) {
     return raw;
