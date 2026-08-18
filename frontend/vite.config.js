@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
       host: serverHost,
       port: serverPort,
       strictPort: true,
+      hmr: {
+        overlay: true,
+      },
       proxy: {
         '/api': {
           target: proxyTarget,
@@ -31,5 +34,24 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+      ],
+    },
+    build: {
+      chunkSizeWarningLimit: 1500,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-bootstrap': ['bootstrap'],
+          },
+        },
+      },
+    },
   }
 })
+

@@ -177,40 +177,62 @@ function applyGlobalTranslations(locale) {
 
 export default function GlobalTranslator() {
   useEffect(() => {
-    let animationFrameId = 0;
+    let debounceTimer = null;
+    let idleCallbackId = null;
 
     const translate = () => {
       const locale = normalizeTranslatableText(getSavedLanguage()) || "id";
       applyGlobalTranslations(locale === "en" ? "en" : "id");
     };
 
-    const scheduleTranslate = () => {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = window.requestAnimationFrame(translate);
+    // Run immediately on language-changed or auth-changed events
+    const translateImmediate = () => {
+      if (idleCallbackId) {
+        cancelIdleCallback(idleCallbackId);
+        idleCallbackId = null;
+      }
+      clearTimeout(debounceTimer);
+      if (typeof requestIdleCallback === "function") {
+        idleCallbackId = requestIdleCallback(translate, { timeout: 300 });
+      } else {
+        setTimeout(translate, 0);
+      }
     };
 
-    const observer = new MutationObserver(() => {
-      scheduleTranslate();
-    });
+    // Debounced mutation handler — waits 120ms after DOM stops changing
+    const scheduleMutationTranslate = () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (typeof requestIdleCallback === "function") {
+          idleCallbackId = requestIdleCallback(translate, { timeout: 400 });
+        } else {
+          translate();
+        }
+      }, 120);
+    };
+
+    const observer = new MutationObserver(scheduleMutationTranslate);
 
     const root = document.getElementById("root");
     if (root) {
       observer.observe(root, {
         childList: true,
         subtree: true,
-        characterData: true,
+        // Do not watch characterData — prevents firing on every keystroke
+        characterData: false,
       });
     }
 
-    scheduleTranslate();
-    window.addEventListener("language-changed", scheduleTranslate);
-    window.addEventListener("auth-changed", scheduleTranslate);
+    translateImmediate();
+    window.addEventListener("language-changed", translateImmediate);
+    window.addEventListener("auth-changed", translateImmediate);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      clearTimeout(debounceTimer);
+      if (idleCallbackId) cancelIdleCallback(idleCallbackId);
       observer.disconnect();
-      window.removeEventListener("language-changed", scheduleTranslate);
-      window.removeEventListener("auth-changed", scheduleTranslate);
+      window.removeEventListener("language-changed", translateImmediate);
+      window.removeEventListener("auth-changed", translateImmediate);
     };
   }, []);
 

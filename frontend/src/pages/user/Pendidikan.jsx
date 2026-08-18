@@ -176,8 +176,9 @@ export default function Pendidikan({ open, onClose, onSubmit, initialData }) {
                 {isMasihKuliah ? "Semester" : "Tahun Lulus"}
               </label>
               <input
+                key={isMasihKuliah ? "input-semester" : "input-tahun-lulus"}
                 className="pd-input"
-                placeholder={isMasihKuliah ? "Contoh: 6" : "Contoh: 2024"}
+                placeholder={isMasihKuliah ? "Contoh: 6" : "Contoh: 2023"}
                 inputMode="numeric"
                 value={isMasihKuliah ? form.semester : form.tahunLulus}
                 onChange={(e) =>

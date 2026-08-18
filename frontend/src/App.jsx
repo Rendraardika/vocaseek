@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import ScrollToTop from "./components/common/ScrollToTop";
 import FloatingLanguageSwitcher from "./components/common/FloatingLanguageSwitcher";
 import GlobalTranslator from "./components/common/GlobalTranslator";
+import GlobalModalAlert from "./components/common/GlobalModalAlert";
 import Beranda from "./pages/user/Beranda";
 import Lowongan from "./pages/user/Lowongan";
 import Mitra from "./pages/user/Mitra";
@@ -173,6 +174,7 @@ export default function App() {
     <>
       <ScrollToTop />
       <GlobalTranslator />
+      <GlobalModalAlert />
       <FloatingLanguageSwitcher />
       <Routes>
         {/* Route utama dari app pertama */}
