@@ -1,5 +1,6 @@
 import "../../styles/StatCard.css";
-export default function StatCard({ title, value, note, type, icon }) {
+
+export default function StatCard({ title, value, icon }) {
   return (
     <div className="stat-card">
       <div className="stat-card-head">
@@ -8,13 +9,6 @@ export default function StatCard({ title, value, note, type, icon }) {
       </div>
 
       <div className="stat-card-value">{value}</div>
-
-      <div className={`stat-card-note ${type}`}>
-        <span>
-          {type === "positive" ? "↗" : type === "negative" ? "↘" : ""}
-        </span>
-        <span>{note}</span>
-      </div>
     </div>
   );
 }

@@ -39,12 +39,12 @@ function Login() {
 
     try {
       const response = await loginApplicant({
-        email: form.email,
+        email: form.email.trim(),
         password: form.password,
       });
 
       saveAuthSession(response.data, {
-        email: form.email,
+        email: form.email.trim(),
         remember: form.remember,
       });
       navigate(resolveUserHomeRoute(response.data?.role), { replace: true });

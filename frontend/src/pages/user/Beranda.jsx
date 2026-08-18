@@ -438,7 +438,7 @@ export default function App() {
                   <h4>{item.title}</h4>
                   <p>{formatCompactNumber(item.count)} posisi terbuka</p>
                   <span className="popular-card-link">
-                    Detail role <FaArrowRight />
+                    Detail pekerjaan <FaArrowRight />
                   </span>
                 </div>
               ))

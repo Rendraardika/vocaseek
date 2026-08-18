@@ -355,11 +355,6 @@ export default function Dashboard() {
       value: pickStatValue(
         overview?.total_talents ?? overview?.totalTalents ?? overview?.talents,
       ),
-      note: pickStatNote(
-        overview?.total_talents ?? overview?.totalTalents ?? overview?.talents,
-        "Data talenta dari backend",
-      ),
-      type: "positive",
       icon: <GraduationCap size={20} />,
     },
     {
@@ -367,11 +362,6 @@ export default function Dashboard() {
       value: pickStatValue(
         overview?.partners ?? overview?.total_partners ?? overview?.mitra,
       ),
-      note: pickStatNote(
-        overview?.partners ?? overview?.total_partners ?? overview?.mitra,
-        "Data mitra dari backend",
-      ),
-      type: "positive",
       icon: <Building2 size={20} />,
     },
     {
@@ -379,11 +369,6 @@ export default function Dashboard() {
       value: pickStatValue(
         overview?.openings ?? overview?.total_openings ?? overview?.lowongan,
       ),
-      note: pickStatNote(
-        overview?.openings ?? overview?.total_openings ?? overview?.lowongan,
-        "Data lowongan dari backend",
-      ),
-      type: "warning",
       icon: <Briefcase size={20} />,
     },
   ];

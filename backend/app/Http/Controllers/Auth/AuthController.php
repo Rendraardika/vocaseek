@@ -28,6 +28,10 @@ class AuthController extends Controller
     // 1. FUNGSI LOGIN
     public function login(Request $request)
     {
+        $request->merge([
+            'email' => strtolower(trim((string) $request->input('email', ''))),
+        ]);
+
         $request->validate([
             'email' => 'required|email:rfc',
             'password' => 'required',

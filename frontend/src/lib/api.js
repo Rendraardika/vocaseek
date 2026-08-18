@@ -62,6 +62,7 @@ export function resolveApiBaseUrl() {
 
     if (isLocalOrPrivateHost(currentHostname)) {
       configuredUrl.hostname = currentHostname;
+      configuredUrl.protocol = window.location.protocol;
 
       if (!configuredUrl.port) {
         configuredUrl.port = "8001";

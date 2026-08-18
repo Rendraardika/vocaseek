@@ -31,6 +31,33 @@ import { getSavedLanguage } from "../../../utils/languagePreference";
 
 const ITEMS_PER_PAGE = 5;
 
+const STATUS_LABELS = {
+  All: { id: "Semua Lowongan", en: "All Jobs" },
+  Open: { id: "Dibuka", en: "Open" },
+  Closed: { id: "Ditutup", en: "Closed" },
+  Draft: { id: "Draf", en: "Draft" },
+};
+
+function formatJobDate(row, locale) {
+  const rawDate =
+    row?.raw?.created_at ||
+    row?.raw?.createdAt ||
+    row?.created_at ||
+    row?.date ||
+    "";
+  const date = new Date(rawDate);
+
+  if (Number.isNaN(date.getTime())) {
+    return row?.date || "-";
+  }
+
+  return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
 function StatBox({
   title,
   value,
@@ -59,17 +86,21 @@ function StatBox({
   );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, locale }) {
   const styles = {
     Open: "job-postings__status-badge job-postings__status-badge--open",
     Draft: "job-postings__status-badge job-postings__status-badge--draft",
     Closed: "job-postings__status-badge job-postings__status-badge--closed",
   };
 
-  return <span className={styles[status]}>{status}</span>;
+  return (
+    <span className={styles[status] || styles.Open}>
+      {STATUS_LABELS[status]?.[locale === "en" ? "en" : "id"] || status}
+    </span>
+  );
 }
 
-function MobileJobCard({ row, onEdit, onDelete, onRestore }) {
+function MobileJobCard({ row, locale, onEdit, onDelete, onRestore }) {
   return (
     <div className="job-postings__mobile-card">
       <div className="job-postings__mobile-card-top">
@@ -83,19 +114,23 @@ function MobileJobCard({ row, onEdit, onDelete, onRestore }) {
           </div>
         </div>
 
-        <StatusBadge status={row.status} />
+        <StatusBadge status={row.status} locale={locale} />
       </div>
 
       <div className="job-postings__mobile-meta">
         <div className="job-postings__mobile-field">
-          <div className="job-postings__mobile-label">Department</div>
+          <div className="job-postings__mobile-label">
+            {translatePhrase("Department", locale) || "Departemen"}
+          </div>
           <div className="job-postings__department">{row.dept}</div>
           <div className="job-postings__team">{row.team}</div>
         </div>
 
         <div className="job-postings__mobile-field">
-          <div className="job-postings__mobile-label">Posted Date</div>
-          <div className="job-postings__date">{row.date}</div>
+          <div className="job-postings__mobile-label">
+            {translatePhrase("Posted Date", locale) || "Tanggal Posting"}
+          </div>
+          <div className="job-postings__date">{formatJobDate(row, locale)}</div>
         </div>
       </div>
 
@@ -108,7 +143,7 @@ function MobileJobCard({ row, onEdit, onDelete, onRestore }) {
               className="job-postings__action-btn job-postings__action-btn--edit"
             >
               <Pencil size={16} />
-              Edit
+              {translatePhrase("Edit", locale) || "Ubah"}
             </button>
 
             <button
@@ -117,7 +152,7 @@ function MobileJobCard({ row, onEdit, onDelete, onRestore }) {
               className="job-postings__action-btn job-postings__action-btn--delete"
             >
               <Trash2 size={16} />
-              Delete
+              {translatePhrase("Delete", locale) || "Hapus"}
             </button>
           </>
         ) : (
@@ -127,7 +162,7 @@ function MobileJobCard({ row, onEdit, onDelete, onRestore }) {
             className="job-postings__action-btn job-postings__action-btn--restore"
           >
             <RotateCcw size={16} />
-            Restore
+            {translatePhrase("Restore", locale) || "Pulihkan"}
           </button>
         )}
       </div>
@@ -355,27 +390,16 @@ export default function JobPostings() {
           <div className="job-postings__table-card">
             <div className="job-postings__table-toolbar">
               <div className="job-postings__tabs">
-                <button
-                  type="button"
-                  className={`job-postings__tab ${activeTab === "All" ? "job-postings__tab--active" : ""}`}
-                  onClick={() => setActiveTab("All")}
-                >
-                  All Jobs
-                </button>
-                <button
-                  type="button"
-                  className={`job-postings__tab ${activeTab === "Open" ? "job-postings__tab--active" : ""}`}
-                  onClick={() => setActiveTab("Open")}
-                >
-                  Open
-                </button>
-                <button
-                  type="button"
-                  className={`job-postings__tab ${activeTab === "Closed" ? "job-postings__tab--active" : ""}`}
-                  onClick={() => setActiveTab("Closed")}
-                >
-                  Closed
-                </button>
+                {["All", "Open", "Closed"].map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    className={`job-postings__tab ${activeTab === tab ? "job-postings__tab--active" : ""}`}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {STATUS_LABELS[tab]?.[locale === "en" ? "en" : "id"] || tab}
+                  </button>
+                ))}
               </div>
 
               <div className="job-postings__toolbar-actions">
@@ -383,7 +407,7 @@ export default function JobPostings() {
                   <Search size={18} className="job-postings__search-icon" />
                   <input
                     type="text"
-                    placeholder="Cari lowongan..."
+                    placeholder={translatePhrase("Cari lowongan...", locale) || "Cari lowongan..."}
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     className="job-postings__search-input"
@@ -405,13 +429,17 @@ export default function JobPostings() {
                         "Posisi Lowongan"}
                     </th>
                     <th className="job-postings__table-head-cell">
-                      Department
+                      {translatePhrase("Department", locale) || "Departemen"}
                     </th>
                     <th className="job-postings__table-head-cell">
-                      Posted Date
+                      {translatePhrase("Posted Date", locale) || "Tanggal Posting"}
                     </th>
-                    <th className="job-postings__table-head-cell">Status</th>
-                    <th className="job-postings__table-head-cell">Actions</th>
+                    <th className="job-postings__table-head-cell">
+                      {translatePhrase("Status", locale) || "Status"}
+                    </th>
+                    <th className="job-postings__table-head-cell">
+                      {translatePhrase("Actions", locale) || "Aksi"}
+                    </th>
                   </tr>
                 </thead>
 
@@ -429,7 +457,7 @@ export default function JobPostings() {
                             color: "#6b7280",
                           }}
                         >
-                          Memuat lowongan...
+                          {translatePhrase("Memuat lowongan...", locale) || "Memuat lowongan..."}
                         </div>
                       </td>
                     </tr>
@@ -461,11 +489,11 @@ export default function JobPostings() {
                           <div className="job-postings__team">{row.team}</div>
                         </td>
                         <td className="job-postings__table-cell job-postings__date">
-                          {row.date}
+                          {formatJobDate(row, locale)}
                         </td>
 
                         <td className="job-postings__table-cell">
-                          <StatusBadge status={row.status} />
+                          <StatusBadge status={row.status} locale={locale} />
                         </td>
 
                         <td className="job-postings__table-cell">
@@ -515,7 +543,7 @@ export default function JobPostings() {
                             color: "#6b7280",
                           }}
                         >
-                          Belum ada lowongan yang dibuat.
+                          {translatePhrase("Belum ada lowongan yang dibuat.", locale) || "Belum ada lowongan yang dibuat."}
                         </div>
                       </td>
                     </tr>
@@ -528,7 +556,7 @@ export default function JobPostings() {
               {isLoading ? (
                 <div className="job-postings__mobile-card">
                   <div className="job-postings__job-title">
-                    Memuat lowongan...
+                    {translatePhrase("Memuat lowongan...", locale) || "Memuat lowongan..."}
                   </div>
                 </div>
               ) : paginatedRows.length > 0 ? (
@@ -536,6 +564,7 @@ export default function JobPostings() {
                   <MobileJobCard
                     key={index}
                     row={row}
+                    locale={locale}
                     onEdit={() => handleEditJob(row)}
                     onDelete={() => handleDeleteJob(row)}
                     onRestore={() => handleRestoreJob(row)}
@@ -544,10 +573,10 @@ export default function JobPostings() {
               ) : (
                 <div className="job-postings__mobile-card">
                   <div className="job-postings__job-title">
-                    Belum ada lowongan
+                    {translatePhrase("Belum ada lowongan", locale) || "Belum ada lowongan"}
                   </div>
                   <div className="job-postings__job-id">
-                    Lowongan yang sudah dibuat akan muncul di sini.
+                    {translatePhrase("Lowongan yang sudah dibuat akan muncul di sini.", locale) || "Lowongan yang sudah dibuat akan muncul di sini."}
                   </div>
                 </div>
               )}
@@ -555,8 +584,9 @@ export default function JobPostings() {
 
             <div className="job-postings__pagination">
               <div className="job-postings__pagination-text">
-                Showing {paginationMeta.start} to {paginationMeta.end} of{" "}
-                {filteredRows.length} results
+                {locale === "en"
+                  ? `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredRows.length} results`
+                  : `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredRows.length} hasil`}
               </div>
 
               {filteredRows.length > 0 && (

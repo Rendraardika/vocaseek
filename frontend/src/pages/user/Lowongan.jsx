@@ -1,6 +1,5 @@
 import "../../styles/lowongan.css";
 import { NavLink } from "react-router-dom";
-import ProcessSection from "../../components/common/ProcessSection";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import FooterSocialIcons from "../../components/common/FooterSocialIcons";
@@ -42,23 +41,23 @@ function App() {
           </div>
 
           <nav className={`nav ${menuOpen ? "show" : ""}`}>
-          <NavLink to="/" onClick={() => setMenuOpen(false)}>Beranda</NavLink>
-          <NavLink to="/lowongan" onClick={() => setMenuOpen(false)}>Lowongan</NavLink>
-          <NavLink to="/mitra" onClick={() => setMenuOpen(false)}>Mitra</NavLink>
-          <NavLink to="/kontak" onClick={() => setMenuOpen(false)}>Kontak</NavLink>
+            <NavLink to="/" onClick={() => setMenuOpen(false)}>Beranda</NavLink>
+            <NavLink to="/lowongan" onClick={() => setMenuOpen(false)}>Lowongan</NavLink>
+            <NavLink to="/mitra" onClick={() => setMenuOpen(false)}>Mitra</NavLink>
+            <NavLink to="/kontak" onClick={() => setMenuOpen(false)}>Kontak</NavLink>
 
-          <Link
-            to="/login"
-            className="mobile-login"
-            onClick={() => setMenuOpen(false)}
-          >
+            <Link
+              to="/login"
+              className="mobile-login"
+              onClick={() => setMenuOpen(false)}
+            >
+              Masuk
+            </Link>
+          </nav>
+
+          <Link to="/login" className="btn-login">
             Masuk
           </Link>
-        </nav>
-
-        <Link to="/login" className="btn-login">
-          Masuk
-        </Link>
         </div>
       </header>
 
@@ -103,7 +102,7 @@ function App() {
 
               <div className="hero-floating hero-verified">✔ Terverifikasi</div>
 
-              <div className="hero-floating hero-rate">98% Success Rate</div>
+              <div className="hero-floating hero-rate">98% Tingkat Keberhasilan</div>
             </div>
           </div>
         </div>
@@ -168,7 +167,7 @@ function App() {
               <FaPaintBrush />
             </div>
             <h3>Kreatif & Media</h3>
-            <p>Design, Konten, UI/UX</p>
+            <p>Desain, Konten, UI/UX</p>
             <Link to="/login" className="kategori-link">
               Lihat &gt;
             </Link>
@@ -179,7 +178,7 @@ function App() {
               <FaLaptopCode />
             </div>
             <h3>Teknologi & IT</h3>
-            <p>Web App, Data Science</p>
+            <p>Aplikasi Web, Sains Data</p>
             <Link to="/login" className="kategori-link">
               Lihat &gt;
             </Link>
@@ -190,7 +189,7 @@ function App() {
               <FaUsers />
             </div>
             <h3>Sumber Daya Manusia</h3>
-            <p>Recruitment, Talent Dev</p>
+            <p>Perekrutan, Pengembangan Talenta</p>
             <Link to="/login" className="kategori-link">
               Lihat &gt;
             </Link>
@@ -201,7 +200,7 @@ function App() {
               <FaUtensils />
             </div>
             <h3>Perhotelan & Kuliner</h3>
-            <p>Tourism, F&B Service</p>
+            <p>Pariwisata, Layanan Makanan & Minuman</p>
             <Link to="/login" className="kategori-link">
               Lihat &gt;
             </Link>
@@ -265,7 +264,7 @@ function App() {
           {/* RIGHT */}
           <div className="process-right">
             <div className="process-image">
-              <img src="/lowongan2.webp" alt="Recruitment Process" />
+              <img src="/lowongan2.webp" alt="Proses Rekrutmen" />
 
               <div className="process-note">
                 <p>Membangun pengalaman nyata untuk masa depan profesional.</p>
@@ -281,14 +280,13 @@ function App() {
       </section>
 
       {/* ===== EXPLORE SECTION ===== */}
-
       <section className="explore">
         <h2>Jelajahi Berdasarkan Bidang</h2>
         <p>Temukan posisi magang terpopuler minggu ini.</p>
 
         <div className="explore-grid">
           <div className="explore-card">
-            <img src="/lowongan3.webp" />
+            <img src="/lowongan3.webp" alt="Teknologi & Digital" />
             <h3>Teknologi & Digital</h3>
             <Link to="/login" className="lihat-lowongan">
               Lihat &gt;
@@ -296,7 +294,7 @@ function App() {
           </div>
 
           <div className="explore-card">
-            <img src="/lowongan4.webp" />
+            <img src="/lowongan4.webp" alt="Bisnis & Manajemen" />
             <h3>Bisnis & Manajemen</h3>
             <Link to="/login" className="lihat-lowongan">
               Lihat &gt;
@@ -304,7 +302,7 @@ function App() {
           </div>
 
           <div className="explore-card">
-            <img src="/lowongan5.webp" />
+            <img src="/lowongan5.webp" alt="Layanan Kesehatan" />
             <h3>Layanan Kesehatan</h3>
             <Link to="/login" className="lihat-lowongan">
               Lihat &gt;
@@ -337,7 +335,7 @@ function App() {
         <div className="footer-inner">
           {/* LEFT */}
           <div className="footer-about">
-            <h3>About Us</h3>
+            <h3>Tentang Kami</h3>
             <span className="footer-line"></span>
             <p>
               Vocaseek berdedikasi dalam mengembangkan kapasitas talenta muda
@@ -352,7 +350,7 @@ function App() {
 
           {/* RIGHT */}
           <div className="footer-contact">
-            <h3>Contact Info</h3>
+            <h3>Informasi Kontak</h3>
             <span className="footer-line"></span>
 
             <ul>
@@ -374,4 +372,3 @@ function App() {
 }
 
 export default App;
-

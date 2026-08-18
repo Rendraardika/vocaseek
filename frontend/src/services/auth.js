@@ -158,6 +158,10 @@ export function getApiErrorMessage(error, fallbackMessage) {
     return "Akun admin ini belum diaktifkan. Silakan buka tautan aktivasi dari email undangan Anda.";
   }
 
+  if (errorCode === "company_not_approved") {
+    return "Akun mitra Anda belum disetujui Vocaseek.";
+  }
+
   if (errorCode === "account_disabled") {
     return "Akun ini sedang dinonaktifkan. Silakan hubungi administrator.";
   }
@@ -175,7 +179,7 @@ export function getApiErrorMessage(error, fallbackMessage) {
   }
 
   if (!error?.response && error?.request) {
-    return `Backend tidak bisa dijangkau. Pastikan API Laravel berjalan di ${apiBaseUrl}.`;
+    return "Tidak dapat terhubung ke layanan. Silakan periksa koneksi internet Anda dan coba lagi.";
   }
 
   if (typeof message === "string" && message.toLowerCase().includes("csrf token mismatch")) {

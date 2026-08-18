@@ -13,6 +13,8 @@ import SidebarSuper from "../../../components/admin/Sidebar";
 import SidebarStaff from "../../../components/admin/SidebarStaff";
 import { getApiErrorMessage } from "../../../services/auth";
 import { getAdminJobs, mapAdminJobRow } from "../../../services/jobs";
+import { translatePhrase } from "../../../i18n/phrases";
+import { getSavedLanguage } from "../../../utils/languagePreference";
 import {
   getPageNumbers,
   getPaginationMeta,
@@ -20,6 +22,79 @@ import {
 } from "../../../utils/pagination";
 
 const ITEMS_PER_PAGE = 8;
+const STATUS_LABELS = {
+  All: { id: "Semua", en: "All" },
+  Open: { id: "Dibuka", en: "Open" },
+  Closed: { id: "Ditutup", en: "Closed" },
+  Draft: { id: "Draf", en: "Draft" },
+};
+const LOCAL_LABELS = {
+  "Total Lowongan": { id: "Total Lowongan", en: "Total Vacancies" },
+  "Seluruh lowongan mitra": { id: "Seluruh lowongan mitra", en: "All partner vacancies" },
+  "Lowongan Aktif": { id: "Lowongan Aktif", en: "Active Vacancies" },
+  "Sedang dibuka": { id: "Sedang dibuka", en: "Currently open" },
+  "Lowongan Ditutup": { id: "Lowongan Ditutup", en: "Closed Vacancies" },
+  "Tidak menerima pelamar": { id: "Tidak menerima pelamar", en: "Not accepting applicants" },
+  "Total Pelamar": { id: "Total Pelamar", en: "Total Applicants" },
+  "Dari semua lowongan": { id: "Dari semua lowongan", en: "From all vacancies" },
+  "Cari judul, perusahaan, lokasi...": {
+    id: "Cari judul, perusahaan, lokasi...",
+    en: "Search title, company, location...",
+  },
+  "Tanggal Posting": { id: "Tanggal Posting", en: "Posted Date" },
+  "Posisi Lowongan": { id: "Posisi Lowongan", en: "Job Position" },
+  "Perusahaan": { id: "Perusahaan", en: "Company" },
+  "Kategori": { id: "Kategori", en: "Category" },
+  "Pelamar": { id: "Pelamar", en: "Applicants" },
+  "Status": { id: "Status", en: "Status" },
+  "Daftar Lowongan": { id: "Daftar Lowongan", en: "Job Postings" },
+  "MANAJEMEN LOWONGAN": { id: "MANAJEMEN LOWONGAN", en: "VACANCY MANAGEMENT" },
+  "Tidak ada lowongan yang sesuai pencarian.": {
+    id: "Tidak ada lowongan yang sesuai pencarian.",
+    en: "No vacancies match your search.",
+  },
+  "Tidak ada lowongan": { id: "Tidak ada lowongan", en: "No vacancies" },
+  "Coba gunakan kata kunci lain.": {
+    id: "Coba gunakan kata kunci lain.",
+    en: "Try another keyword.",
+  },
+  "Menampilkan": { id: "Menampilkan", en: "Showing" },
+  "sampai": { id: "sampai", en: "to" },
+  "dari": { id: "dari", en: "of" },
+  "hasil": { id: "hasil", en: "results" },
+};
+
+function labelByLocale(labels, locale) {
+  return labels?.[locale === "en" ? "en" : "id"] || "";
+}
+
+function translate(text, locale) {
+  return (
+    labelByLocale(LOCAL_LABELS[text], locale) ||
+    translatePhrase(text, locale) ||
+    text
+  );
+}
+
+function formatPostedDate(row, locale) {
+  const rawDate =
+    row?.raw?.created_at ||
+    row?.raw?.createdAt ||
+    row?.created_at ||
+    row?.date ||
+    "";
+  const date = new Date(rawDate);
+
+  if (Number.isNaN(date.getTime())) {
+    return row?.date || "-";
+  }
+
+  return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
 function StatBox({ title, value, subtitle, icon, iconBg, iconColor }) {
   return (
@@ -38,7 +113,7 @@ function StatBox({ title, value, subtitle, icon, iconBg, iconColor }) {
   );
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status, locale }) {
   const className =
     status === "Closed"
       ? "job-postings__status-badge job-postings__status-badge--closed"
@@ -46,10 +121,14 @@ function StatusBadge({ status }) {
         ? "job-postings__status-badge job-postings__status-badge--draft"
         : "job-postings__status-badge job-postings__status-badge--open";
 
-  return <span className={className}>{status}</span>;
+  return (
+    <span className={className}>
+      {labelByLocale(STATUS_LABELS[status], locale) || status}
+    </span>
+  );
 }
 
-function AdminMobileJobCard({ row }) {
+function AdminMobileJobCard({ row, locale }) {
   return (
     <div className="job-postings__mobile-card">
       <div className="job-postings__mobile-card-top">
@@ -62,17 +141,21 @@ function AdminMobileJobCard({ row }) {
             <div className="job-postings__job-id">{row.company}</div>
           </div>
         </div>
-        <StatusBadge status={row.status} />
+        <StatusBadge status={row.status} locale={locale} />
       </div>
 
       <div className="job-postings__mobile-meta">
         <div className="job-postings__mobile-field">
-          <div className="job-postings__mobile-label">Kategori</div>
+          <div className="job-postings__mobile-label">
+            {translate("Kategori", locale)}
+          </div>
           <div className="job-postings__department">{row.dept}</div>
           <div className="job-postings__team">{row.team || "-"}</div>
         </div>
         <div className="job-postings__mobile-field">
-          <div className="job-postings__mobile-label">Pelamar</div>
+          <div className="job-postings__mobile-label">
+            {translate("Pelamar", locale)}
+          </div>
           <div className="job-postings__date">{row.applicantCount}</div>
         </div>
       </div>
@@ -88,6 +171,18 @@ export default function AdminJobPostings({ mode = "super" }) {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [locale, setLocale] = React.useState(getSavedLanguage());
+
+  React.useEffect(() => {
+    const syncLanguage = () => {
+      setLocale(getSavedLanguage());
+    };
+
+    window.addEventListener("language-changed", syncLanguage);
+    return () => {
+      window.removeEventListener("language-changed", syncLanguage);
+    };
+  }, []);
 
   const loadJobs = React.useCallback(async () => {
     setIsLoading(true);
@@ -166,44 +261,46 @@ export default function AdminJobPostings({ mode = "super" }) {
             <p className="dashboard-mitra__breadcrumb">
               <span>ADMIN &gt; </span>
               <span className="dashboard-mitra__breadcrumb-active">
-                MANAJEMEN LOWONGAN
+                {translate("MANAJEMEN LOWONGAN", locale)}
               </span>
             </p>
           </div>
 
           <div className="job-postings__header">
-            <h1 className="job-postings__title">Daftar Lowongan</h1>
+            <h1 className="job-postings__title">
+              {translate("Daftar Lowongan", locale)}
+            </h1>
           </div>
 
           <div className="job-postings__stats-grid job-postings__stats-grid--admin">
             <StatBox
-              title="Total Lowongan"
+              title={translate("Total Lowongan", locale)}
               value={stats.total}
-              subtitle="Seluruh lowongan mitra"
+              subtitle={translate("Seluruh lowongan mitra", locale)}
               icon={<BriefcaseBusiness size={20} />}
               iconBg="job-postings__icon-bg--blue"
               iconColor="job-postings__icon-color--blue"
             />
             <StatBox
-              title="Lowongan Aktif"
+              title={translate("Lowongan Aktif", locale)}
               value={stats.active}
-              subtitle="Sedang dibuka"
+              subtitle={translate("Sedang dibuka", locale)}
               icon={<CircleCheck size={20} />}
               iconBg="job-postings__icon-bg--green"
               iconColor="job-postings__icon-color--green"
             />
             <StatBox
-              title="Lowongan Ditutup"
+              title={translate("Lowongan Ditutup", locale)}
               value={stats.closed}
-              subtitle="Tidak menerima pelamar"
+              subtitle={translate("Tidak menerima pelamar", locale)}
               icon={<FileX2 size={20} />}
               iconBg="job-postings__icon-bg--red"
               iconColor="job-postings__icon-color--red"
             />
             <StatBox
-              title="Total Pelamar"
+              title={translate("Total Pelamar", locale)}
               value={stats.applicants}
-              subtitle="Dari semua lowongan"
+              subtitle={translate("Dari semua lowongan", locale)}
               icon={<Users size={20} />}
               iconBg="job-postings__icon-bg--yellow"
               iconColor="job-postings__icon-color--yellow"
@@ -220,7 +317,7 @@ export default function AdminJobPostings({ mode = "super" }) {
                     className={`job-postings__tab ${activeTab === tab ? "job-postings__tab--active" : ""}`}
                     onClick={() => setActiveTab(tab)}
                   >
-                    {tab === "All" ? "Semua" : tab}
+                    {labelByLocale(STATUS_LABELS[tab], locale) || tab}
                   </button>
                 ))}
               </div>
@@ -230,7 +327,7 @@ export default function AdminJobPostings({ mode = "super" }) {
                   <Search size={18} className="job-postings__search-icon" />
                   <input
                     type="search"
-                    placeholder="Cari judul, perusahaan, lokasi..."
+                    placeholder={translate("Cari judul, perusahaan, lokasi...", locale)}
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     className="job-postings__search-input"
@@ -248,13 +345,23 @@ export default function AdminJobPostings({ mode = "super" }) {
                 <thead className="job-postings__table-head">
                   <tr className="job-postings__table-head-row">
                     <th className="job-postings__table-head-cell job-postings__table-head-cell--first">
-                      Posisi Lowongan
+                      {translate("Posisi Lowongan", locale)}
                     </th>
-                    <th className="job-postings__table-head-cell">Perusahaan</th>
-                    <th className="job-postings__table-head-cell">Kategori</th>
-                    <th className="job-postings__table-head-cell">Posted Date</th>
-                    <th className="job-postings__table-head-cell">Pelamar</th>
-                    <th className="job-postings__table-head-cell">Status</th>
+                    <th className="job-postings__table-head-cell">
+                      {translate("Perusahaan", locale)}
+                    </th>
+                    <th className="job-postings__table-head-cell">
+                      {translate("Kategori", locale)}
+                    </th>
+                    <th className="job-postings__table-head-cell">
+                      {translate("Tanggal Posting", locale)}
+                    </th>
+                    <th className="job-postings__table-head-cell">
+                      {translate("Pelamar", locale)}
+                    </th>
+                    <th className="job-postings__table-head-cell">
+                      {translate("Status", locale)}
+                    </th>
                   </tr>
                 </thead>
 
@@ -262,7 +369,7 @@ export default function AdminJobPostings({ mode = "super" }) {
                   {isLoading ? (
                     <tr className="job-postings__table-row">
                       <td className="job-postings__empty-cell" colSpan={6}>
-                        Memuat lowongan...
+                        {translate("Memuat lowongan...", locale)}
                       </td>
                     </tr>
                   ) : paginatedRows.length > 0 ? (
@@ -300,20 +407,20 @@ export default function AdminJobPostings({ mode = "super" }) {
                           <div className="job-postings__team">{row.team}</div>
                         </td>
                         <td className="job-postings__table-cell job-postings__date">
-                          {row.date}
+                          {formatPostedDate(row, locale)}
                         </td>
                         <td className="job-postings__table-cell job-postings__date">
                           {row.applicantCount}
                         </td>
                         <td className="job-postings__table-cell">
-                          <StatusBadge status={row.status} />
+                          <StatusBadge status={row.status} locale={locale} />
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr className="job-postings__table-row">
                       <td className="job-postings__empty-cell" colSpan={6}>
-                        Tidak ada lowongan yang sesuai pencarian.
+                        {translate("Tidak ada lowongan yang sesuai pencarian.", locale)}
                       </td>
                     </tr>
                   )}
@@ -324,19 +431,21 @@ export default function AdminJobPostings({ mode = "super" }) {
             <div className="job-postings__mobile-list">
               {isLoading ? (
                 <div className="job-postings__mobile-card">
-                  <div className="job-postings__job-title">Memuat lowongan...</div>
+                  <div className="job-postings__job-title">
+                    {translate("Memuat lowongan...", locale)}
+                  </div>
                 </div>
               ) : paginatedRows.length > 0 ? (
                 paginatedRows.map((row) => (
-                  <AdminMobileJobCard key={row.id} row={row} />
+                  <AdminMobileJobCard key={row.id} row={row} locale={locale} />
                 ))
               ) : (
                 <div className="job-postings__mobile-card">
                   <div className="job-postings__job-title">
-                    Tidak ada lowongan
+                    {translate("Tidak ada lowongan", locale)}
                   </div>
                   <div className="job-postings__job-id">
-                    Coba gunakan kata kunci lain.
+                    {translate("Coba gunakan kata kunci lain.", locale)}
                   </div>
                 </div>
               )}
@@ -344,8 +453,9 @@ export default function AdminJobPostings({ mode = "super" }) {
 
             <div className="job-postings__pagination">
               <div className="job-postings__pagination-text">
-                Menampilkan {paginationMeta.start} sampai {paginationMeta.end} dari{" "}
-                {filteredRows.length} hasil
+                {locale === "en"
+                  ? `Showing ${paginationMeta.start} to ${paginationMeta.end} of ${filteredRows.length} results`
+                  : `Menampilkan ${paginationMeta.start} sampai ${paginationMeta.end} dari ${filteredRows.length} hasil`}
               </div>
 
               {filteredRows.length > 0 && (
